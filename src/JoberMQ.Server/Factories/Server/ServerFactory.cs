@@ -1,5 +1,5 @@
 ﻿using JoberMQ.Entities.Enums.Server;
-using JoberMQ.Server.Abstraction.Config;
+using JoberMQ.Entities.Models.Config;
 using JoberMQ.Server.Abstraction.Server;
 using JoberMQ.Server.Implementation.Server.Default;
 
@@ -7,7 +7,7 @@ namespace JoberMQ.Server.Factories.Server
 {
     internal class ServerFactory
     {
-        public static IServer CreateServer(IServerConfig serverConfig)
+        public static IServer CreateServer(ServerConfigModel serverConfig)
         {
             IServer server;
             switch (serverConfig.ServerFactory)
