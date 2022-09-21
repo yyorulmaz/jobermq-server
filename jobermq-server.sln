@@ -26,6 +26,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "statuscode", "statuscode", 
 		src\statuscode\StatusCodes.json = src\statuscode\StatusCodes.json
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JoberMQ.Server.Example.ConsoleApp", "examples\JoberMQ.Server.Example.ConsoleApp\JoberMQ.Server.Example.ConsoleApp.csproj", "{53C24B60-CD5B-42B8-A126-BD965F2A261C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -44,6 +46,10 @@ Global
 		{03E2E214-B1E0-42CF-BC5D-6794E6107919}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{03E2E214-B1E0-42CF-BC5D-6794E6107919}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{03E2E214-B1E0-42CF-BC5D-6794E6107919}.Release|Any CPU.Build.0 = Release|Any CPU
+		{53C24B60-CD5B-42B8-A126-BD965F2A261C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{53C24B60-CD5B-42B8-A126-BD965F2A261C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{53C24B60-CD5B-42B8-A126-BD965F2A261C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{53C24B60-CD5B-42B8-A126-BD965F2A261C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -52,6 +58,7 @@ Global
 		{293E3874-EB1A-452C-9CDA-155D8F5FB1A7} = {961CF067-6789-45FF-B97E-837A17578205}
 		{EFCCADE3-FCBA-4A62-8DEA-7C4080E30F14} = {961CF067-6789-45FF-B97E-837A17578205}
 		{03E2E214-B1E0-42CF-BC5D-6794E6107919} = {961CF067-6789-45FF-B97E-837A17578205}
+		{53C24B60-CD5B-42B8-A126-BD965F2A261C} = {AB474013-D5EC-4B2C-88FA-48E597166089}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4545C350-15EB-420A-BB52-D51F01843630}

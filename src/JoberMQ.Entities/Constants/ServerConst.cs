@@ -1,4 +1,4 @@
-﻿using JoberMQ.Entities.Enums.Config;
+﻿using JoberMQ.Entities.Enums.DbOpr;
 using JoberMQ.Entities.Enums.Server;
 using JoberMQ.Entities.Enums.StatusCode;
 
@@ -8,15 +8,22 @@ namespace JoberMQ.Entities.Constants
     {
         internal const ServerFactoryEnum ServerFactory = ServerFactoryEnum.Default;
 
-        internal class Config
+        internal class StatusCode
         {
-            internal const ServerConfigFactoryEnum ServerConfigFactory = ServerConfigFactoryEnum.Default;
-
-            internal const SecurityConfigFactoryEnum SecurityConfigFactory = SecurityConfigFactoryEnum.Default;
-            internal const string SecurityKey = "böyle_bir_aşk_görülmemiş_dünyada_ne_geçmişte_nede_bundan_sonrada";
-
-            internal const StatusCodeConfigFactoryEnum StatusCodeConfigFactory = StatusCodeConfigFactoryEnum.Default;
             internal const StatusCodeMessageLanguageEnum StatusCodeMessageLanguage = StatusCodeMessageLanguageEnum.en;
+        }
+        internal class Security
+        {
+            internal const string SecurityKey = "böyle_bir_aşk_görülmemiş_dünyada_ne_geçmişte_nede_bundan_sonrada";
+        }
+        internal class DbOpr
+        {
+            internal const DbOprFactoryEnum DbOprFactory = DbOprFactoryEnum.Default;
+            internal const DbOprServiceFactoryEnum DbOprServiceFactory = DbOprServiceFactoryEnum.Default;
+            internal const DbMemFactoryEnum DbMemFactory = DbMemFactoryEnum.Default;
+            internal const DbMemDataFactoryEnum DbMemDataFactory = DbMemDataFactoryEnum.Data;
+            internal const DbTextFactoryEnum DbTextFactory = DbTextFactoryEnum.Default;
+
         }
     }
 }

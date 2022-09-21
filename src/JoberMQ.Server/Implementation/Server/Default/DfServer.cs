@@ -1,5 +1,7 @@
-﻿using JoberMQ.Server.Abstraction.Config;
+﻿using JoberMQ.Entities.Models.Config;
+using JoberMQ.Server.Abstraction.DbOpr;
 using JoberMQ.Server.Abstraction.Server;
+using JoberMQ.Server.Factories.DbOpr;
 using JoberMQ.Server.Hubs;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -7,8 +9,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,9 +17,12 @@ namespace JoberMQ.Server.Implementation.Server.Default
 {
     internal class DfServer: IServer
     {
+        bool isServerActive;
+        bool IServer.IsServerActive { get => isServerActive; set => isServerActive = value; }
+
         #region ServerConfig
-        private readonly IServerConfig serverConfig;
-        public IServerConfig ServerConfig => serverConfig;
+        private readonly ServerConfigModel serverConfig;
+        public ServerConfigModel ServerConfig => serverConfig;
         #endregion
 
         #region StatusCode
@@ -27,10 +30,23 @@ namespace JoberMQ.Server.Implementation.Server.Default
         IStatusCode IServer.StatusCode => statusCode;
         #endregion
 
-        public DfServer(IServerConfig serverConfig)
+        #region StatusCode
+        private readonly IDbOprService dbOprService;
+        IDbOprService IServer.DbOprService => dbOprService;
+        #endregion
+
+
+        public DfServer(ServerConfigModel serverConfig)
         {
             this.serverConfig = serverConfig;
-            this.statusCode = StatusCodeFactory.CreateStatusCodeService(serverConfig.StatusCode.StatusCodeMessageLanguage);
+            this.statusCode = StatusCodeFactory.CreateStatusCodeService(serverConfig.StatusCodeConfig.StatusCodeMessageLanguage);
+            this.dbOprService = DbOprServiceFactory.CreateDbOprService(
+                serverConfig.DbOprConfig.DbOprServiceFactory,
+                serverConfig.DbOprConfig.DbOprFactory,
+                serverConfig.DbOprConfig.DbMemConfig.DbMemFactory,
+                serverConfig.DbOprConfig.DbMemConfig.DbMemDataFactory,
+                serverConfig.DbOprConfig.DbTextConfig.DbTextFactory);
+
         }
 
         public void Start()
@@ -44,7 +60,7 @@ namespace JoberMQ.Server.Implementation.Server.Default
 
 
 
-
+            isServerActive = true;
         }
 
 
@@ -86,7 +102,7 @@ namespace JoberMQ.Server.Implementation.Server.Default
                             ValidateIssuer = false,
                             ValidateActor = false,
                             ValidateLifetime = false,
-                            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(serverConfig.Security.SecurityKey))
+                            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(serverConfig.SecurityConfig.SecurityKey))
                         };
 
 
