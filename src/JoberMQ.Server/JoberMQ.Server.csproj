@@ -1,0 +1,40 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="GenRep.ConcurrentRepository" Version="0.0.1" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+	</ItemGroup>
+
+	<ItemGroup Condition=" '$(Configuration)' == 'Release'">
+
+		<Compile Include="..\JoberMQ.Entities\**\*.cs" Exclude="..\JoberMQ.Entities\Properties\AssemblyInfo.cs;..\JoberMQ.Entities\obj\**;..\JoberMQ.Entities\bin\**">
+			<Link>Entities\%(RecursiveDir)%(Filename)%(Extension)</Link>
+			<Visible>false</Visible>
+		</Compile>
+
+		<Compile Include="..\JoberMQ.DataAccess\**\*.cs" Exclude="..\JoberMQ.DataAccess\Properties\AssemblyInfo.cs;..\JoberMQ.DataAccess\obj\**;..\JoberMQ.DataAccess\bin\**">
+			<Link>Entities\%(RecursiveDir)%(Filename)%(Extension)</Link>
+			<Visible>false</Visible>
+		</Compile>
+
+	</ItemGroup>
+
+	<ItemGroup Condition=" '$(Configuration)' == 'Debug'">
+
+		<Compile Include="..\JoberMQ.Entities\**\*.cs" Exclude="..\JoberMQ.Entities\Properties\AssemblyInfo.cs;..\JoberMQ.Entities\obj\**;..\JoberMQ.Entities\bin\**">
+			<Link>Entities\%(RecursiveDir)%(Filename)%(Extension)</Link>
+			<Visible>false</Visible>
+		</Compile>
+
+		<Compile Include="..\JoberMQ.DataAccess\**\*.cs" Exclude="..\JoberMQ.DataAccess\Properties\AssemblyInfo.cs;..\JoberMQ.DataAccess\obj\**;..\JoberMQ.DataAccess\bin\**">
+			<Link>Entities\%(RecursiveDir)%(Filename)%(Extension)</Link>
+			<Visible>false</Visible>
+		</Compile>
+
+	</ItemGroup>
+
+</Project>
