@@ -37,4 +37,31 @@
 
 	</ItemGroup>
 
+	<ItemGroup>
+
+		<Compile Remove="..\statuscode\StatusCodes.json" />
+		<EmbeddedResource Include="..\statuscode\StatusCodes.json" />
+		
+		<Compile Include="..\statuscode\**\IStatusCode.cs">
+			<Link>Abstraction\StatusCode\%(RecursiveDir)%(Filename)%(Extension)</Link>
+			<Visible>true</Visible>
+		</Compile>
+
+		<Compile Include="..\statuscode\**\DefaultStatusCode.cs">
+			<Link>Implementation\StatusCode\%(RecursiveDir)%(Filename)%(Extension)</Link>
+			<Visible>true</Visible>
+		</Compile>
+
+		<Compile Include="..\statuscode\**\ResourceFileHelper.cs">
+			<Link>Helpers\StatusCode\%(RecursiveDir)%(Filename)%(Extension)</Link>
+			<Visible>true</Visible>
+		</Compile>
+
+		<Compile Include="..\statuscode\**\StatusCodeFactory.cs">
+			<Link>Factories\StatusCode\%(RecursiveDir)%(Filename)%(Extension)</Link>
+			<Visible>true</Visible>
+		</Compile>
+
+	</ItemGroup>
+
 </Project>
