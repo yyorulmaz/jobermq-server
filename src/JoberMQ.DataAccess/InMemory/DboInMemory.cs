@@ -10,7 +10,7 @@ namespace JoberMQ.DataAccess.InMemory
         internal static ConcurrentDictionary<Guid, DistributorDbo> DistributorDatas = new ConcurrentDictionary<Guid, DistributorDbo>();
         internal static ConcurrentDictionary<Guid, QueueDbo> QueueDatas = new ConcurrentDictionary<Guid, QueueDbo>();
         internal static ConcurrentDictionary<Guid, EventSubDbo> EventSubDatas = new ConcurrentDictionary<Guid, EventSubDbo>();
-        internal static ConcurrentDictionary<Guid, JobDataDbo> JobDataDboDatas = new ConcurrentDictionary<Guid, JobDataDbo>();
+        internal static ConcurrentDictionary<Guid, JobDataDbo> JobDataDatas = new ConcurrentDictionary<Guid, JobDataDbo>();
         internal static ConcurrentDictionary<Guid, JobDbo> JobDatas = new ConcurrentDictionary<Guid, JobDbo>();
         internal static ConcurrentDictionary<Guid, MessageDbo> MessageDatas = new ConcurrentDictionary<Guid, MessageDbo>();
         internal static ConcurrentDictionary<Guid, MessageResultDbo> MessageResultDatas = new ConcurrentDictionary<Guid, MessageResultDbo>();
