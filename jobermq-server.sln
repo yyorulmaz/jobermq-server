@@ -15,7 +15,16 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JoberMQ.Entities", "src\Job
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JoberMQ.DataAccess", "src\JoberMQ.DataAccess\JoberMQ.DataAccess.csproj", "{EFCCADE3-FCBA-4A62-8DEA-7C4080E30F14}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JoberMQ.Server", "src\JoberMQ.Server\JoberMQ.Server.csproj", "{03E2E214-B1E0-42CF-BC5D-6794E6107919}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JoberMQ.Server", "src\JoberMQ.Server\JoberMQ.Server.csproj", "{03E2E214-B1E0-42CF-BC5D-6794E6107919}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "statuscode", "statuscode", "{E5794B67-9168-4E60-A61D-C56F526DB256}"
+	ProjectSection(SolutionItems) = preProject
+		src\statuscode\DefaultStatusCode.cs = src\statuscode\DefaultStatusCode.cs
+		src\statuscode\IStatusCode.cs = src\statuscode\IStatusCode.cs
+		src\statuscode\ResourceFileHelper.cs = src\statuscode\ResourceFileHelper.cs
+		src\statuscode\StatusCodeFactory.cs = src\statuscode\StatusCodeFactory.cs
+		src\statuscode\StatusCodes.json = src\statuscode\StatusCodes.json
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
