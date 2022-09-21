@@ -3,7 +3,27 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32819.101
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{961CF067-6789-45FF-B97E-837A17578205}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{2DC75D50-42AE-4B38-B0E5-85BD2225B922}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "examples", "examples", "{AB474013-D5EC-4B2C-88FA-48E597166089}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{8DC3A47A-468C-4C1B-9841-E70DEC8ED7C5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JoberMQ.Entities", "src\JoberMQ.Entities\JoberMQ.Entities.csproj", "{293E3874-EB1A-452C-9CDA-155D8F5FB1A7}"
+EndProject
 Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{293E3874-EB1A-452C-9CDA-155D8F5FB1A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{293E3874-EB1A-452C-9CDA-155D8F5FB1A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{293E3874-EB1A-452C-9CDA-155D8F5FB1A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{293E3874-EB1A-452C-9CDA-155D8F5FB1A7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
