@@ -11,7 +11,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "examples", "examples", "{AB
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{8DC3A47A-468C-4C1B-9841-E70DEC8ED7C5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JoberMQ.Entities", "src\JoberMQ.Entities\JoberMQ.Entities.csproj", "{293E3874-EB1A-452C-9CDA-155D8F5FB1A7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JoberMQ.Entities", "src\JoberMQ.Entities\JoberMQ.Entities.csproj", "{293E3874-EB1A-452C-9CDA-155D8F5FB1A7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JoberMQ.DataAccess", "src\JoberMQ.DataAccess\JoberMQ.DataAccess.csproj", "{EFCCADE3-FCBA-4A62-8DEA-7C4080E30F14}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,6 +25,10 @@ Global
 		{293E3874-EB1A-452C-9CDA-155D8F5FB1A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{293E3874-EB1A-452C-9CDA-155D8F5FB1A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{293E3874-EB1A-452C-9CDA-155D8F5FB1A7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EFCCADE3-FCBA-4A62-8DEA-7C4080E30F14}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EFCCADE3-FCBA-4A62-8DEA-7C4080E30F14}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EFCCADE3-FCBA-4A62-8DEA-7C4080E30F14}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EFCCADE3-FCBA-4A62-8DEA-7C4080E30F14}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
