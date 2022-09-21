@@ -1,8 +1,10 @@
 ﻿using JoberMQ.Entities.Models.Config;
 using JoberMQ.Server.Abstraction.DbOpr;
 using JoberMQ.Server.Abstraction.Server;
+using JoberMQ.Server.Factories.Client;
 using JoberMQ.Server.Factories.DbOpr;
 using JoberMQ.Server.Hubs;
+using JoberMQNEW.Server.Abstraction.Client;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
@@ -35,6 +37,10 @@ namespace JoberMQ.Server.Implementation.Server.Default
         IDbOprService IServer.DbOprService => dbOprService;
         #endregion
 
+        #region StatusCode
+        private readonly IClientService clientService;
+        IClientService IServer.ClientService => clientService;
+        #endregion
 
         public DfServer(ServerConfigModel serverConfig)
         {
@@ -46,7 +52,7 @@ namespace JoberMQ.Server.Implementation.Server.Default
                 serverConfig.DbOprConfig.DbMemConfig.DbMemFactory,
                 serverConfig.DbOprConfig.DbMemConfig.DbMemDataFactory,
                 serverConfig.DbOprConfig.DbTextConfig.DbTextFactory);
-
+            this.clientService = ClientFactory.CreateClientService(serverConfig.ClientServiceFactory);
         }
 
         public void Start()

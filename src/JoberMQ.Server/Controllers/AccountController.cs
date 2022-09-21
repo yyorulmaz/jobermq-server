@@ -49,7 +49,7 @@ namespace JoberMQ.Server.Controllers
             var password = split[1];
             var clientKey = HttpContext.Request.Headers["clientKey"].ToString();
 
-            Factory.ServerService.ClientService.Clients.TryGetValue(clientKey, out var clientCheck);
+            Factory.Server.ClientService.Clients.TryGetValue(clientKey, out var clientCheck);
             //var clientCheck = Startup.ClientService.ClientData.Get(x => x.ClientKey == clientKey);
 
             if (clientCheck != null)

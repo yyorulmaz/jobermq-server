@@ -1,4 +1,5 @@
-﻿using JoberMQ.Entities.Enums.DbOpr;
+﻿using JoberMQ.Entities.Enums.Client;
+using JoberMQ.Entities.Enums.DbOpr;
 using JoberMQ.Entities.Enums.Server;
 using JoberMQ.Entities.Enums.StatusCode;
 
@@ -7,6 +8,8 @@ namespace JoberMQ.Entities.Constants
     internal class ServerConst
     {
         internal const ServerFactoryEnum ServerFactory = ServerFactoryEnum.Default;
+        internal const ClientFactoryEnum ClientFactory = ClientFactoryEnum.Default;
+        internal const ClientServiceFactoryEnum ClientServiceFactory = ClientServiceFactoryEnum.Default;
 
         internal class StatusCode
         {
