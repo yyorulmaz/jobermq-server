@@ -1,4 +1,6 @@
-﻿namespace JoberMQ.Server.Abstraction.DbOpr
+﻿using TimerFramework;
+
+namespace JoberMQ.Server.Abstraction.DbOpr
 {
     internal interface IDbOprService
     {
@@ -12,7 +14,10 @@
         public IMessageResultDbOpr MessageResult { get; }
 
         public bool ImportTextDataToSetMemDb();
-        public bool Setup();
-        public bool DataGroupingAndSize();
+        public bool Setups();
+        public bool DataGroupingAndSizes();
+
+        bool IsRuningCompletedDataRemove { get; }
+        void CompletedDataRemoves(TimerModel timer);
     }
 }

@@ -23,7 +23,7 @@ namespace JoberMQ.Server.Implementation.DbOpr.Default
         }
 
         public IConcurrentDictionaryRepository<Guid, D> DbMem => dbMem;
-        public IDbTextRepository<D> DbTextService => dbText;
+        public IDbTextRepository<D> DbText => dbText;
 
         #region CRUD
         public D Get(Guid id) => dbMem.Get(id);
@@ -86,5 +86,7 @@ namespace JoberMQ.Server.Implementation.DbOpr.Default
 
         public bool DataGroupingAndSize()
             => dbText.DataGroupingAndSize();
+
+        public int ArsiveFileCounter { get => dbText.ArsiveFileCounter ; set => dbText.ArsiveFileCounter = value; }
     }
 }

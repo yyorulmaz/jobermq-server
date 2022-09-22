@@ -10,7 +10,7 @@ namespace JoberMQ.Server.Abstraction.DbOpr
     where D : DboPropertyGuidBase, new()
     {
         public IConcurrentDictionaryRepository<Guid, D> DbMem { get; }
-        public IDbTextRepository<D> DbTextService { get; }
+        public IDbTextRepository<D> DbText { get; }
 
 
         #region CRUD
@@ -30,5 +30,6 @@ namespace JoberMQ.Server.Abstraction.DbOpr
         public bool ImportTextDataToSetMemDb();
         public bool Setup();
         public bool DataGroupingAndSize();
+        int ArsiveFileCounter { get; set; }
     }
 }
