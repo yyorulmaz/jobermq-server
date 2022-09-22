@@ -1,4 +1,5 @@
 ﻿using JoberMQ.Entities.Enums.DbOpr;
+using JoberMQ.Entities.Models.Config;
 using JoberMQ.Server.Abstraction.DbOpr;
 using JoberMQ.Server.Implementation.DbOpr.Default;
 
@@ -6,18 +7,13 @@ namespace JoberMQ.Server.Factories.DbOpr
 {
     internal class DbOprServiceFactory
     {
-        internal static IDbOprService CreateDbOprService(
-            DbOprServiceFactoryEnum dbOprServiceFactory, 
-            DbOprFactoryEnum dbOprFactory, 
-            DbMemFactoryEnum dbMemFactory, 
-            DbMemDataFactoryEnum dbMemDataFactory, 
-            DbTextFactoryEnum dbTextFactory)
+        internal static IDbOprService CreateDbOprService(DbOprConfigModel dbOprConfig)
         {
-            var dbOprs = DbOprFactory.CreateDbOprs(dbOprFactory, dbMemFactory, dbMemDataFactory, dbTextFactory);
+            var dbOprs = DbOprFactory.CreateDbOprs(dbOprConfig);
 
             IDbOprService dbOprService;
 
-            switch (dbOprServiceFactory)
+            switch (dbOprConfig.DbOprServiceFactory)
             {
                 case DbOprServiceFactoryEnum.Default:
                     dbOprService = new DfDbOprManager(

@@ -1,12 +1,13 @@
 ﻿using JoberMQ.DataAccess.Abstract.DBTEXT;
 using JoberMQ.DataAccess.Repository.DbText.Implementation;
 using JoberMQ.Entities.Dbos;
+using JoberMQ.Entities.Models.Config;
 
 namespace JoberMQ.DataAccess.Implementation.DbText.Default
 {
     internal class DfMessageTextDal : DfDbTextRepository<MessageDbo>, IMessageTextDal
     {
-        public DfMessageTextDal(string dbPath, string dbFolderPath, string dbFileName, char dbFileSeparator, char dbArchiveFileSeparator, string dbFileExtension, int maxRowCount) : base(dbPath, dbFolderPath, dbFileName, dbFileSeparator, dbArchiveFileSeparator, dbFileExtension, maxRowCount)
+        public DfMessageTextDal(DbTextFileConfigModel dbTextFileConfig) : base(dbTextFileConfig)
         {
         }
     }

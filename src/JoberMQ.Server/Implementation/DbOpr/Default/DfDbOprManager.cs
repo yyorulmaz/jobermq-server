@@ -61,16 +61,35 @@ namespace JoberMQ.Server.Implementation.DbOpr.Default
             return true;
         }
 
-        public bool TextDataSetup()
+        public bool Setup()
         {
-            var resultUser = User.TextDataSetup();
-            var resultDistributor = Distributor.TextDataSetup();
-            var resultQueue = Queue.TextDataSetup();
-            var resultEventSub = EventSub.TextDataSetup();
-            var resultJobData = JobData.TextDataSetup();
-            var resultJob = Job.TextDataSetup();
-            var resultMessage = Message.TextDataSetup();
-            var resultMessageResult = MessageResult.TextDataSetup();
+            var resultUser = User.Setup();
+            var resultDistributor = Distributor.Setup();
+            var resultQueue = Queue.Setup();
+            var resultEventSub = EventSub.Setup();
+            var resultJobData = JobData.Setup();
+            var resultJob = Job.Setup();
+            var resultMessage = Message.Setup();
+            var resultMessageResult = MessageResult.Setup();
+
+            if (!resultUser || !resultDistributor || !resultQueue || !resultEventSub || !resultJobData || !resultJob || !resultMessage || !resultMessageResult)
+            {
+                throw new System.Exception("errorrrr ");
+            }
+
+            return true;
+        }
+
+        public bool DataGroupingAndSize()
+        {
+            var resultUser = User.DataGroupingAndSize();
+            var resultDistributor = Distributor.DataGroupingAndSize();
+            var resultQueue = Queue.DataGroupingAndSize();
+            var resultEventSub = EventSub.DataGroupingAndSize();
+            var resultJobData = JobData.DataGroupingAndSize();
+            var resultJob = Job.DataGroupingAndSize();
+            var resultMessage = Message.DataGroupingAndSize();
+            var resultMessageResult = MessageResult.DataGroupingAndSize();
 
             if (!resultUser || !resultDistributor || !resultQueue || !resultEventSub || !resultJobData || !resultJob || !resultMessage || !resultMessageResult)
             {

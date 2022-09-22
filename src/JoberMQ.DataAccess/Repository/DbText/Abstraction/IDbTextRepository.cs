@@ -5,16 +5,11 @@ namespace JoberMQ.DataAccess.Repository.DbText.Abstraction
 {
     internal interface IDbTextRepository<T> where T : DboPropertyGuidBase, new()
     {
-        string DbPath { get; }
-        string DbFolderPath { get; }
-        string DbFileName { get; }
-        char DbFileSeparator { get; }
-        char DbArchiveFileSeparator { get; }
-        string DbFileExtension { get; }
         bool Setup();
         bool WriteLine(string message);
         bool WriteLine(T message);
-        List<T> ReadAll(bool isStarted);
-        List<T> ReadAllGroup(bool isStarted);
+        List<T> ReadAllData(bool isFullFileList);
+        List<T> ReadAllDataGrouping(bool isFullFileList);
+        bool DataGroupingAndSize();
     }
 }
