@@ -20,7 +20,6 @@ namespace JoberMQ.Server.Implementation.DbOpr.Default
         private readonly IJobDbOpr job;
         private readonly IMessageDbOpr message;
         private readonly IMessageResultDbOpr messageResult;
-        private readonly ITimer completedDataRemoveTimer;
 
         public DfDbOprManager(
             IUserDbOpr user,
@@ -41,13 +40,7 @@ namespace JoberMQ.Server.Implementation.DbOpr.Default
             this.message = message;
             this.messageResult = messageResult;
 
-            completedDataRemoveTimer = new TimerFactory().CreateTimer();
-            completedDataRemoveTimer.Receive += CompletedDataRemoves;
-            var timer = new TimerModel();
-            timer.Id = Guid.NewGuid();
-            timer.CronTime = "0 */5 * ? * *";
-            timer.TimerGroup = "CompletedDataRemoves";
-            completedDataRemoveTimer.Add(timer);
+            
         }
 
         public IUserDbOpr User => user;
@@ -59,67 +52,24 @@ namespace JoberMQ.Server.Implementation.DbOpr.Default
         public IMessageDbOpr Message => message;
         public IMessageResultDbOpr MessageResult => messageResult;
 
-
-        public bool ImportTextDataToSetMemDb()
+        private ITimer completedDataRemoveTimer;
+        public bool CompletedDataRemovesTimerStart()
         {
-            var resultUser = User.ImportTextDataToSetMemDb();
-            var resultDistributor = Distributor.ImportTextDataToSetMemDb();
-            var resultQueue = Queue.ImportTextDataToSetMemDb();
-            var resultEventSub = EventSub.ImportTextDataToSetMemDb();
-            var resultJobData = JobData.ImportTextDataToSetMemDb();
-            var resultJob = Job.ImportTextDataToSetMemDb();
-            var resultMessage = Message.ImportTextDataToSetMemDb();
-            var resultMessageResult = MessageResult.ImportTextDataToSetMemDb();
-
-            if (!resultUser || !resultDistributor || !resultQueue || !resultEventSub || !resultJobData || !resultJob || !resultMessage || !resultMessageResult)
-            {
-                throw new System.Exception("errorrrr ");
-            }
+            completedDataRemoveTimer = new TimerFactory().CreateTimer();
+            completedDataRemoveTimer.Receive += CompletedDataRemoves;
+            var timer = new TimerModel();
+            timer.Id = Guid.NewGuid();
+            timer.CronTime = "0 */5 * ? * *";
+            timer.TimerGroup = "CompletedDataRemoves";
+            completedDataRemoveTimer.Add(timer);
 
             return true;
         }
-
-        public bool Setups()
+        private void CompletedDataRemoves(TimerModel timer)
         {
-            var resultUser = User.Setup();
-            var resultDistributor = Distributor.Setup();
-            var resultQueue = Queue.Setup();
-            var resultEventSub = EventSub.Setup();
-            var resultJobData = JobData.Setup();
-            var resultJob = Job.Setup();
-            var resultMessage = Message.Setup();
-            var resultMessageResult = MessageResult.Setup();
+            if (isRuningCompletedDataRemove)
+                return;
 
-            if (!resultUser || !resultDistributor || !resultQueue || !resultEventSub || !resultJobData || !resultJob || !resultMessage || !resultMessageResult)
-            {
-                throw new System.Exception("errorrrr ");
-            }
-
-            return true;
-        }
-        public bool DataGroupingAndSizes()
-        {
-            var resultUser = User.DataGroupingAndSize();
-            var resultDistributor = Distributor.DataGroupingAndSize();
-            var resultQueue = Queue.DataGroupingAndSize();
-            var resultEventSub = EventSub.DataGroupingAndSize();
-            var resultJobData = JobData.DataGroupingAndSize();
-            var resultJob = Job.DataGroupingAndSize();
-            var resultMessage = Message.DataGroupingAndSize();
-            var resultMessageResult = MessageResult.DataGroupingAndSize();
-
-            if (!resultUser || !resultDistributor || !resultQueue || !resultEventSub || !resultJobData || !resultJob || !resultMessage || !resultMessageResult)
-            {
-                throw new System.Exception("errorrrr ");
-            }
-
-            return true;
-        }
-
-        bool isRuningCompletedDataRemove = false;
-        public bool IsRuningCompletedDataRemove => isRuningCompletedDataRemove;
-        public void CompletedDataRemoves(TimerModel timer)
-        {
             isRuningCompletedDataRemove = true;
 
             var newJobDatas = new List<JobDataDbo>();
@@ -195,5 +145,65 @@ namespace JoberMQ.Server.Implementation.DbOpr.Default
 
             isRuningCompletedDataRemove = false;
         }
+
+        public bool ImportTextDataToSetMemDb()
+        {
+            var resultUser = User.ImportTextDataToSetMemDb();
+            var resultDistributor = Distributor.ImportTextDataToSetMemDb();
+            var resultQueue = Queue.ImportTextDataToSetMemDb();
+            var resultEventSub = EventSub.ImportTextDataToSetMemDb();
+            var resultJobData = JobData.ImportTextDataToSetMemDb();
+            var resultJob = Job.ImportTextDataToSetMemDb();
+            var resultMessage = Message.ImportTextDataToSetMemDb();
+            var resultMessageResult = MessageResult.ImportTextDataToSetMemDb();
+
+            if (!resultUser || !resultDistributor || !resultQueue || !resultEventSub || !resultJobData || !resultJob || !resultMessage || !resultMessageResult)
+            {
+                throw new System.Exception("errorrrr ");
+            }
+
+            return true;
+        }
+
+        public bool Setups()
+        {
+            var resultUser = User.Setup();
+            var resultDistributor = Distributor.Setup();
+            var resultQueue = Queue.Setup();
+            var resultEventSub = EventSub.Setup();
+            var resultJobData = JobData.Setup();
+            var resultJob = Job.Setup();
+            var resultMessage = Message.Setup();
+            var resultMessageResult = MessageResult.Setup();
+
+            if (!resultUser || !resultDistributor || !resultQueue || !resultEventSub || !resultJobData || !resultJob || !resultMessage || !resultMessageResult)
+            {
+                throw new System.Exception("errorrrr ");
+            }
+
+            return true;
+        }
+        public bool DataGroupingAndSizes()
+        {
+            var resultUser = User.DataGroupingAndSize();
+            var resultDistributor = Distributor.DataGroupingAndSize();
+            var resultQueue = Queue.DataGroupingAndSize();
+            var resultEventSub = EventSub.DataGroupingAndSize();
+            var resultJobData = JobData.DataGroupingAndSize();
+            var resultJob = Job.DataGroupingAndSize();
+            var resultMessage = Message.DataGroupingAndSize();
+            var resultMessageResult = MessageResult.DataGroupingAndSize();
+
+            if (!resultUser || !resultDistributor || !resultQueue || !resultEventSub || !resultJobData || !resultJob || !resultMessage || !resultMessageResult)
+            {
+                throw new System.Exception("errorrrr ");
+            }
+
+            return true;
+        }
+
+        bool isRuningCompletedDataRemove = false;
+        public bool IsRuningCompletedDataRemove => isRuningCompletedDataRemove;
+        
     }
 }
