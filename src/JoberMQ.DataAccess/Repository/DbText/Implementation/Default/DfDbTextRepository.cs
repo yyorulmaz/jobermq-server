@@ -34,6 +34,10 @@ namespace JoberMQ.DataAccess.Repository.DbText.Implementation
         }
         #endregion
 
+
+        public int ArsiveFileCounter { get => arsiveFileCounter; set => arsiveFileCounter = value; }
+
+
         #region Setup
         public bool Setup()
         {
@@ -106,8 +110,32 @@ namespace JoberMQ.DataAccess.Repository.DbText.Implementation
 
             return fullData;
         }
+        public (List<T> datas, List<DataLogFileModel> paths) ReadAllData2(bool isFullFileList)
+        {
+            List<T> list = new List<T>();
+
+            List<DataLogFileModel> fullFileList;
+            if (isFullFileList)
+                fullFileList = GetFileListFull();
+            else
+                fullFileList = GetFileListArchive();
+
+            if (fullFileList == null)
+                return (null, null);
+
+            var paths = fullFileList.Select(x => x.FullPath).ToList();
+            var fullData = ReadLineFile(paths);
+
+            return (fullData, fullFileList);
+        }
         public List<T> ReadAllDataGrouping(bool isFullFileList)
             => GroupingData(ReadAllData(isFullFileList));
+        public (List<T> datas, List<DataLogFileModel> paths) ReadAllDataGrouping2(bool isFullFileList)
+        {
+            var readAllData2 = ReadAllData2(isFullFileList);
+
+            return (GroupingData(readAllData2.datas), readAllData2.paths);
+        }
         #endregion
 
         #region HELPER
@@ -124,10 +152,12 @@ namespace JoberMQ.DataAccess.Repository.DbText.Implementation
                 arsiveFileCounter++;
             }
         }
-        private string GetBaseFileFullPath()
+        public string GetBaseFileFullPath()
             => Path.Combine(new string[] { dbTextFileConfig.DbPath, dbTextFileConfig.DbFolderPath, dbTextFileConfig.DbFileName + dbTextFileConfig.DbFileSeparator + dbTextFileConfig.DbFileExtension });
-        private string GetArsiveFileFullPath(int fileNumber)
+        public string GetArsiveFileFullPath(int fileNumber)
             => Path.Combine(new string[] { dbTextFileConfig.DbPath, dbTextFileConfig.DbFolderPath, dbTextFileConfig.DbFileName + "_" + fileNumber + dbTextFileConfig.DbFileSeparator + dbTextFileConfig.DbFileExtension });
+
+         
 
         private List<DataLogFileModel> GetFileListArchive()
         {
@@ -235,7 +265,7 @@ namespace JoberMQ.DataAccess.Repository.DbText.Implementation
             using (StreamWriter sw = new StreamWriter(tempFile, true, Encoding.UTF8))
             {
                 foreach (var item in groupDatas)
-                    sw.WriteLine(item);
+                    sw.WriteLine(JsonConvert.SerializeObject(item, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
             }
 
             //temp dosyası hariç tüm dosyaları sildim

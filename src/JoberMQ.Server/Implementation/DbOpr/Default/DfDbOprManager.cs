@@ -1,4 +1,12 @@
-﻿using JoberMQ.Server.Abstraction.DbOpr;
+﻿using JoberMQ.Entities.Dbos;
+using JoberMQ.Server.Abstraction.DbOpr;
+using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using TimerFramework;
 
 namespace JoberMQ.Server.Implementation.DbOpr.Default
 {
@@ -12,6 +20,7 @@ namespace JoberMQ.Server.Implementation.DbOpr.Default
         private readonly IJobDbOpr job;
         private readonly IMessageDbOpr message;
         private readonly IMessageResultDbOpr messageResult;
+        private readonly ITimer completedDataRemoveTimer;
 
         public DfDbOprManager(
             IUserDbOpr user,
@@ -31,6 +40,14 @@ namespace JoberMQ.Server.Implementation.DbOpr.Default
             this.job = job;
             this.message = message;
             this.messageResult = messageResult;
+
+            completedDataRemoveTimer = new TimerFactory().CreateTimer();
+            completedDataRemoveTimer.Receive += CompletedDataRemoves;
+            var timer = new TimerModel();
+            timer.Id = Guid.NewGuid();
+            timer.CronTime = "0 */5 * ? * *";
+            timer.TimerGroup = "CompletedDataRemoves";
+            completedDataRemoveTimer.Add(timer);
         }
 
         public IUserDbOpr User => user;
@@ -41,6 +58,7 @@ namespace JoberMQ.Server.Implementation.DbOpr.Default
         public IJobDbOpr Job => job;
         public IMessageDbOpr Message => message;
         public IMessageResultDbOpr MessageResult => messageResult;
+
 
         public bool ImportTextDataToSetMemDb()
         {
@@ -61,7 +79,7 @@ namespace JoberMQ.Server.Implementation.DbOpr.Default
             return true;
         }
 
-        public bool Setup()
+        public bool Setups()
         {
             var resultUser = User.Setup();
             var resultDistributor = Distributor.Setup();
@@ -79,8 +97,7 @@ namespace JoberMQ.Server.Implementation.DbOpr.Default
 
             return true;
         }
-
-        public bool DataGroupingAndSize()
+        public bool DataGroupingAndSizes()
         {
             var resultUser = User.DataGroupingAndSize();
             var resultDistributor = Distributor.DataGroupingAndSize();
@@ -97,6 +114,86 @@ namespace JoberMQ.Server.Implementation.DbOpr.Default
             }
 
             return true;
+        }
+
+        bool isRuningCompletedDataRemove = false;
+        public bool IsRuningCompletedDataRemove => isRuningCompletedDataRemove;
+        public void CompletedDataRemoves(TimerModel timer)
+        {
+            isRuningCompletedDataRemove = true;
+
+            var newJobDatas = new List<JobDataDbo>();
+            var newJobs = new List<JobDbo>();
+            var newMessages = new List<MessageDbo>();
+
+            var jobDatasAndPaths = jobData.DbText.ReadAllDataGrouping2(false);
+            var jobsAndPaths = job.DbText.ReadAllDataGrouping2(false);
+            var messagesAndPaths = message.DbText.ReadAllDataGrouping2(false);
+
+            var completedJobDataIdList = jobDatasAndPaths.datas.Where(x => x.IsCompleted == true).Select(s => s.Id).ToList();
+
+            newJobDatas = jobDatasAndPaths.datas.Where(x => x.IsCompleted == false).ToList();
+            newJobs = jobsAndPaths.datas.Where(x => !completedJobDataIdList.Contains(x.CreatedJobDataId)).ToList();
+            newMessages = messagesAndPaths.datas.Where(x => !completedJobDataIdList.Contains(x.CreatedJobDataId.Value)).ToList();
+
+            #region JobData
+            var tempFileJobData = jobData.DbText.GetArsiveFileFullPath(0);
+            File.Create(tempFileJobData);
+            using (StreamWriter sw = new StreamWriter(tempFileJobData, true, Encoding.UTF8))
+            {
+                foreach (var item in newJobDatas)
+                    sw.WriteLine(JsonConvert.SerializeObject(item, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
+            }
+            foreach (var item in jobDatasAndPaths.paths)
+                File.Delete(item.FullPath);
+
+            var arsiveFileJobData = jobData.DbText.GetArsiveFileFullPath(1);
+
+            if (jobData.DbText.ArsiveFileCounter == 1)
+                jobData.DbText.ArsiveFileCounter = 2;
+
+            File.Move(tempFileJobData, arsiveFileJobData);
+            #endregion
+
+            #region Job
+            var tempFileJob = job.DbText.GetArsiveFileFullPath(0);
+            File.Create(tempFileJob);
+            using (StreamWriter sw = new StreamWriter(tempFileJob, true, Encoding.UTF8))
+            {
+                foreach (var item in newJobs)
+                    sw.WriteLine(JsonConvert.SerializeObject(item, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
+            }
+            foreach (var item in jobsAndPaths.paths)
+                File.Delete(item.FullPath);
+
+            var arsiveFileJob = job.DbText.GetArsiveFileFullPath(1);
+
+            if (job.DbText.ArsiveFileCounter == 1)
+                job.DbText.ArsiveFileCounter = 2;
+
+            File.Move(tempFileJob, arsiveFileJob);
+            #endregion
+
+            #region Message
+            var tempFileMessage = message.DbText.GetArsiveFileFullPath(0);
+            File.Create(tempFileMessage);
+            using (StreamWriter sw = new StreamWriter(tempFileMessage, true, Encoding.UTF8))
+            {
+                foreach (var item in newMessages)
+                    sw.WriteLine(JsonConvert.SerializeObject(item, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
+            }
+            foreach (var item in messagesAndPaths.paths)
+                File.Delete(item.FullPath);
+
+            var arsiveFileMessage = message.DbText.GetArsiveFileFullPath(1);
+
+            if (message.DbText.ArsiveFileCounter == 1)
+                message.DbText.ArsiveFileCounter = 2;
+
+            File.Move(tempFileMessage, arsiveFileMessage);
+            #endregion
+
+            isRuningCompletedDataRemove = false;
         }
     }
 }
