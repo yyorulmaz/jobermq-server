@@ -17,7 +17,7 @@ namespace JoberMQ.Server.Abstraction.DbOpr
         public bool Setups();
         public bool DataGroupingAndSizes();
 
+        bool CompletedDataRemovesTimerStart();
         bool IsRuningCompletedDataRemove { get; }
-        void CompletedDataRemoves(TimerModel timer);
     }
 }
