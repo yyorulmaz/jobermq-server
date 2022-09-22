@@ -1,4 +1,5 @@
 ﻿using JoberMQ.Entities.Enums.DbOpr;
+using JoberMQ.Entities.Models.Config;
 using JoberMQ.Server.Abstraction.DbOpr;
 using JoberMQ.Server.Implementation.DbOpr.Default;
 
@@ -15,10 +16,11 @@ namespace JoberMQ.Server.Factories.DbOpr
             IJobDbOpr JobDbOpr,
             IMessageDbOpr MessageDbOpr,
             IMessageResultDbOpr MessageResultDbOpr)
-            CreateDbOprs(DbOprFactoryEnum dbOprFactory, DbMemFactoryEnum dbMemFactory, DbMemDataFactoryEnum dbMemDataFactory, DbTextFactoryEnum dbTextFactory)
+            //CreateDbOprs(DbOprFactoryEnum dbOprFactory, DbMemFactoryEnum dbMemFactory, DbMemDataFactoryEnum dbMemDataFactory, DbTextFactoryEnum dbTextFactory)
+            CreateDbOprs(DbOprConfigModel dbOprConfig)
         {
-            var dbMems = DbMemFactory.CreateDbMems(dbMemFactory, dbMemDataFactory);
-            var dbTexts = DbTextFactory.CreateDbTexts(dbTextFactory);
+            var dbMems = DbMemFactory.CreateDbMems(dbOprConfig.DbMemConfig.DbMemFactory, dbOprConfig.DbMemConfig.DbMemDataFactory);
+            var dbTexts = DbTextFactory.CreateDbTexts(dbOprConfig.DbTextConfig);
 
             IUserDbOpr userDbOpr;
             IDistributorDbOpr distributorDbOpr;
@@ -29,7 +31,7 @@ namespace JoberMQ.Server.Factories.DbOpr
             IMessageDbOpr messageDbOpr;
             IMessageResultDbOpr messageResultDbOpr;
 
-            switch (dbOprFactory)
+            switch (dbOprConfig.DbOprFactory)
             {
                 case DbOprFactoryEnum.Default:
                     userDbOpr = new DfUserDbOpr(dbMems.UserMemDal, dbTexts.UserTextDal);

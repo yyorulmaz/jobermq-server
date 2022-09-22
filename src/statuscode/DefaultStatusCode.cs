@@ -17,7 +17,8 @@ internal class DefaultStatusCode : ConcurrentDictionaryRepository<string, Status
         try
         {
             var ass = Assembly.GetAssembly(typeof(DefaultStatusCode));
-            var data = ResourceFileHelper.GetString(ass, @"StatusCode", "StatusCodes.json");
+            //var data = ResourceFileHelper.GetString(ass, @"StatusCode", "StatusCodes.json");
+            var data = ResourceFileHelper.GetString(ass, null, "StatusCodes.json");
             var deserialize = JsonConvert.DeserializeObject<List<StatusCodeModel>>(data);
 
             foreach (var item in deserialize)

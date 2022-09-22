@@ -1,20 +1,16 @@
 ﻿using JoberMQ.Entities.Base.Dbo;
+using JoberMQ.Entities.Models.Config;
 using System.Collections.Generic;
 
 namespace JoberMQ.DataAccess.Repository.DbText.Abstraction
 {
     internal interface IDbTextRepository<T> where T : DboPropertyGuidBase, new()
     {
-        string DbPath { get; }
-        string DbFolderPath { get; }
-        string DbFileName { get; }
-        char DbFileSeparator { get; }
-        char DbArchiveFileSeparator { get; }
-        string DbFileExtension { get; }
+        DbTextFileConfigModel DbTextFileConfig { get; }
         bool Setup();
         bool WriteLine(string message);
         bool WriteLine(T message);
-        List<T> ReadAll(bool isStarted);
-        List<T> ReadAllGroup(bool isStarted);
+        List<T> ReadAll(bool isFullFileList);
+        List<T> ReadAllGrouping(bool isFullFileList);
     }
 }
