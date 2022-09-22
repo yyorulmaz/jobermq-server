@@ -59,10 +59,12 @@ namespace JoberMQ.Server.Implementation.Server.Default
             #endregion
 
             #region Text Data Folder, File created
-            var textDataSetup = dbOprService.TextDataSetup(); 
+            var textDataSetup = dbOprService.Setup();
             #endregion
 
-            // todo
+            #region Text Data Group and Size
+            var textDataDataClearAndSize = dbOprService.DataGroupingAndSize();
+            #endregion
 
             isServerActive = true;
         }
