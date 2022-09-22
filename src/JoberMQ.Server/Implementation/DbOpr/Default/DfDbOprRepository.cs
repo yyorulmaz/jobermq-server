@@ -73,7 +73,7 @@ namespace JoberMQ.Server.Implementation.DbOpr.Default
 
         public bool ImportTextDataToSetMemDb()
         {
-            var datas = dbText.ReadAllGroup(true);
+            var datas = dbText.ReadAllDataGrouping(true);
 
             if (datas != null)
                 foreach (var data in datas)
@@ -81,10 +81,10 @@ namespace JoberMQ.Server.Implementation.DbOpr.Default
 
             return true;
         }
-        public bool TextDataSetup()
-        {
-            var datas = dbText.Setup();
-            return datas;
-        }
+        public bool Setup()
+            => dbText.Setup();
+
+        public bool DataGroupingAndSize()
+            => dbText.DataGroupingAndSize();
     }
 }

@@ -28,6 +28,7 @@ namespace JoberMQ.Server.Abstraction.DbOpr
         #endregion
 
         public bool ImportTextDataToSetMemDb();
-        public bool TextDataSetup();
+        public bool Setup();
+        public bool DataGroupingAndSize();
     }
 }

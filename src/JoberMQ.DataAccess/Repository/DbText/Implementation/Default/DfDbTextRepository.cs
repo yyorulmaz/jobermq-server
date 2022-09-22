@@ -1,5 +1,6 @@
 ﻿using JoberMQ.DataAccess.Repository.DbText.Abstraction;
 using JoberMQ.Entities.Base.Dbo;
+using JoberMQ.Entities.Models.Config;
 using JoberMQ.Entities.Models.Data;
 using Newtonsoft.Json;
 using System;
@@ -14,42 +15,26 @@ namespace JoberMQ.DataAccess.Repository.DbText.Implementation
     internal class DfDbTextRepository<T> : IDbTextRepository<T>
          where T : DboPropertyGuidBase, new()
     {
+        #region Property Helper
+        private readonly DbTextFileConfigModel dbTextFileConfig;
         private bool isSetup;
-        private FileStream activeFileStream;
-        //private FileStream archiveFileStream;
-        private StreamWriter activeStreamWriter;
-
-        //private StreamWriter archiveStreamWriter;
+        private FileStream fileStream;
+        private StreamWriter streamWriter;
         private Mutex mutex;
         private int rowCounter = 1;
         private int arsiveFileCounter = 1;
+        private string baseFileFullPath;
+        #endregion
 
-        readonly string dbPath;
-        readonly string dbFolderPath;
-        readonly string dbFileName;
-        readonly char dbFileSeparator;
-        readonly char dbArchiveFileSeparator;
-        readonly string dbFileExtension;
-        readonly int maxRowCount;
-        public DfDbTextRepository(string dbPath, string dbFolderPath, string dbFileName, char dbFileSeparator, char dbArchiveFileSeparator, string dbFileExtension, int maxRowCount)
+        #region Constructor
+        public DfDbTextRepository(DbTextFileConfigModel dbTextFileConfig)
         {
-            this.dbPath = dbPath;
-            this.dbFolderPath = dbFolderPath;
-            this.dbFileName = dbFileName;
-            this.dbFileSeparator = dbFileSeparator;
-            this.dbArchiveFileSeparator = dbArchiveFileSeparator;
-            this.dbFileExtension = dbFileExtension;
-            this.maxRowCount = maxRowCount;
+            this.dbTextFileConfig = dbTextFileConfig;
+            baseFileFullPath = GetBaseFileFullPath();
         }
+        #endregion
 
-        public string DbPath => dbPath;
-        public string DbFolderPath => dbFolderPath;
-        public string DbFileName => dbFileName;
-        public char DbFileSeparator => dbFileSeparator;
-        public char DbArchiveFileSeparator => dbArchiveFileSeparator;
-        public string DbFileExtension => dbFileExtension;
-        public int MaxRowCount => maxRowCount;
-
+        #region Setup
         public bool Setup()
         {
             try
@@ -57,13 +42,15 @@ namespace JoberMQ.DataAccess.Repository.DbText.Implementation
                 if (isSetup)
                     return true;
 
-                if (!Directory.Exists(dbPath))
-                    Directory.CreateDirectory(dbPath);
+                if (!Directory.Exists(dbTextFileConfig.DbPath))
+                    Directory.CreateDirectory(dbTextFileConfig.DbPath);
 
-                if (!Directory.Exists(Path.Combine(new string[] { dbPath, dbFolderPath })))
-                    Directory.CreateDirectory(Path.Combine(new string[] { dbPath, dbFolderPath }));
+                if (!Directory.Exists(Path.Combine(new string[] { dbTextFileConfig.DbPath, dbTextFileConfig.DbFolderPath })))
+                    Directory.CreateDirectory(Path.Combine(new string[] { dbTextFileConfig.DbPath, dbTextFileConfig.DbFolderPath }));
 
-                CreateActiveFileStream();
+                mutex = MutexCreate(false, dbTextFileConfig.DbFileName);
+                fileStream = FileStreamCreate(baseFileFullPath, 32768);
+                streamWriter = StreamWriterCreate(fileStream);
 
                 return true;
             }
@@ -72,50 +59,20 @@ namespace JoberMQ.DataAccess.Repository.DbText.Implementation
                 return false;
             }
         }
-        private void CreateActiveFileStream()
-        {
-            mutex = new Mutex(false, dbFileName);
-            int bufferSize = 32768;
-            FileShare fileShare = FileShare.ReadWrite | FileShare.Delete;
+        #endregion
 
-            activeFileStream = new FileStream(
-                Path.Combine(new string[] { dbPath, dbFolderPath, dbFileName + dbFileSeparator + dbFileExtension }),
-                FileMode.OpenOrCreate,
-                FileAccess.ReadWrite,
-                fileShare,
-                bufferSize);
 
-            activeStreamWriter = new StreamWriter(activeFileStream);
-        }
-
+        #region WRITE
         public bool WriteLine(string message)
         {
             try
             {
-                if (rowCounter == maxRowCount)
-                {
-                    try
-                    {
-                        File.Move(
-                            Path.Combine(new string[] { dbPath, dbFolderPath, dbFileName + dbFileSeparator + dbFileExtension }),
-                            Path.Combine(new string[] { dbPath, dbFolderPath, dbFileName + "_" + arsiveFileCounter + dbFileSeparator + dbFileExtension }));
-
-                        CreateActiveFileStream();
-
-                        rowCounter = 1;
-                        arsiveFileCounter++;
-                    }
-                    catch (Exception ex)
-                    {
-
-                        throw;
-                    }
-                }
+                MaxRowCountCheck();
 
                 lock (mutex)
                 {
-                    activeStreamWriter.WriteLine(message);
-                    activeStreamWriter.Flush();
+                    streamWriter.WriteLine(message);
+                    streamWriter.Flush();
                 }
 
                 rowCounter++;
@@ -127,138 +84,172 @@ namespace JoberMQ.DataAccess.Repository.DbText.Implementation
             }
         }
         public bool WriteLine(T message)
-        {
-            try
-            {
-                if (rowCounter == maxRowCount)
-                {
-                    try
-                    {
-                        File.Move(
-                            Path.Combine(new string[] { dbPath, dbFolderPath, dbFileName + dbFileSeparator + dbFileExtension }),
-                            Path.Combine(new string[] { dbPath, dbFolderPath, dbFileName + "_" + arsiveFileCounter + dbFileSeparator + dbFileExtension }));
+            => WriteLine(JsonConvert.SerializeObject(message, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
+        #endregion
 
-                        CreateActiveFileStream();
-
-                        rowCounter = 1;
-                        arsiveFileCounter++;
-                    }
-                    catch (Exception ex)
-                    {
-
-                        throw;
-                    }
-                }
-
-                lock (mutex)
-                {
-                    activeStreamWriter.WriteLine(JsonConvert.SerializeObject(message, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
-                    activeStreamWriter.Flush();
-                }
-
-                rowCounter++;
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
-        public List<T> ReadAll(bool isStarted)
+        #region READ
+        public List<T> ReadAllData(bool isFullFileList)
         {
             List<T> list = new List<T>();
 
             List<DataLogFileModel> fullFileList;
-            if (isStarted)
-                fullFileList = GetFullFileList();
+            if (isFullFileList)
+                fullFileList = GetFileListFull();
             else
-                fullFileList = GetArsiveFileList();
+                fullFileList = GetFileListArchive();
 
             if (fullFileList == null)
                 return null;
 
-            foreach (var item in fullFileList)
-            {
-                string row;
-                StreamReader sr = new StreamReader(item.FullPath, Encoding.UTF8);
+            var paths = fullFileList.Select(x => x.FullPath).ToList();
+            var fullData = ReadLineFile(paths);
 
-                while ((row = sr.ReadLine()) != null)
-                {
-                    var rowData = JsonConvert.DeserializeObject<T>(row);
-                    list.Add(rowData);
-                }
-                sr.Close();
-            }
-
-            return list;
+            return fullData;
         }
-        public List<T> ReadAllGroup(bool isStarted)
+        public List<T> ReadAllDataGrouping(bool isFullFileList)
+            => GroupingData(ReadAllData(isFullFileList));
+        #endregion
+
+        #region HELPER
+        private void MaxRowCountCheck()
         {
-            var datas = ReadAll(isStarted);
+            if (rowCounter == dbTextFileConfig.MaxRowCount)
+            {
+                File.Move(baseFileFullPath, GetArsiveFileFullPath(arsiveFileCounter));
 
-            if (datas == null)
-                return null;
+                fileStream = FileStreamCreate(baseFileFullPath, 32768);
+                streamWriter = StreamWriterCreate(fileStream);
 
-            var groupDatas = datas
-                .GroupBy(g => g.Id)
-                .Select(g => g.OrderByDescending(t => t.DataStatusType).OrderByDescending(t => t.ProcessTime).FirstOrDefault())
-                .ToList();
-
-            return groupDatas;
+                rowCounter = 1;
+                arsiveFileCounter++;
+            }
         }
+        private string GetBaseFileFullPath()
+            => Path.Combine(new string[] { dbTextFileConfig.DbPath, dbTextFileConfig.DbFolderPath, dbTextFileConfig.DbFileName + dbTextFileConfig.DbFileSeparator + dbTextFileConfig.DbFileExtension });
+        private string GetArsiveFileFullPath(int fileNumber)
+            => Path.Combine(new string[] { dbTextFileConfig.DbPath, dbTextFileConfig.DbFolderPath, dbTextFileConfig.DbFileName + "_" + fileNumber + dbTextFileConfig.DbFileSeparator + dbTextFileConfig.DbFileExtension });
 
-
-        private List<DataLogFileModel> GetArsiveFileList()
+        private List<DataLogFileModel> GetFileListArchive()
+        {
+            var fileListFull = GetFileListFull();
+            fileListFull.Remove(fileListFull.FirstOrDefault(x => x.FileName == dbTextFileConfig.DbFileName));
+            return fileListFull;
+        }
+        private List<DataLogFileModel> GetFileListFull()
         {
             var fileList = new List<DataLogFileModel>();
-            string[] files = Directory.GetFiles(Path.Combine(new string[] { dbPath, dbFolderPath }));
+            string[] files = Directory.GetFiles(Path.Combine(new string[] { dbTextFileConfig.DbPath, dbTextFileConfig.DbFolderPath }));
+
             foreach (var item in files)
             {
                 var fileName = Path.GetFileNameWithoutExtension(item);
                 var dataCheck = new DataLogFileModel();
                 dataCheck.FullPath = item;
+                dataCheck.FileName = fileName.Split(dbTextFileConfig.DbFileSeparator)[0];
 
-                if (fileName != dbFileName)
-                {
-                    dataCheck.FileName = fileName.Split(dbFileSeparator)[0];
-                    dataCheck.Number = Convert.ToInt32(fileName.Split(dbArchiveFileSeparator)[1]);
-                    fileList.Add(dataCheck);
-                }
-            }
-
-            return fileList;
-        }
-        private List<DataLogFileModel> GetFullFileList()
-        {
-            var fileList = new List<DataLogFileModel>();
-            var checkFolder = Directory.Exists(Path.Combine(new string[] { dbPath, dbFolderPath }));
-            if (checkFolder == false)
-                return null;
-
-            string[] files = Directory.GetFiles(Path.Combine(new string[] { dbPath, dbFolderPath }));
-            foreach (var item in files)
-            {
-                var fileName = Path.GetFileNameWithoutExtension(item);
-                var dataCheck = new DataLogFileModel();
-                dataCheck.FullPath = item;
-
-                if (fileName == dbFileName)
-                {
-                    dataCheck.FileName = fileName;
-                    dataCheck.Number = 2000000000;
-                }
+                var fileNameSplit = fileName.Split(dbTextFileConfig.DbArchiveFileSeparator);
+                if (fileNameSplit.Length > 1)
+                    dataCheck.Number = Convert.ToInt32(fileNameSplit[1]);
                 else
-                {
-
-                    dataCheck.FileName = fileName.Split(dbFileSeparator)[0];
-                    dataCheck.Number = Convert.ToInt32(fileName.Split(dbArchiveFileSeparator)[1]);
-                }
-
+                    dataCheck.Number = 2000000000;
 
                 fileList.Add(dataCheck);
             }
 
             return fileList;
+        }
+
+        private List<T> GroupingData(List<T> datas)
+            => datas.GroupBy(g => g.Id)
+            .Select(g => g.OrderByDescending(t => t.DataStatusType).OrderByDescending(t => t.ProcessTime).FirstOrDefault())
+            .ToList();
+        private List<T> ReadLineFile(List<string> filePaths)
+        {
+            List<T> list = new List<T>();
+            foreach (var item in filePaths)
+                list.AddRange(ReadLineFile(item));
+
+            return list;
+        }
+        private List<T> ReadLineFile(string filePath)
+        {
+            List<T> list = new List<T>();
+
+            using (StreamReader sr = new StreamReader(filePath, Encoding.UTF8))
+            {
+                string row;
+                while ((row = sr.ReadLine()) != null)
+                {
+                    var rowData = JsonConvert.DeserializeObject<T>(row);
+                    list.Add(rowData);
+                }
+            }
+
+            return list;
+        }
+
+
+        private FileStream FileStreamCreate(string pathFull, int? bufferSize)
+        {
+            if (bufferSize == null || bufferSize <= 0)
+                bufferSize = 32768;
+
+            FileShare fileShare = FileShare.ReadWrite | FileShare.Delete;
+
+            return new FileStream(
+                pathFull,
+                FileMode.OpenOrCreate,
+                FileAccess.ReadWrite,
+                fileShare,
+                bufferSize.Value);
+        }
+        private StreamWriter StreamWriterCreate(FileStream fileStream)
+            => new StreamWriter(fileStream);
+        private Mutex MutexCreate(bool initiallyOwned, string name)
+            => new Mutex(initiallyOwned, name);
+        #endregion
+
+
+
+
+        public bool DataGroupingAndSize()
+        {
+            //tüm dosya listesini aldım
+            var fullFileList = GetFileListFull();
+            if (fullFileList == null || fullFileList.Count == 0)
+                return true;
+
+            //tüm verileri aldım
+            var paths = fullFileList.Select(x => x.FullPath).ToList();
+            var fullData = ReadLineFile(paths);
+
+            //tüm veriyi grupladım
+            var groupDatas = GroupingData(fullData);
+
+            //temp dosyası var ise sildim ve yenisini oluşturdum
+            var tempFile = GetArsiveFileFullPath(0);
+            File.Delete(tempFile);
+            File.Create(tempFile);
+
+            //grupladığım veriyi temp dosyasına yazdım
+            using (StreamWriter sw = new StreamWriter(tempFile, true, Encoding.UTF8))
+            {
+                foreach (var item in groupDatas)
+                    sw.WriteLine(item);
+            }
+
+            //temp dosyası hariç tüm dosyaları sildim
+            var deleteFileList = fullFileList.Where(x => x.FullPath != tempFile).ToList();
+            foreach (var item in deleteFileList)
+                File.Delete(item.FullPath);
+
+
+            //temp dosyasını 1 numaralı arşiv dosyasına taşıdım ve arşiv numarasını 2 olarak değiştirdim
+            var arsiveFile = GetArsiveFileFullPath(1);
+            File.Move(tempFile, arsiveFile);
+            arsiveFileCounter = 2;
+
+            return true;
         }
     }
 }

@@ -12,6 +12,7 @@
         public IMessageResultDbOpr MessageResult { get; }
 
         public bool ImportTextDataToSetMemDb();
-        public bool TextDataSetup();
+        public bool Setup();
+        public bool DataGroupingAndSize();
     }
 }

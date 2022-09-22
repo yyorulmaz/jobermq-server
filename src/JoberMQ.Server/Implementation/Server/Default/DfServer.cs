@@ -46,12 +46,7 @@ namespace JoberMQ.Server.Implementation.Server.Default
         {
             this.serverConfig = serverConfig;
             this.statusCode = StatusCodeFactory.CreateStatusCodeService(serverConfig.StatusCodeConfig.StatusCodeMessageLanguage);
-            this.dbOprService = DbOprServiceFactory.CreateDbOprService(
-                serverConfig.DbOprConfig.DbOprServiceFactory,
-                serverConfig.DbOprConfig.DbOprFactory,
-                serverConfig.DbOprConfig.DbMemConfig.DbMemFactory,
-                serverConfig.DbOprConfig.DbMemConfig.DbMemDataFactory,
-                serverConfig.DbOprConfig.DbTextConfig.DbTextFactory);
+            this.dbOprService = DbOprServiceFactory.CreateDbOprService(serverConfig.DbOprConfig);
             this.clientService = ClientFactory.CreateClientService(serverConfig.ClientServiceFactory);
         }
 
@@ -63,8 +58,13 @@ namespace JoberMQ.Server.Implementation.Server.Default
                 throw new Exception("error statusCodeStart");
             #endregion
 
+            #region Text Data Folder, File created
+            var textDataSetup = dbOprService.Setup();
+            #endregion
 
-
+            #region Text Data Group and Size
+            var textDataDataClearAndSize = dbOprService.DataGroupingAndSize();
+            #endregion
 
             isServerActive = true;
         }

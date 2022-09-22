@@ -1,6 +1,8 @@
 ﻿using JoberMQ.DataAccess.Abstract.DBTEXT;
 using JoberMQ.DataAccess.Implementation.DbText.Default;
 using JoberMQ.Entities.Enums.DbOpr;
+using JoberMQ.Entities.Models.Config;
+using System.Linq;
 
 namespace JoberMQ.Server.Factories.DbOpr
 {
@@ -15,7 +17,7 @@ namespace JoberMQ.Server.Factories.DbOpr
             IJobTextDal JobTextDal,
             IMessageTextDal MessageTextDal,
             IMessageResultTextDal MessageResultTextDal)
-            CreateDbTexts(DbTextFactoryEnum dbTextFactory)
+            CreateDbTexts(DbTextConfigModel dbTextConfig)
         {
             IUserTextDal userTextDal;
             IDistributorTextDal distributorTextDal;
@@ -26,27 +28,27 @@ namespace JoberMQ.Server.Factories.DbOpr
             IMessageTextDal messageTextDal;
             IMessageResultTextDal messageResultTextDal;
 
-            switch (dbTextFactory)
+            switch (dbTextConfig.DbTextFactory)
             {
                 case DbTextFactoryEnum.Default:
-                    userTextDal = new DfUserTextDal("Database", "User", "User", '.', '_', "txt", 100000);
-                    distributorTextDal = new DfDistributorTextDal("Database", "Distributor", "Distributor", '.', '_', "txt", 100000);
-                    queueTextDal = new DfQueueTextDal("Database", "Queue", "Queue", '.', '_', "txt", 100000);
-                    eventSubTextDal = new DfEventSubTextDal("Database", "EventSub", "EventSub", '.', '_', "txt", 100000);
-                    jobDataTextDal = new DfJobDataTextDal("Database", "JobData", "JobData", '.', '_', "txt", 100000);
-                    jobTextDal = new DfJobTextDal("Database", "Job", "Job", '.', '_', "txt", 100000);
-                    messageTextDal = new DfMessageTextDal("Database", "Message", "Message", '.', '_', "txt", 100000);
-                    messageResultTextDal = new DfMessageResultTextDal("Database", "MessageResult", "MessageResult", '.', '_', "txt", 100000);
+                    userTextDal = new DfUserTextDal(dbTextConfig.DbTextFileConfigDatas.FirstOrDefault(x=>x.Key == "User").Value);
+                    distributorTextDal = new DfDistributorTextDal(dbTextConfig.DbTextFileConfigDatas.FirstOrDefault(x => x.Key == "Distributor").Value);
+                    queueTextDal = new DfQueueTextDal(dbTextConfig.DbTextFileConfigDatas.FirstOrDefault(x => x.Key == "Queue").Value);
+                    eventSubTextDal = new DfEventSubTextDal(dbTextConfig.DbTextFileConfigDatas.FirstOrDefault(x => x.Key == "EventSub").Value);
+                    jobDataTextDal = new DfJobDataTextDal(dbTextConfig.DbTextFileConfigDatas.FirstOrDefault(x => x.Key == "JobData").Value);
+                    jobTextDal = new DfJobTextDal(dbTextConfig.DbTextFileConfigDatas.FirstOrDefault(x => x.Key == "Job").Value);
+                    messageTextDal = new DfMessageTextDal(dbTextConfig.DbTextFileConfigDatas.FirstOrDefault(x => x.Key == "Message").Value);
+                    messageResultTextDal = new DfMessageResultTextDal(dbTextConfig.DbTextFileConfigDatas.FirstOrDefault(x => x.Key == "MessageResult").Value);
                     break;
                 default:
-                    userTextDal = new DfUserTextDal("Database", "User", "User", '.', '_', "txt", 100000);
-                    distributorTextDal = new DfDistributorTextDal("Database", "Distributor", "Distributor", '.', '_', "txt", 100000);
-                    queueTextDal = new DfQueueTextDal("Database", "Queue", "Queue", '.', '_', "txt", 100000);
-                    eventSubTextDal = new DfEventSubTextDal("Database", "EventSub", "EventSub", '.', '_', "txt", 100000);
-                    jobDataTextDal = new DfJobDataTextDal("Database", "JobData", "JobData", '.', '_', "txt", 100000);
-                    jobTextDal = new DfJobTextDal("Database", "Job", "Job", '.', '_', "txt", 100000);
-                    messageTextDal = new DfMessageTextDal("Database", "Message", "Message", '.', '_', "txt", 100000);
-                    messageResultTextDal = new DfMessageResultTextDal("Database", "MessageResult", "MessageResult", '.', '_', "txt", 100000);
+                    userTextDal = new DfUserTextDal(dbTextConfig.DbTextFileConfigDatas.FirstOrDefault(x => x.Key == "User").Value);
+                    distributorTextDal = new DfDistributorTextDal(dbTextConfig.DbTextFileConfigDatas.FirstOrDefault(x => x.Key == "Distributor").Value);
+                    queueTextDal = new DfQueueTextDal(dbTextConfig.DbTextFileConfigDatas.FirstOrDefault(x => x.Key == "Queue").Value);
+                    eventSubTextDal = new DfEventSubTextDal(dbTextConfig.DbTextFileConfigDatas.FirstOrDefault(x => x.Key == "EventSub").Value);
+                    jobDataTextDal = new DfJobDataTextDal(dbTextConfig.DbTextFileConfigDatas.FirstOrDefault(x => x.Key == "JobData").Value);
+                    jobTextDal = new DfJobTextDal(dbTextConfig.DbTextFileConfigDatas.FirstOrDefault(x => x.Key == "Job").Value);
+                    messageTextDal = new DfMessageTextDal(dbTextConfig.DbTextFileConfigDatas.FirstOrDefault(x => x.Key == "Message").Value);
+                    messageResultTextDal = new DfMessageResultTextDal(dbTextConfig.DbTextFileConfigDatas.FirstOrDefault(x => x.Key == "MessageResult").Value);
                     break;
             }
 
