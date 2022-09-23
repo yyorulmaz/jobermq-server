@@ -230,7 +230,7 @@ namespace JoberMQ.DataAccess.Repository.DbText.Implementation
         }
 
 
-        private FileStream FileStreamCreate(string pathFull, int? bufferSize)
+        public FileStream FileStreamCreate(string pathFull, int? bufferSize)
         {
             if (bufferSize == null || bufferSize <= 0)
                 bufferSize = 32768;
@@ -244,7 +244,7 @@ namespace JoberMQ.DataAccess.Repository.DbText.Implementation
                 fileShare,
                 bufferSize.Value);
         }
-        private StreamWriter StreamWriterCreate(FileStream fileStream)
+        public StreamWriter StreamWriterCreate(FileStream fileStream)
             => new StreamWriter(fileStream);
         private Mutex MutexCreate(bool initiallyOwned, string name)
             => new Mutex(initiallyOwned, name);

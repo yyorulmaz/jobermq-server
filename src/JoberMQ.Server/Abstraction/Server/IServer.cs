@@ -1,6 +1,8 @@
 ﻿using JoberMQ.Entities.Models.Config;
 using JoberMQ.Server.Abstraction.DbOpr;
+using JoberMQ.Server.Hubs;
 using JoberMQNEW.Server.Abstraction.Client;
+using Microsoft.AspNetCore.SignalR;
 
 namespace JoberMQ.Server.Abstraction.Server
 {
@@ -12,7 +14,8 @@ namespace JoberMQ.Server.Abstraction.Server
         internal IStatusCode StatusCode { get; }
         internal IDbOprService DbOprService { get; }
         internal IClientService ClientService { get; }
-        
+        internal IHubContext<JoberHub> JoberHubContext { get; }
+
 
         public void Start();
     }

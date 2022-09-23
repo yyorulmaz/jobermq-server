@@ -1,10 +1,11 @@
 ﻿using JoberMQ.Entities.Enums.Client;
 using JoberMQ.Entities.Enums.DbOpr;
+using JoberMQ.Entities.Enums.Distributor;
+using JoberMQ.Entities.Enums.Queue;
 using JoberMQ.Entities.Enums.Server;
 using JoberMQ.Entities.Enums.StatusCode;
 using JoberMQ.Entities.Models.Config;
 using System.Collections.Concurrent;
-using System.Runtime.CompilerServices;
 
 namespace JoberMQ.Entities.Constants
 {
@@ -131,6 +132,15 @@ namespace JoberMQ.Entities.Constants
 
                 return clientDatas;
             }
+        }
+        internal class Broker
+        {
+            internal const QueueFactoryEnum QueueFactory = QueueFactoryEnum.Default;
+            internal const QueueChildPriorityFactoryEnum QueueChildPriorityFactory = QueueChildPriorityFactoryEnum.Default;
+            internal const QueueChildFIFOFactoryEnum QueueChildFIFOFactory = QueueChildFIFOFactoryEnum.Default;
+            internal const QueueChildLIFOFactoryEnum QueueChildLIFOFactory = QueueChildLIFOFactoryEnum.Default;
+            internal const DistributorFactoryEnum DistributorFactory = DistributorFactoryEnum.Default;
+            
         }
     }
 }
