@@ -89,11 +89,15 @@ namespace JoberMQ.Server.Implementation.DbOpr.Default
             #region JobData
             var tempFileJobData = jobData.DbText.GetArsiveFileFullPath(0);
             File.Create(tempFileJobData);
-            using (StreamWriter sw = new StreamWriter(tempFileJobData, true, Encoding.UTF8))
+            using (FileStream fs = jobData.DbText.FileStreamCreate(tempFileJobData, 32768))
             {
-                foreach (var item in newJobDatas)
-                    sw.WriteLine(JsonConvert.SerializeObject(item, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
+                using (StreamWriter sw = jobData.DbText.StreamWriterCreate(fs))
+                {
+                    foreach (var item in newJobDatas)
+                        sw.WriteLine(JsonConvert.SerializeObject(item, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
+                }
             }
+
             foreach (var item in jobDatasAndPaths.paths)
                 File.Delete(item.FullPath);
 
@@ -108,11 +112,15 @@ namespace JoberMQ.Server.Implementation.DbOpr.Default
             #region Job
             var tempFileJob = job.DbText.GetArsiveFileFullPath(0);
             File.Create(tempFileJob);
-            using (StreamWriter sw = new StreamWriter(tempFileJob, true, Encoding.UTF8))
+            using (FileStream fs = job.DbText.FileStreamCreate(tempFileJob, 32768))
             {
-                foreach (var item in newJobs)
-                    sw.WriteLine(JsonConvert.SerializeObject(item, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
+                using (StreamWriter sw = job.DbText.StreamWriterCreate(fs))
+                {
+                    foreach (var item in newJobs)
+                        sw.WriteLine(JsonConvert.SerializeObject(item, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
+                }
             }
+
             foreach (var item in jobsAndPaths.paths)
                 File.Delete(item.FullPath);
 
@@ -127,11 +135,15 @@ namespace JoberMQ.Server.Implementation.DbOpr.Default
             #region Message
             var tempFileMessage = message.DbText.GetArsiveFileFullPath(0);
             File.Create(tempFileMessage);
-            using (StreamWriter sw = new StreamWriter(tempFileMessage, true, Encoding.UTF8))
+            using (FileStream fs = message.DbText.FileStreamCreate(tempFileMessage, 32768))
             {
-                foreach (var item in newMessages)
-                    sw.WriteLine(JsonConvert.SerializeObject(item, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
+                using (StreamWriter sw = message.DbText.StreamWriterCreate(fs))
+                {
+                    foreach (var item in newMessages)
+                        sw.WriteLine(JsonConvert.SerializeObject(item, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
+                }
             }
+
             foreach (var item in messagesAndPaths.paths)
                 File.Delete(item.FullPath);
 

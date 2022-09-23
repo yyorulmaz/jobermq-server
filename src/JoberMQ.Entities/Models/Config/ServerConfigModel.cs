@@ -1,6 +1,7 @@
 ﻿using JoberMQ.Entities.Constants;
 using JoberMQ.Entities.Enums.Client;
 using JoberMQ.Entities.Enums.DbOpr;
+using JoberMQ.Entities.Enums.Distributor;
 using JoberMQ.Entities.Enums.Server;
 using JoberMQ.Entities.Enums.StatusCode;
 using System.Collections.Concurrent;
@@ -53,5 +54,9 @@ namespace JoberMQ.Entities.Models.Config
         public char DbArchiveFileSeparator { get; set; }
         public string DbFileExtension { get; set; }
         public int MaxRowCount { get; set; }
+    }
+    public class BrokerConfigModel
+    {
+        internal DistributorFactoryEnum DistributorFactory => ServerConst.Broker.DistributorFactory;
     }
 }

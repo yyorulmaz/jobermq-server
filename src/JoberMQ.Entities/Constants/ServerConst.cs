@@ -1,10 +1,10 @@
 ﻿using JoberMQ.Entities.Enums.Client;
 using JoberMQ.Entities.Enums.DbOpr;
+using JoberMQ.Entities.Enums.Distributor;
 using JoberMQ.Entities.Enums.Server;
 using JoberMQ.Entities.Enums.StatusCode;
 using JoberMQ.Entities.Models.Config;
 using System.Collections.Concurrent;
-using System.Runtime.CompilerServices;
 
 namespace JoberMQ.Entities.Constants
 {
@@ -131,6 +131,11 @@ namespace JoberMQ.Entities.Constants
 
                 return clientDatas;
             }
+        }
+        internal class Broker
+        {
+            internal const DistributorFactoryEnum DistributorFactory = DistributorFactoryEnum.Default;
+            
         }
     }
 }
