@@ -5,11 +5,11 @@ using System.Linq;
 
 namespace JoberMQ.Server.Implementation.Client.Default
 {
-    internal class DfClientGroupManager : IClientGroup
+    internal class DfClientGroup : IClientGroup
     {
         private readonly string groupName;
         private readonly ConcurrentDictionary<string, IClient> clientChilds;
-        public DfClientGroupManager(string groupName)
+        public DfClientGroup(string groupName)
         {
             clientChilds = new ConcurrentDictionary<string, IClient>();
             this.groupName = groupName;

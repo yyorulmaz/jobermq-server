@@ -81,12 +81,15 @@ namespace JoberMQ.Server.Implementation.DbOpr.Default
 
             return true;
         }
+
+        public bool CreateDatabase()
+            => dbText.CreateDatabase();
         public bool Setup()
             => dbText.Setup();
 
         public bool DataGroupingAndSize()
             => dbText.DataGroupingAndSize();
 
-        public int ArsiveFileCounter { get => dbText.ArsiveFileCounter ; set => dbText.ArsiveFileCounter = value; }
+        public int ArsiveFileCounter { get => dbText.ArsiveFileCounter; set => dbText.ArsiveFileCounter = value; }
     }
 }

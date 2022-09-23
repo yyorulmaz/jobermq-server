@@ -14,6 +14,7 @@ namespace JoberMQ.Server.Abstraction.DbOpr
         public IMessageResultDbOpr MessageResult { get; }
 
         public bool ImportTextDataToSetMemDb();
+        public bool CreateDatabases();
         public bool Setups();
         public bool DataGroupingAndSizes();
 

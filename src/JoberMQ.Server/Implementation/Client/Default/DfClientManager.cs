@@ -22,7 +22,7 @@ namespace JoberMQ.Server.Implementation.Client.Default
             var checkGroup = CheckGroup(groupName);
             if (!checkGroup)
             {
-                IClientGroup clientGroup = new DfClientGroupManager(groupName);
+                IClientGroup clientGroup = new DfClientGroup(groupName);
                 clientGroups.TryAdd(groupName, clientGroup);
             }
 
