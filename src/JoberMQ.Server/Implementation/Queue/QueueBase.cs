@@ -2,6 +2,7 @@
 using JoberMQ.Entities.Enums.Queue;
 using JoberMQ.Entities.Models.Config;
 using JoberMQ.Entities.Models.Response;
+using JoberMQ.Server.Abstraction.DbOpr;
 using JoberMQ.Server.Abstraction.Queue;
 using JoberMQNEW.Server.Abstraction.Client;
 
@@ -15,8 +16,9 @@ namespace JoberMQ.Server.Implementation.Queue
         private readonly SendTypeEnum sendType;
         private readonly IClientGroup clientGroup;
         protected IQueueDataBase queueDataBase;
+        protected readonly IMessageDbOpr messageDbOpr;
         private bool isSendRuning;
-
+        protected int endConsumerNumber = 0;
         public QueueBase(
             BrokerConfigModel brokerConfig,
             string distributorName,
@@ -24,7 +26,8 @@ namespace JoberMQ.Server.Implementation.Queue
             MatchTypeEnum matchType,
             SendTypeEnum sendType,
             IClientGroup clientGroup,
-            IQueueDataBase queueDataBase)
+            IQueueDataBase queueDataBase, 
+            IMessageDbOpr messageDbOpr)
         {
             this.distributorName = distributorName;
             this.queueName = queueName;
@@ -32,6 +35,7 @@ namespace JoberMQ.Server.Implementation.Queue
             this.sendType = sendType;
             this.clientGroup = clientGroup;
             this.queueDataBase = queueDataBase;
+            this.messageDbOpr = messageDbOpr;
         }
 
         public string DistributorName => distributorName;
