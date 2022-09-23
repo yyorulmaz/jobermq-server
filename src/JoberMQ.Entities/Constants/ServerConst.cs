@@ -136,6 +136,9 @@ namespace JoberMQ.Entities.Constants
         internal class Broker
         {
             internal const QueueFactoryEnum QueueFactory = QueueFactoryEnum.Default;
+            internal const QueueChildPriorityFactoryEnum QueueChildPriorityFactory = QueueChildPriorityFactoryEnum.Default;
+            internal const QueueChildFIFOFactoryEnum QueueChildFIFOFactory = QueueChildFIFOFactoryEnum.Default;
+            internal const QueueChildLIFOFactoryEnum QueueChildLIFOFactory = QueueChildLIFOFactoryEnum.Default;
             internal const DistributorFactoryEnum DistributorFactory = DistributorFactoryEnum.Default;
             
         }

@@ -9,6 +9,10 @@ namespace JoberMQ.Server.Abstraction.Queue
         public IQueueDataBase QueueDataBase { get; }
         #endregion
 
+        #region Count
+        public int Count { get; }
+        #endregion
+
         #region CRUD
         public MessageDbo Get();
         public MessageDbo Get(Guid key);

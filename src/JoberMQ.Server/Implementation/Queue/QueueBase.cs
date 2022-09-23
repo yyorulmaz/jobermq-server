@@ -1,5 +1,6 @@
 ﻿using JoberMQ.Entities.Dbos;
 using JoberMQ.Entities.Enums.Queue;
+using JoberMQ.Entities.Models.Config;
 using JoberMQ.Entities.Models.Response;
 using JoberMQ.Server.Abstraction.Queue;
 using JoberMQNEW.Server.Abstraction.Client;
@@ -14,9 +15,10 @@ namespace JoberMQ.Server.Implementation.Queue
         private readonly SendTypeEnum sendType;
         private readonly IClientGroup clientGroup;
         protected IQueueDataBase queueDataBase;
-        bool isSendRuning;
+        private bool isSendRuning;
 
         public QueueBase(
+            BrokerConfigModel brokerConfig,
             string distributorName,
             string queueName,
             MatchTypeEnum matchType,
@@ -40,5 +42,6 @@ namespace JoberMQ.Server.Implementation.Queue
         public bool IsSendRuning { get => isSendRuning; set => isSendRuning = value; }
 
         public abstract JobDataAddResponseModel QueueAdd(MessageDbo message);
+        protected abstract void Qperation();
     }
 }

@@ -1,17 +1,15 @@
 ﻿using JoberMQ.Entities.Enums.Queue;
+using JoberMQ.Entities.Models.Config;
 using JoberMQ.Server.Abstraction.Queue;
 using JoberMQ.Server.Implementation.Queue;
 using JoberMQNEW.Server.Abstraction.Client;
-using JoberMQNEW.Server.Data;
 
 namespace JoberMQ.Server.Factories.Queue
 {
     internal class QueueFactory
     {
-        internal static IQueueDataBase GetQueueDataBase()
-            => new DfQueueDataBase(InMemoryQueue.QueueDatas);
-
         internal static IQueue CreateQueue(
+            BrokerConfigModel brokerConfig,
             QueueFactoryEnum queueFactory,
             string distributorName, 
             string queueName, 
@@ -27,16 +25,16 @@ namespace JoberMQ.Server.Factories.Queue
                     switch (sendType)
                     {
                         case SendTypeEnum.Priority:
-                            queue = new DfQueuePriority(distributorName, queueName, matchType, sendType, clientGroup, GetQueueDataBase());
+                            queue = new DfQueuePriority(brokerConfig,distributorName, queueName, matchType, sendType, clientGroup, QueueDataBaseFactory.GetQueueDataBase());
                             break;
                         case SendTypeEnum.FIFO:
-                            queue = new DfQueueFIFO(distributorName, queueName, matchType, sendType, clientGroup, GetQueueDataBase());
+                            queue = new DfQueueFIFO(brokerConfig,distributorName, queueName, matchType, sendType, clientGroup, QueueDataBaseFactory.GetQueueDataBase());
                             break;
                         case SendTypeEnum.LIFO:
-                            queue = new DfQueueLIFO(distributorName, queueName, matchType, sendType, clientGroup, GetQueueDataBase());
+                            queue = new DfQueueLIFO(brokerConfig,distributorName, queueName, matchType, sendType, clientGroup, QueueDataBaseFactory.GetQueueDataBase());
                             break;
                         default:
-                            queue = new DfQueueFIFO(distributorName, queueName, matchType, sendType, clientGroup, GetQueueDataBase());
+                            queue = new DfQueueFIFO(brokerConfig, distributorName, queueName, matchType, sendType, clientGroup, QueueDataBaseFactory.GetQueueDataBase());
                             break;
                     }
                     break;
@@ -44,16 +42,16 @@ namespace JoberMQ.Server.Factories.Queue
                     switch (sendType)
                     {
                         case SendTypeEnum.Priority:
-                            queue = new DfQueuePriority(distributorName, queueName, matchType, sendType, clientGroup, GetQueueDataBase());
+                            queue = new DfQueuePriority(brokerConfig, distributorName, queueName, matchType, sendType, clientGroup, QueueDataBaseFactory.GetQueueDataBase());
                             break;
                         case SendTypeEnum.FIFO:
-                            queue = new DfQueueFIFO(distributorName, queueName, matchType, sendType, clientGroup, GetQueueDataBase());
+                            queue = new DfQueueFIFO(brokerConfig, distributorName, queueName, matchType, sendType, clientGroup, QueueDataBaseFactory.GetQueueDataBase());
                             break;
                         case SendTypeEnum.LIFO:
-                            queue = new DfQueueLIFO(distributorName, queueName, matchType, sendType, clientGroup, GetQueueDataBase());
+                            queue = new DfQueueLIFO(brokerConfig, distributorName, queueName, matchType, sendType, clientGroup, QueueDataBaseFactory.GetQueueDataBase());
                             break;
                         default:
-                            queue = new DfQueueFIFO(distributorName, queueName, matchType, sendType, clientGroup, GetQueueDataBase());
+                            queue = new DfQueueFIFO(brokerConfig, distributorName, queueName, matchType, sendType, clientGroup, QueueDataBaseFactory.GetQueueDataBase());
                             break;
                     }
                     break;
