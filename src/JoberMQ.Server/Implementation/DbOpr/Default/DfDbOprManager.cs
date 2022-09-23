@@ -165,6 +165,24 @@ namespace JoberMQ.Server.Implementation.DbOpr.Default
             return true;
         }
 
+        public bool CreateDatabases()
+        {
+            var resultUser = User.CreateDatabase();
+            var resultDistributor = Distributor.CreateDatabase();
+            var resultQueue = Queue.CreateDatabase();
+            var resultEventSub = EventSub.CreateDatabase();
+            var resultJobData = JobData.CreateDatabase();
+            var resultJob = Job.CreateDatabase();
+            var resultMessage = Message.CreateDatabase();
+            var resultMessageResult = MessageResult.CreateDatabase();
+
+            if (!resultUser || !resultDistributor || !resultQueue || !resultEventSub || !resultJobData || !resultJob || !resultMessage || !resultMessageResult)
+            {
+                throw new System.Exception("errorrrr ");
+            }
+
+            return true;
+        }
         public bool Setups()
         {
             var resultUser = User.Setup();
