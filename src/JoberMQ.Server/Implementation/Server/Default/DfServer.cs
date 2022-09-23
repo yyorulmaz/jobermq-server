@@ -7,6 +7,7 @@ using JoberMQ.Server.Hubs;
 using JoberMQNEW.Server.Abstraction.Client;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
@@ -40,6 +41,11 @@ namespace JoberMQ.Server.Implementation.Server.Default
         #region StatusCode
         private readonly IClientService clientService;
         IClientService IServer.ClientService => clientService;
+        #endregion
+
+        #region JoberHubContext
+        private IHubContext<JoberHub> joberHubContext;
+        IHubContext<JoberHub> IServer.JoberHubContext => joberHubContext;
         #endregion
 
         public DfServer(ServerConfigModel serverConfig)
@@ -82,7 +88,7 @@ namespace JoberMQ.Server.Implementation.Server.Default
 
 
 
-
+            //joberHubContext
 
 
             isServerActive = true;

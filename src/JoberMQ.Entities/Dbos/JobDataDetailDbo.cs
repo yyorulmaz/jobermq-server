@@ -1,5 +1,6 @@
 ﻿using JoberMQ.Entities.Base.Dbo;
 using JoberMQ.Entities.Enums.Message;
+using JoberMQ.Entities.Enums.Priority;
 using System;
 
 namespace JoberMQ.Entities.Dbos
@@ -41,6 +42,7 @@ namespace JoberMQ.Entities.Dbos
         public string Name { get; set; }
         public string Description { get; set; }
         public string GeneralData { get; set; }
+        public PriorityTypeEnum PriorityType { get; set; } = PriorityTypeEnum.None;
         #endregion
 
         #region 3.6 - CONSUMING

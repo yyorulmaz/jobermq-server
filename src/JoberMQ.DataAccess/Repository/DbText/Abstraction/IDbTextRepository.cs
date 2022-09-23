@@ -1,6 +1,7 @@
 ﻿using JoberMQ.Entities.Base.Dbo;
 using JoberMQ.Entities.Models.Data;
 using System.Collections.Generic;
+using System.IO;
 
 namespace JoberMQ.DataAccess.Repository.DbText.Abstraction
 {
@@ -18,5 +19,7 @@ namespace JoberMQ.DataAccess.Repository.DbText.Abstraction
         bool DataGroupingAndSize();
         string GetBaseFileFullPath();
         string GetArsiveFileFullPath(int fileNumber);
+        FileStream FileStreamCreate(string pathFull, int? bufferSize);
+        StreamWriter StreamWriterCreate(FileStream fileStream);
     }
 }
