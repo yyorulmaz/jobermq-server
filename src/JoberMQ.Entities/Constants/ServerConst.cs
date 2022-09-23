@@ -1,6 +1,7 @@
 ﻿using JoberMQ.Entities.Enums.Client;
 using JoberMQ.Entities.Enums.DbOpr;
 using JoberMQ.Entities.Enums.Distributor;
+using JoberMQ.Entities.Enums.Queue;
 using JoberMQ.Entities.Enums.Server;
 using JoberMQ.Entities.Enums.StatusCode;
 using JoberMQ.Entities.Models.Config;
@@ -134,6 +135,7 @@ namespace JoberMQ.Entities.Constants
         }
         internal class Broker
         {
+            internal const QueueFactoryEnum QueueFactory = QueueFactoryEnum.Default;
             internal const DistributorFactoryEnum DistributorFactory = DistributorFactoryEnum.Default;
             
         }

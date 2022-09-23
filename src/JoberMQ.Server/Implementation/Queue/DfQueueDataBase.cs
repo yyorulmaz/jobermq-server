@@ -7,21 +7,16 @@ using System.Linq;
 
 namespace JoberMQ.Server.Implementation.Queue
 {
-    internal class DfQueueChildDataConcurrentDictionary : IQueueChildDataConcurrentDictionary
+    internal class DfQueueDataBase : IQueueDataBase
     {
         #region Constructor
-        public DfQueueChildDataConcurrentDictionary(IQueueMainData dataMain)
+        public DfQueueDataBase(ConcurrentDictionary<Guid, MessageDbo> data)
         {
-            this.dataMain = dataMain;
-            this.data = new ConcurrentDictionary<Guid, MessageDbo>();
+            this.data = data;
         }
         #endregion
 
         #region Data
-        private readonly IQueueMainData dataMain;
-        public IQueueMainData DataMain => dataMain;
-
-
         private readonly ConcurrentDictionary<Guid, MessageDbo> data;
         public ConcurrentDictionary<Guid, MessageDbo> Data => data;
         #endregion
@@ -49,7 +44,6 @@ namespace JoberMQ.Server.Implementation.Queue
         }
         public bool Add(Guid key, MessageDbo value)
         {
-            dataMain.Add(key, value);
             var result = data.TryAdd(key, value);
             if (result)
                 ChangedAdded?.Invoke(value);
@@ -57,7 +51,6 @@ namespace JoberMQ.Server.Implementation.Queue
         }
         public bool Update(Guid key, MessageDbo value)
         {
-            dataMain.Update(key, value);
             var result = data.TryUpdate(key, value, value);
             if (result)
                 ChangedUpdated?.Invoke(value);
@@ -65,7 +58,6 @@ namespace JoberMQ.Server.Implementation.Queue
         }
         public MessageDbo Remove(Guid key)
         {
-            dataMain.Remove(key);
             data.TryRemove(key, out MessageDbo value);
             if (value != null)
                 ChangedRemoved?.Invoke(value);
