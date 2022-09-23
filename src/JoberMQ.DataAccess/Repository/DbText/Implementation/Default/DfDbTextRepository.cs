@@ -39,18 +39,29 @@ namespace JoberMQ.DataAccess.Repository.DbText.Implementation
 
 
         #region Setup
+        public bool CreateDatabase()
+        {
+            try
+            {
+                if (!Directory.Exists(dbTextFileConfig.DbPath))
+                    Directory.CreateDirectory(dbTextFileConfig.DbPath);
+
+                if (!Directory.Exists(Path.Combine(new string[] { dbTextFileConfig.DbPath, dbTextFileConfig.DbFolderPath })))
+                    Directory.CreateDirectory(Path.Combine(new string[] { dbTextFileConfig.DbPath, dbTextFileConfig.DbFolderPath }));
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
         public bool Setup()
         {
             try
             {
                 if (isSetup)
                     return true;
-
-                if (!Directory.Exists(dbTextFileConfig.DbPath))
-                    Directory.CreateDirectory(dbTextFileConfig.DbPath);
-
-                if (!Directory.Exists(Path.Combine(new string[] { dbTextFileConfig.DbPath, dbTextFileConfig.DbFolderPath })))
-                    Directory.CreateDirectory(Path.Combine(new string[] { dbTextFileConfig.DbPath, dbTextFileConfig.DbFolderPath }));
 
                 mutex = MutexCreate(false, dbTextFileConfig.DbFileName);
                 fileStream = FileStreamCreate(baseFileFullPath, 32768);
@@ -262,10 +273,13 @@ namespace JoberMQ.DataAccess.Repository.DbText.Implementation
             File.Create(tempFile);
 
             //grupladığım veriyi temp dosyasına yazdım
-            using (StreamWriter sw = new StreamWriter(tempFile, true, Encoding.UTF8))
+            using (FileStream fs = FileStreamCreate(tempFile, 32768))
             {
-                foreach (var item in groupDatas)
-                    sw.WriteLine(JsonConvert.SerializeObject(item, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
+                using (StreamWriter sw = StreamWriterCreate(fs))
+                {
+                    foreach (var item in groupDatas)
+                        sw.WriteLine(JsonConvert.SerializeObject(item, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
+                }
             }
 
             //temp dosyası hariç tüm dosyaları sildim

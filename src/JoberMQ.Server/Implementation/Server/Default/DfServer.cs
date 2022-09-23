@@ -59,7 +59,7 @@ namespace JoberMQ.Server.Implementation.Server.Default
             #endregion
 
             #region Text Data Folder, File created
-            var textDataSetupResult = dbOprService.Setups();
+            var createDatabasesResult = dbOprService.CreateDatabases();
             #endregion
 
             #region Text Data Group and Size
@@ -73,6 +73,16 @@ namespace JoberMQ.Server.Implementation.Server.Default
             #region Text Data Import Memory
             var importTextDataToSetMemDbResult = dbOprService.ImportTextDataToSetMemDb();
             #endregion
+
+            #region Text Data Folder, File created
+            var textDataSetupResult = dbOprService.Setups();
+            #endregion
+
+            // default user
+
+
+
+
 
 
             isServerActive = true;

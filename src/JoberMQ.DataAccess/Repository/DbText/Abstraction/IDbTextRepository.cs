@@ -7,6 +7,7 @@ namespace JoberMQ.DataAccess.Repository.DbText.Abstraction
     internal interface IDbTextRepository<T> where T : DboPropertyGuidBase, new()
     {
         int ArsiveFileCounter { get; set; }
+        bool CreateDatabase();
         bool Setup();
         bool WriteLine(string message);
         bool WriteLine(T message);

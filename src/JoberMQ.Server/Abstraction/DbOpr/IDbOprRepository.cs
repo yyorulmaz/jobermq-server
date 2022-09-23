@@ -28,6 +28,8 @@ namespace JoberMQ.Server.Abstraction.DbOpr
         #endregion
 
         public bool ImportTextDataToSetMemDb();
+        
+        public bool CreateDatabase();
         public bool Setup();
         public bool DataGroupingAndSize();
         int ArsiveFileCounter { get; set; }
