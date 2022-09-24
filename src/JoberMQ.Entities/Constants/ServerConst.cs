@@ -1,6 +1,7 @@
 ﻿using JoberMQ.Entities.Enums.Client;
 using JoberMQ.Entities.Enums.DbOpr;
 using JoberMQ.Entities.Enums.Distributor;
+using JoberMQ.Entities.Enums.Publisher;
 using JoberMQ.Entities.Enums.Queue;
 using JoberMQ.Entities.Enums.Schedule;
 using JoberMQ.Entities.Enums.Server;
@@ -156,7 +157,11 @@ namespace JoberMQ.Entities.Constants
         internal class Schedule
         {
             internal const ScheduleFactoryEnum ScheduleFactory = ScheduleFactoryEnum.Default;
-
         }
+        internal class Publisher
+        {
+            internal const PublisherFactoryEnum PublisherFactory = PublisherFactoryEnum.Default;
+        }
+        
     }
 }

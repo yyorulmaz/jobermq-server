@@ -2,10 +2,12 @@
 using JoberMQ.Entities.Models.Config;
 using JoberMQ.Server.Abstraction.DboCreator;
 using JoberMQ.Server.Abstraction.DbOpr;
+using JoberMQ.Server.Abstraction.Publisher;
 using JoberMQ.Server.Abstraction.Schedule;
 using JoberMQ.Server.Abstraction.Server;
 using JoberMQ.Server.Factories.Client;
 using JoberMQ.Server.Factories.DbOpr;
+using JoberMQ.Server.Factories.Publisher;
 using JoberMQ.Server.Factories.Schedule;
 using JoberMQ.Server.Helpers;
 using JoberMQ.Server.Hubs;
@@ -57,7 +59,7 @@ namespace JoberMQ.Server.Implementation.Server.Default
         IClientService IServer.ClientService => clientService;
         #endregion
 
-        #region ClientService
+        #region Schedule
         private readonly ISchedule schedule;
         ISchedule IServer.Schedule => schedule;
         #endregion
@@ -76,7 +78,8 @@ namespace JoberMQ.Server.Implementation.Server.Default
             this.clientService = ClientFactory.CreateClientService(serverConfig.ClientServiceFactory);
             this.schedule = ScheduleFactory.CreateSchedule(serverConfig.ScheduleConfig.ScheduleFactory, dbOprService, dboCreator);
 
-            
+
+
         }
 
         public void Start()
