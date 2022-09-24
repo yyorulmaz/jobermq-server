@@ -17,16 +17,16 @@ namespace JoberMQ.Server.Implementation.Client.Default
         public ConcurrentDictionary<string, IClientGroup> ClientGroups => clientGroups;
         public bool AddClient(IClient client) => AddClient(client.ClientKey, client);
         public bool AddClient(string clientKey, IClient client) => clients.TryAdd(clientKey, client);
-        public bool AddClientGroup(string groupName)
+        public IClientGroup AddClientGroup(string groupName)
         {
-            var checkGroup = CheckGroup(groupName);
-            if (!checkGroup)
+            var checkClientGroup = CheckGroup(groupName);
+            if (checkClientGroup == null)
             {
-                IClientGroup clientGroup = new DfClientGroup(groupName);
-                clientGroups.TryAdd(groupName, clientGroup);
+                checkClientGroup = new DfClientGroup(groupName);
+                clientGroups.TryAdd(groupName, checkClientGroup);
             }
 
-            return true;
+            return checkClientGroup;
         }
         public bool AddClientGroupChild(string groupName, IClient client)
         {
@@ -57,13 +57,13 @@ namespace JoberMQ.Server.Implementation.Client.Default
         }
 
 
-        private bool CheckGroup(string groupName)
+        private IClientGroup CheckGroup(string groupName)
         {
             var checkGroup = ClientGroups.FirstOrDefault(x => x.Key == groupName);
             if (checkGroup.Key == null)
-                return false;
+                return null;
             else
-                return true;
+                return checkGroup.Value;
         }
     }
 }

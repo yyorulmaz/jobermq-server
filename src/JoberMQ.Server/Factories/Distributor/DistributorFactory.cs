@@ -6,7 +6,7 @@ namespace JoberMQ.Server.Factories.Distributor
 {
     internal class DistributorFactory
     {
-        internal static IDistributor CreateDistributorService(DistributorFactoryEnum distributorFactory, string name, DistributorTypeEnum type)
+        internal static IDistributor CreateDistributor(DistributorFactoryEnum distributorFactory, string name, DistributorTypeEnum type)
         {
             IDistributor distributor;
 
