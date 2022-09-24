@@ -1,5 +1,6 @@
 ﻿using JoberMQ.Entities.Dbos;
 using JoberMQ.Entities.Models.Config;
+using JoberMQ.Server.Abstraction.DboCreator;
 using JoberMQ.Server.Abstraction.DbOpr;
 using JoberMQ.Server.Abstraction.Server;
 using JoberMQ.Server.Factories.Client;
@@ -39,12 +40,17 @@ namespace JoberMQ.Server.Implementation.Server.Default
         IStatusCode IServer.StatusCode => statusCode;
         #endregion
 
-        #region StatusCode
+        #region DbOprService
         private readonly IDbOprService dbOprService;
         IDbOprService IServer.DbOprService => dbOprService;
         #endregion
 
-        #region StatusCode
+        #region DboCreator
+        private readonly IDboCreator dboCreator;
+        IDboCreator IServer.DboCreator => dboCreator;
+        #endregion
+
+        #region ClientService
         private readonly IClientService clientService;
         IClientService IServer.ClientService => clientService;
         #endregion
@@ -59,6 +65,7 @@ namespace JoberMQ.Server.Implementation.Server.Default
             this.serverConfig = serverConfig;
             this.statusCode = StatusCodeFactory.CreateStatusCodeService(serverConfig.StatusCodeConfig.StatusCodeMessageLanguage);
             this.dbOprService = DbOprServiceFactory.CreateDbOprService(serverConfig.DbOprConfig);
+            this.dboCreator = DboCreatorFactory.CreateDboCreator(serverConfig.DbOprConfig.DboCreatorFactory, dbOprService);
             this.clientService = ClientFactory.CreateClientService(serverConfig.ClientServiceFactory);
         }
 
@@ -111,12 +118,9 @@ namespace JoberMQ.Server.Implementation.Server.Default
             #endregion
 
             #region Server Start
-            // todo url yapısını düzgün yap
+            // todo url yapısını düzelt
             Uri urlHttp = new Uri($"http://{serverConfig.HostConfig.HostName}:{serverConfig.HostConfig.Port}");
             Uri urlHttps = new Uri($"https://{serverConfig.HostConfig.HostName}:{serverConfig.HostConfig.PortSsl}");
-
-            //var urlHttp = "http://localhost:7654/";
-            //var urlHttps = "https://localhost:7655/";
 
             var host = WebHost
                 .CreateDefaultBuilder()
