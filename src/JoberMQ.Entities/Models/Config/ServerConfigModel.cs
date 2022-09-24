@@ -5,6 +5,7 @@ using JoberMQ.Entities.Enums.Distributor;
 using JoberMQ.Entities.Enums.Queue;
 using JoberMQ.Entities.Enums.Server;
 using JoberMQ.Entities.Enums.StatusCode;
+using System;
 using System.Collections.Concurrent;
 
 namespace JoberMQ.Entities.Models.Config
@@ -18,7 +19,8 @@ namespace JoberMQ.Entities.Models.Config
         public StatusCodeConfigModel StatusCodeConfig => new StatusCodeConfigModel();
         public SecurityConfigModel SecurityConfig => new SecurityConfigModel();
         public DbOprConfigModel DbOprConfig => new DbOprConfigModel();
-        public BrokerConfigModel BrokerConfig => new BrokerConfigModel();
+        internal BrokerConfigModel BrokerConfig => new BrokerConfigModel();
+        public HostConfigModel HostConfig => new HostConfigModel();
     }
 
     public class StatusCodeConfigModel
@@ -35,7 +37,7 @@ namespace JoberMQ.Entities.Models.Config
         internal DbOprFactoryEnum DbOprFactory => ServerConst.DbOpr.DbOprFactory;
         internal DbMemConfigModel DbMemConfig => new DbMemConfigModel();
         internal DbTextConfigModel DbTextConfig => new DbTextConfigModel();
-
+        public string CompletedDataRemovesTimer => ServerConst.DbOpr.CompletedDataRemovesTimer;
     }
     public class DbMemConfigModel
     {
@@ -64,5 +66,11 @@ namespace JoberMQ.Entities.Models.Config
         internal QueueChildFIFOFactoryEnum QueueChildFIFOFactory => ServerConst.Broker.QueueChildFIFOFactory;
         internal QueueChildLIFOFactoryEnum QueueChildLIFOFactory => ServerConst.Broker.QueueChildLIFOFactory;
         internal DistributorFactoryEnum DistributorFactory => ServerConst.Broker.DistributorFactory;
+    }
+    public class HostConfigModel
+    {
+        internal string HostName => ServerConst.Hosting.HostName;
+        public int Port => ServerConst.Hosting.Port;
+        public int PortSsl => ServerConst.Hosting.PortSsl;
     }
 }
