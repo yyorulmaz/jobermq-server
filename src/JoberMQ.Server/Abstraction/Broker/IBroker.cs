@@ -81,10 +81,13 @@ namespace JoberMQ.Server.Abstraction.Broker
 
         public JobDataAddResponseModel QueueAdd(MessageDbo message)
         {
-            // todo kuşullar sağlandımı kontrol
-            var distributorName = queues.Get(message.QueueKey).DistributorName;
-            var distributor = distributors.Get(distributorName);
-            return distributor.QueueAdd(message);
+            //// todo kuşullar sağlandımı kontrol
+            //var distributorName = queues.Get(message.QueueKey).DistributorName;
+            //var distributor = distributors.Get(distributorName);
+            //return distributor.QueueAdd(message);
+
+
+            return null;
         }
     }
 }

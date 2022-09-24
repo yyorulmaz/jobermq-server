@@ -1,24 +1,30 @@
-﻿using JoberMQ.Entities.Models.Config;
+﻿using JoberMQ.Entities.Dbos;
+using JoberMQ.Entities.Models.Config;
 using JoberMQ.Server.Abstraction.DbOpr;
 using JoberMQ.Server.Abstraction.Server;
 using JoberMQ.Server.Factories.Client;
 using JoberMQ.Server.Factories.DbOpr;
+using JoberMQ.Server.Helpers;
 using JoberMQ.Server.Hubs;
 using JoberMQNEW.Server.Abstraction.Client;
+using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using System;
 using System.Security.Claims;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace JoberMQ.Server.Implementation.Server.Default
 {
-    internal class DfServer: IServer
+    internal class DfServer : IServer
     {
         bool isServerActive;
         bool IServer.IsServerActive { get => isServerActive; set => isServerActive = value; }
@@ -73,7 +79,7 @@ namespace JoberMQ.Server.Implementation.Server.Default
             #endregion
 
             #region Completed Data Removes Timer Start
-            var completedDataRemovesTimerStartResult = dbOprService.CompletedDataRemovesTimerStart();
+            var completedDataRemovesTimerStartResult = dbOprService.CompletedDataRemovesTimerStart(serverConfig.DbOprConfig.CompletedDataRemovesTimer);
             #endregion
 
             #region Text Data Import Memory
@@ -84,12 +90,45 @@ namespace JoberMQ.Server.Implementation.Server.Default
             var textDataSetupResult = dbOprService.Setups();
             #endregion
 
-            // default user
 
 
+            #region default user create
+            var userId = Guid.Parse("3b1fb872-c5de-40f4-8a93-342e754da53a");
+            var userCheck = dbOprService.User.Get(userId);
+            if (userCheck == null)
+            {
+                dbOprService.User.Add(new UserDbo
+                {
+                    Id = userId,
+                    UserName = "jobermq",
+                    Password = CryptionHashHelper.SHA256EnCryption("jobermq"),
+                    IsActive = true,
+                    IsDelete = false,
+                    DataStatusType = Entities.Enums.Data.DataStatusTypeEnum.Insert
+                });
+            }
 
-            //joberHubContext
+            #endregion
 
+            #region Server Start
+            // todo url yapısını düzgün yap
+            Uri urlHttp = new Uri($"http://{serverConfig.HostConfig.HostName}:{serverConfig.HostConfig.Port}");
+            Uri urlHttps = new Uri($"https://{serverConfig.HostConfig.HostName}:{serverConfig.HostConfig.PortSsl}");
+
+            //var urlHttp = "http://localhost:7654/";
+            //var urlHttps = "https://localhost:7655/";
+
+            var host = WebHost
+                .CreateDefaultBuilder()
+                .ConfigureServices(services => ConfigureServices(services))
+                .Configure(app => Configure(app))
+                .UseUrls(urlHttp.ToString(), urlHttps.ToString())
+                .Build();
+
+            joberHubContext = host.Services.GetService<IHubContext<JoberHub>>();
+
+            host.RunAsync();
+            #endregion
 
             isServerActive = true;
         }
