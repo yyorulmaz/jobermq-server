@@ -53,13 +53,14 @@ namespace JoberMQ.Server.Implementation.DbOpr.Default
         public IMessageResultDbOpr MessageResult => messageResult;
 
         private ITimer completedDataRemoveTimer;
-        public bool CompletedDataRemovesTimerStart()
+        public bool CompletedDataRemovesTimerStart(string completedDataRemovesTimer)
         {
             completedDataRemoveTimer = new TimerFactory().CreateTimer();
             completedDataRemoveTimer.Receive += CompletedDataRemoves;
             var timer = new TimerModel();
             timer.Id = Guid.NewGuid();
-            timer.CronTime = "0 */5 * ? * *";
+            //toco crontime check
+            timer.CronTime = completedDataRemovesTimer;
             timer.TimerGroup = "CompletedDataRemoves";
             completedDataRemoveTimer.Add(timer);
 

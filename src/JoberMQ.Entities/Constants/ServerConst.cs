@@ -31,6 +31,10 @@ namespace JoberMQ.Entities.Constants
             internal const DbMemDataFactoryEnum DbMemDataFactory = DbMemDataFactoryEnum.Data;
             internal const DbTextFactoryEnum DbTextFactory = DbTextFactoryEnum.Default;
 
+
+            internal const string CompletedDataRemovesTimer = "0 */5 * ? * *";
+
+
             internal static ConcurrentDictionary<string, DbTextFileConfigModel> DbTextFileConfigDatas = DbTextFileConfigData();
             private static ConcurrentDictionary<string, DbTextFileConfigModel> DbTextFileConfigData()
             {
@@ -141,6 +145,12 @@ namespace JoberMQ.Entities.Constants
             internal const QueueChildLIFOFactoryEnum QueueChildLIFOFactory = QueueChildLIFOFactoryEnum.Default;
             internal const DistributorFactoryEnum DistributorFactory = DistributorFactoryEnum.Default;
             
+        }
+        internal class Hosting
+        {
+            internal const string HostName = "localhost";
+            internal const int Port = 7654;
+            internal const int PortSsl = 7655;
         }
     }
 }
