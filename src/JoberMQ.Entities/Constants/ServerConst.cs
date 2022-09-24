@@ -2,6 +2,7 @@
 using JoberMQ.Entities.Enums.DbOpr;
 using JoberMQ.Entities.Enums.Distributor;
 using JoberMQ.Entities.Enums.Queue;
+using JoberMQ.Entities.Enums.Schedule;
 using JoberMQ.Entities.Enums.Server;
 using JoberMQ.Entities.Enums.StatusCode;
 using JoberMQ.Entities.Models.Config;
@@ -151,6 +152,11 @@ namespace JoberMQ.Entities.Constants
             internal const string HostName = "localhost";
             internal const int Port = 7654;
             internal const int PortSsl = 7655;
+        }
+        internal class Schedule
+        {
+            internal const ScheduleFactoryEnum ScheduleFactory = ScheduleFactoryEnum.Default;
+
         }
     }
 }

@@ -2,21 +2,24 @@
 using JoberMQ.Server.Abstraction.Queue;
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
 
-namespace JoberMQ.Server.Implementation.Queue
+namespace JoberMQ.Server.Implementation.Queue.Default
 {
-    internal class DfQueueDataBase : IQueueDataBase
+    internal class DfQueueChildDataBasePriority : IQueueChildDataBasePriority
     {
         #region Constructor
-        public DfQueueDataBase(ConcurrentDictionary<Guid, MessageDbo> data)
+        public DfQueueChildDataBasePriority(IQueueDataBase queueDataBase)
         {
-            this.data = data;
+            this.queueDataBase = queueDataBase;
+            data = new ConcurrentDictionary<Guid, MessageDbo>();
         }
         #endregion
 
         #region Data
+        private readonly IQueueDataBase queueDataBase;
+        public IQueueDataBase QueueDataBase => queueDataBase;
+
+
         private readonly ConcurrentDictionary<Guid, MessageDbo> data;
         public ConcurrentDictionary<Guid, MessageDbo> Data => data;
         #endregion
@@ -26,38 +29,26 @@ namespace JoberMQ.Server.Implementation.Queue
         #endregion
 
         #region CRUD
+        public MessageDbo Get()
+        {
+            throw new NotImplementedException();
+        }
         public MessageDbo Get(Guid key)
         {
             data.TryGetValue(key, out MessageDbo value);
             return value;
         }
-        public MessageDbo Get(Func<MessageDbo, bool> filter)
+        public bool Add(MessageDbo value)
         {
-            return data.Values.FirstOrDefault(filter);
-        }
-        public List<MessageDbo> GetAll(Func<MessageDbo, bool> filter = null)
-        {
-            if (filter == null)
-                return data.Values.ToList();
-            else
-                return data.Values.Where(filter).ToList();
-        }
-        public bool Add(Guid key, MessageDbo value)
-        {
-            var result = data.TryAdd(key, value);
+            queueDataBase.Add(value.Id, value);
+            var result = data.TryAdd(value.Id, value);
             if (result)
                 ChangedAdded?.Invoke(value);
             return result;
         }
-        public bool Update(Guid key, MessageDbo value)
-        {
-            var result = data.TryUpdate(key, value, value);
-            if (result)
-                ChangedUpdated?.Invoke(value);
-            return result;
-        }
         public MessageDbo Remove(Guid key)
         {
+            queueDataBase.Remove(key);
             data.TryRemove(key, out MessageDbo value);
             if (value != null)
                 ChangedRemoved?.Invoke(value);

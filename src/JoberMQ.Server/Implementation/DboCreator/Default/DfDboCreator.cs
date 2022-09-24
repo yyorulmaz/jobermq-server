@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace JoberMQ.Server.Implementation.DboCreator
+namespace JoberMQ.Server.Implementation.DboCreator.Default
 {
     internal class DfDboCreator : IDboCreator
     {

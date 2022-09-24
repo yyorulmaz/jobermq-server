@@ -1,6 +1,6 @@
 ﻿using JoberMQ.Entities.Enums.Distributor;
 using JoberMQ.Server.Abstraction.Distributor;
-using JoberMQ.Server.Implementation.Distributor;
+using JoberMQ.Server.Implementation.Distributor.Default;
 
 namespace JoberMQ.Server.Factories.Distributor
 {

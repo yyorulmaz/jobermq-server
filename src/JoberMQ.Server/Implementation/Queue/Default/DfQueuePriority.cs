@@ -7,20 +7,21 @@ using JoberMQ.Server.Abstraction.DbOpr;
 using JoberMQ.Server.Abstraction.Queue;
 using JoberMQ.Server.Factories.Queue;
 using JoberMQNEW.Server.Abstraction.Client;
+using Microsoft.AspNetCore.Hosting;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Concurrent;
+using System.IO;
 using System.Linq;
 
-namespace JoberMQ.Server.Implementation.Queue
+namespace JoberMQ.Server.Implementation.Queue.Default
 {
-    internal class DfQueueFIFO : QueueBase
+    internal class DfQueuePriority : QueueBase
     {
-        IQueueChildDataBaseFIFO ChildData;
+        IQueueChildDataBasePriority ChildData;
 
-        public DfQueueFIFO(BrokerConfigModel brokerConfig, string distributorName, string queueName, MatchTypeEnum matchType, SendTypeEnum sendType, IClientGroup clientGroup, IQueueDataBase queueDataBase, IMessageDbOpr messageDbOpr) : base(brokerConfig, distributorName, queueName, matchType, sendType, clientGroup, queueDataBase, messageDbOpr)
+        public DfQueuePriority(BrokerConfigModel brokerConfig, string distributorName, string queueName, MatchTypeEnum matchType, SendTypeEnum sendType, IClientGroup clientGroup, IQueueDataBase queueDataBase, IMessageDbOpr messageDbOpr) : base(brokerConfig, distributorName, queueName, matchType, sendType, clientGroup, queueDataBase, messageDbOpr)
         {
-            ChildData = QueueChildDataBaseFactory.CreateQueueChildDataBaseFIFO(brokerConfig.QueueChildFIFOFactory, queueDataBase);
+            ChildData = QueueChildDataBaseFactory.CreateQueueChildDataBasePriority(brokerConfig.QueueChildPriorityFactory, queueDataBase);
 
             clientGroup.ChangedAdded += ClientGroup_ChangedAdded;
             clientGroup.ChangedUpdated += ClientGroup_ChangedUpdated;
@@ -53,23 +54,22 @@ namespace JoberMQ.Server.Implementation.Queue
 
         protected override void Qperation()
         {
-            while (ChildData.Data != null)
+            foreach (var message in ChildData.Data.OrderByDescending(x => x.Value.PriorityType))
             {
-                var message = ChildData.Get();
                 IClient client;
 
                 if (MatchType == MatchTypeEnum.ClientKey)
-                    client = ClientGroup.Get(x => x.ClientKey == message.ConsumerKey);
+                    client = ClientGroup.Get(x => x.ClientKey == message.Value.ConsumerKey);
                 else
                     client = ClientGroup.Get(x => x.RowNumber > endConsumerNumber);
 
                 if (client != null)
                 {
-                    Factory.Server.JoberHubContext.Clients.Client(client.ConnectionId).SendCoreAsync("ReceiveData", new[] { JsonConvert.SerializeObject(message) }).ConfigureAwait(false);
-                    message.StatusTypeMessage = StatusTypeMessageEnum.SendClient;
-                    messageDbOpr.Update(message);
+                    Factory.Server.JoberHubContext.Clients.Client(client.ConnectionId).SendCoreAsync("ReceiveData", new[] { JsonConvert.SerializeObject(message.Value) }).ConfigureAwait(false);
+                    message.Value.StatusTypeMessage = StatusTypeMessageEnum.SendClient;
+                    messageDbOpr.Update(message.Value);
 
-                    ChildData.Remove(message.Id);
+                    ChildData.Remove(message.Value.Id);
 
                     endConsumerNumber = client.RowNumber;
                 }
