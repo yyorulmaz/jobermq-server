@@ -37,6 +37,7 @@ namespace JoberMQ.Entities.Models.Config
         internal DbOprFactoryEnum DbOprFactory => ServerConst.DbOpr.DbOprFactory;
         internal DbMemConfigModel DbMemConfig => new DbMemConfigModel();
         internal DbTextConfigModel DbTextConfig => new DbTextConfigModel();
+        internal DboCreatorFactoryEnum DboCreatorFactory => ServerConst.DbOpr.DboCreatorFactory;
         public string CompletedDataRemovesTimer => ServerConst.DbOpr.CompletedDataRemovesTimer;
     }
     public class DbMemConfigModel
