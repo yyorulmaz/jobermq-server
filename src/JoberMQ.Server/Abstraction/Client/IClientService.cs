@@ -8,7 +8,7 @@ namespace JoberMQNEW.Server.Abstraction.Client
         public ConcurrentDictionary<string, IClientGroup> ClientGroups { get; }
         public bool AddClient(IClient client);
         public bool AddClient(string clientKey, IClient client);
-        public bool AddClientGroup(string groupName);
+        public IClientGroup AddClientGroup(string groupName);
         public bool AddClientGroupChild(string groupName, IClient client);
         public bool UpdateClient(IClient client);
         public bool UpdateClient(string clientKey, IClient client);
