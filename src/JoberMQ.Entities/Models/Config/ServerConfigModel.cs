@@ -2,6 +2,7 @@
 using JoberMQ.Entities.Enums.Client;
 using JoberMQ.Entities.Enums.DbOpr;
 using JoberMQ.Entities.Enums.Distributor;
+using JoberMQ.Entities.Enums.Publisher;
 using JoberMQ.Entities.Enums.Queue;
 using JoberMQ.Entities.Enums.Schedule;
 using JoberMQ.Entities.Enums.Server;
@@ -23,6 +24,7 @@ namespace JoberMQ.Entities.Models.Config
         internal BrokerConfigModel BrokerConfig => new BrokerConfigModel();
         public HostConfigModel HostConfig => new HostConfigModel();
         public ScheduleConfigModel ScheduleConfig => new ScheduleConfigModel();
+        public PublisherConfigModel PublisherConfig => new PublisherConfigModel();
     }
 
     public class StatusCodeConfigModel
@@ -79,5 +81,9 @@ namespace JoberMQ.Entities.Models.Config
     public class ScheduleConfigModel
     {
         internal ScheduleFactoryEnum ScheduleFactory => ServerConst.Schedule.ScheduleFactory;
+    }
+    public class PublisherConfigModel
+    {
+        internal PublisherFactoryEnum PublisherFactory => ServerConst.Publisher.PublisherFactory;
     }
 }
