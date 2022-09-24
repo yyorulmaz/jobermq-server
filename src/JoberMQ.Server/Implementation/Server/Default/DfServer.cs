@@ -2,9 +2,11 @@
 using JoberMQ.Entities.Models.Config;
 using JoberMQ.Server.Abstraction.DboCreator;
 using JoberMQ.Server.Abstraction.DbOpr;
+using JoberMQ.Server.Abstraction.Schedule;
 using JoberMQ.Server.Abstraction.Server;
 using JoberMQ.Server.Factories.Client;
 using JoberMQ.Server.Factories.DbOpr;
+using JoberMQ.Server.Factories.Schedule;
 using JoberMQ.Server.Helpers;
 using JoberMQ.Server.Hubs;
 using JoberMQNEW.Server.Abstraction.Client;
@@ -55,6 +57,11 @@ namespace JoberMQ.Server.Implementation.Server.Default
         IClientService IServer.ClientService => clientService;
         #endregion
 
+        #region ClientService
+        private readonly ISchedule schedule;
+        ISchedule IServer.Schedule => schedule;
+        #endregion
+
         #region JoberHubContext
         private IHubContext<JoberHub> joberHubContext;
         IHubContext<JoberHub> IServer.JoberHubContext => joberHubContext;
@@ -67,6 +74,9 @@ namespace JoberMQ.Server.Implementation.Server.Default
             this.dbOprService = DbOprServiceFactory.CreateDbOprService(serverConfig.DbOprConfig);
             this.dboCreator = DboCreatorFactory.CreateDboCreator(serverConfig.DbOprConfig.DboCreatorFactory, dbOprService);
             this.clientService = ClientFactory.CreateClientService(serverConfig.ClientServiceFactory);
+            this.schedule = ScheduleFactory.CreateSchedule(serverConfig.ScheduleConfig.ScheduleFactory, dbOprService, dboCreator);
+
+            
         }
 
         public void Start()
@@ -96,6 +106,18 @@ namespace JoberMQ.Server.Implementation.Server.Default
             #region Text Data Folder, File created
             var textDataSetupResult = dbOprService.Setups();
             #endregion
+
+
+
+
+            //#region Schedule JobData Start
+            //var jobScheduleTimerStartResult = scheduleService.ScheduleJobDataTimerStart();
+            //if (!jobScheduleTimerStartResult)
+            //    throw new Exception(statusCodeService.GetStatusMessage("0.0.4"));
+            //#endregion
+
+
+
 
 
 

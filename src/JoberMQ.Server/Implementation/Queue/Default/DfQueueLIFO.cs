@@ -9,7 +9,7 @@ using JoberMQ.Server.Factories.Queue;
 using JoberMQNEW.Server.Abstraction.Client;
 using Newtonsoft.Json;
 
-namespace JoberMQ.Server.Implementation.Queue
+namespace JoberMQ.Server.Implementation.Queue.Default
 {
     internal class DfQueueLIFO : QueueBase
     {

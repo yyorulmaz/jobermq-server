@@ -2,7 +2,7 @@
 using JoberMQ.Entities.Models.Config;
 using JoberMQ.Server.Abstraction.DbOpr;
 using JoberMQ.Server.Abstraction.Queue;
-using JoberMQ.Server.Implementation.Queue;
+using JoberMQ.Server.Implementation.Queue.Default;
 using JoberMQNEW.Server.Abstraction.Client;
 
 namespace JoberMQ.Server.Factories.Queue

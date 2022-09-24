@@ -1,6 +1,7 @@
 ﻿using JoberMQ.Entities.Models.Config;
 using JoberMQ.Server.Abstraction.DboCreator;
 using JoberMQ.Server.Abstraction.DbOpr;
+using JoberMQ.Server.Abstraction.Schedule;
 using JoberMQ.Server.Hubs;
 using JoberMQNEW.Server.Abstraction.Client;
 using Microsoft.AspNetCore.SignalR;
@@ -16,6 +17,7 @@ namespace JoberMQ.Server.Abstraction.Server
         internal IDbOprService DbOprService { get; }
         internal IDboCreator DboCreator { get; }
         internal IClientService ClientService { get; }
+        internal ISchedule Schedule { get; }
         internal IHubContext<JoberHub> JoberHubContext { get; }
 
 

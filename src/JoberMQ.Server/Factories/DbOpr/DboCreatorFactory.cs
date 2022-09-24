@@ -1,7 +1,7 @@
 ﻿using JoberMQ.Entities.Enums.DbOpr;
 using JoberMQ.Server.Abstraction.DboCreator;
 using JoberMQ.Server.Abstraction.DbOpr;
-using JoberMQ.Server.Implementation.DboCreator;
+using JoberMQ.Server.Implementation.DboCreator.Default;
 
 namespace JoberMQ.Server.Factories.DbOpr
 {
