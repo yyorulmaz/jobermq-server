@@ -1,23 +1,20 @@
 ﻿using JoberMQ.Entities.Dbos;
+using JoberMQ.Entities.Models.Config;
 using JoberMQ.Entities.Models.Response;
 using JoberMQ.Server.Abstraction.DboCreator;
 using JoberMQ.Server.Abstraction.DbOpr;
-using JoberMQ.Server.Abstraction.Schedule;
-using System;
+using JoberMQ.Server.Abstraction.Timing;
+using JoberMQ.Server.Factories.Timing;
 
 namespace JoberMQ.Server.Implementation.Publisher.Default
 {
     internal class DfPublisherStandart : PublisherBase
     {
-        public DfPublisherStandart(IDbOprService dbOprService, IDboCreator dboCreator, ISchedule schedule) : base(dbOprService, dboCreator, schedule)
+        public DfPublisherStandart(ServerConfigModel serverConfig, IDbOprService dbOprService, IDboCreator dboCreator, ISchedule schedule) : base(serverConfig, dbOprService, dboCreator, schedule)
         {
         }
 
         public override JobDataAddResponseModel Publish(JobDataDbo jobData)
-             //=> TimingFactory.CreateTimingService(jobData.TimingType, dbOprService, dboCreatorService, scheduleService).Timing(jobData);
-        {
-
-            throw new NotImplementedException();
-        }
+             => TimingFactory.CreateTiming(serverConfig.TimingConfig.TimingFactory, jobData.TimingType, dbOprService, dboCreator, schedule).Timing(jobData);
     }
 }

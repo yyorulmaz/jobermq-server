@@ -6,6 +6,7 @@ using JoberMQ.Entities.Enums.Queue;
 using JoberMQ.Entities.Enums.Schedule;
 using JoberMQ.Entities.Enums.Server;
 using JoberMQ.Entities.Enums.StatusCode;
+using JoberMQ.Entities.Enums.Timing;
 using JoberMQ.Entities.Models.Config;
 using System.Collections.Concurrent;
 
@@ -154,9 +155,10 @@ namespace JoberMQ.Entities.Constants
             internal const int Port = 7654;
             internal const int PortSsl = 7655;
         }
-        internal class Schedule
+        internal class Timing
         {
             internal const ScheduleFactoryEnum ScheduleFactory = ScheduleFactoryEnum.Default;
+            internal const TimingFactoryEnum TimingFactory = TimingFactoryEnum.Default;
         }
         internal class Publisher
         {

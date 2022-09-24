@@ -1,10 +1,10 @@
 ﻿using JoberMQ.Entities.Enums.Schedule;
 using JoberMQ.Server.Abstraction.DboCreator;
 using JoberMQ.Server.Abstraction.DbOpr;
-using JoberMQ.Server.Abstraction.Schedule;
-using JoberMQ.Server.Implementation.Schedule.Default;
+using JoberMQ.Server.Abstraction.Timing;
+using JoberMQ.Server.Implementation.Timing.Default;
 
-namespace JoberMQ.Server.Factories.Schedule
+namespace JoberMQ.Server.Factories.Timing
 {
     internal class ScheduleFactory
     {
