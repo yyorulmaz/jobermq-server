@@ -3,12 +3,12 @@ using JoberMQ.Entities.Models.Config;
 using JoberMQ.Server.Abstraction.DboCreator;
 using JoberMQ.Server.Abstraction.DbOpr;
 using JoberMQ.Server.Abstraction.Publisher;
-using JoberMQ.Server.Abstraction.Schedule;
 using JoberMQ.Server.Abstraction.Server;
+using JoberMQ.Server.Abstraction.Timing;
 using JoberMQ.Server.Factories.Client;
 using JoberMQ.Server.Factories.DbOpr;
 using JoberMQ.Server.Factories.Publisher;
-using JoberMQ.Server.Factories.Schedule;
+using JoberMQ.Server.Factories.Timing;
 using JoberMQ.Server.Helpers;
 using JoberMQ.Server.Hubs;
 using JoberMQNEW.Server.Abstraction.Client;
@@ -76,7 +76,7 @@ namespace JoberMQ.Server.Implementation.Server.Default
             this.dbOprService = DbOprServiceFactory.CreateDbOprService(serverConfig.DbOprConfig);
             this.dboCreator = DboCreatorFactory.CreateDboCreator(serverConfig.DbOprConfig.DboCreatorFactory, dbOprService);
             this.clientService = ClientFactory.CreateClientService(serverConfig.ClientServiceFactory);
-            this.schedule = ScheduleFactory.CreateSchedule(serverConfig.ScheduleConfig.ScheduleFactory, dbOprService, dboCreator);
+            this.schedule = ScheduleFactory.CreateSchedule(serverConfig.TimingConfig.ScheduleFactory, dbOprService, dboCreator);
 
 
 
@@ -110,14 +110,11 @@ namespace JoberMQ.Server.Implementation.Server.Default
             var textDataSetupResult = dbOprService.Setups();
             #endregion
 
-
-
-
-            //#region Schedule JobData Start
-            //var jobScheduleTimerStartResult = scheduleService.ScheduleJobDataTimerStart();
-            //if (!jobScheduleTimerStartResult)
-            //    throw new Exception(statusCodeService.GetStatusMessage("0.0.4"));
-            //#endregion
+            #region Schedule JobData Start
+            var jobScheduleTimerStartResult = schedule.Start();
+            if (!jobScheduleTimerStartResult)
+                throw new Exception(statusCode.GetStatusMessage("0.0.4"));
+            #endregion
 
 
 
