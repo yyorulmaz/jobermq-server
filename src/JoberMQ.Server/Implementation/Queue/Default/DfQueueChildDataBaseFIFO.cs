@@ -3,15 +3,15 @@ using JoberMQ.Server.Abstraction.Queue;
 using System;
 using System.Collections.Concurrent;
 
-namespace JoberMQ.Server.Implementation.Queue
+namespace JoberMQ.Server.Implementation.Queue.Default
 {
-    internal class DfQueueChildDataBaseLIFO : IQueueChildDataBaseLIFO
+    internal class DfQueueChildDataBaseFIFO : IQueueChildDataBaseFIFO
     {
         #region Constructor
-        public DfQueueChildDataBaseLIFO(IQueueDataBase queueDataBase)
+        public DfQueueChildDataBaseFIFO(IQueueDataBase queueDataBase)
         {
             this.queueDataBase = queueDataBase;
-            this.data = new ConcurrentStack<MessageDbo>();
+            data = new ConcurrentQueue<MessageDbo>();
         }
         #endregion
 
@@ -20,8 +20,8 @@ namespace JoberMQ.Server.Implementation.Queue
         public IQueueDataBase QueueDataBase => queueDataBase;
 
 
-        private readonly ConcurrentStack<MessageDbo> data;
-        public ConcurrentStack<MessageDbo> Data => data;
+        private readonly ConcurrentQueue<MessageDbo> data;
+        public ConcurrentQueue<MessageDbo> Data => data;
         #endregion
 
         #region Count
@@ -43,7 +43,7 @@ namespace JoberMQ.Server.Implementation.Queue
             try
             {
                 queueDataBase.Add(value.Id, value);
-                data.Push(value);
+                data.Enqueue(value);
                 ChangedAdded?.Invoke(value);
                 return true;
             }
@@ -55,7 +55,7 @@ namespace JoberMQ.Server.Implementation.Queue
         public MessageDbo Remove(Guid key)
         {
             queueDataBase.Remove(key);
-            var result = data.TryPeek(out var value);
+            var result = data.TryDequeue(out var value);
             if (result)
                 ChangedRemoved?.Invoke(value);
             return value;

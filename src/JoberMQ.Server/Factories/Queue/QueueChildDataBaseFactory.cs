@@ -1,6 +1,6 @@
 ﻿using JoberMQ.Entities.Enums.Queue;
 using JoberMQ.Server.Abstraction.Queue;
-using JoberMQ.Server.Implementation.Queue;
+using JoberMQ.Server.Implementation.Queue.Default;
 
 namespace JoberMQ.Server.Factories.Queue
 {

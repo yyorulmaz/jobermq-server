@@ -3,11 +3,11 @@ using JoberMQ.Entities.Enums.Distributor;
 using JoberMQ.Entities.Models.Response;
 using System;
 
-namespace JoberMQ.Server.Implementation.Distributor
+namespace JoberMQ.Server.Implementation.Distributor.Default
 {
-    internal class DfDistributorEvent : DfDistributorBase
+    internal class DfDistributorFilter : DistributorBase
     {
-        public DfDistributorEvent(string name, DistributorTypeEnum type) : base(name, type)
+        public DfDistributorFilter(string name, DistributorTypeEnum type) : base(name, type)
         {
         }
 
