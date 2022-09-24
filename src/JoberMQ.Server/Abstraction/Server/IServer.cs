@@ -1,4 +1,5 @@
 ﻿using JoberMQ.Entities.Models.Config;
+using JoberMQ.Server.Abstraction.DboCreator;
 using JoberMQ.Server.Abstraction.DbOpr;
 using JoberMQ.Server.Hubs;
 using JoberMQNEW.Server.Abstraction.Client;
@@ -13,6 +14,7 @@ namespace JoberMQ.Server.Abstraction.Server
         public ServerConfigModel ServerConfig { get; }
         internal IStatusCode StatusCode { get; }
         internal IDbOprService DbOprService { get; }
+        internal IDboCreator DboCreator { get; }
         internal IClientService ClientService { get; }
         internal IHubContext<JoberHub> JoberHubContext { get; }
 

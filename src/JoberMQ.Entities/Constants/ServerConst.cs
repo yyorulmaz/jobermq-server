@@ -30,7 +30,7 @@ namespace JoberMQ.Entities.Constants
             internal const DbMemFactoryEnum DbMemFactory = DbMemFactoryEnum.Default;
             internal const DbMemDataFactoryEnum DbMemDataFactory = DbMemDataFactoryEnum.Data;
             internal const DbTextFactoryEnum DbTextFactory = DbTextFactoryEnum.Default;
-
+            internal const DboCreatorFactoryEnum DboCreatorFactory = DboCreatorFactoryEnum.Default;
 
             internal const string CompletedDataRemovesTimer = "0 */5 * ? * *";
 
