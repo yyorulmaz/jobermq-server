@@ -1,11 +1,11 @@
 ﻿using JoberMQ.Server.Abstraction.DboCreator;
 using JoberMQ.Server.Abstraction.DbOpr;
-using JoberMQ.Server.Abstraction.Schedule;
+using JoberMQ.Server.Abstraction.Timing;
 using TimerFramework;
 
-namespace JoberMQ.Server.Implementation.Schedule
+namespace JoberMQ.Server.Implementation.Timing
 {
-    internal abstract class ScheduleBase: ISchedule
+    internal abstract class ScheduleBase : ISchedule
     {
         protected ITimer jobDataTimer;
         protected readonly IDbOprService dbOprService;

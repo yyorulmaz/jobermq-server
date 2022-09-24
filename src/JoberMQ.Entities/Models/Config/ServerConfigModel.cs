@@ -7,6 +7,7 @@ using JoberMQ.Entities.Enums.Queue;
 using JoberMQ.Entities.Enums.Schedule;
 using JoberMQ.Entities.Enums.Server;
 using JoberMQ.Entities.Enums.StatusCode;
+using JoberMQ.Entities.Enums.Timing;
 using System;
 using System.Collections.Concurrent;
 
@@ -23,7 +24,7 @@ namespace JoberMQ.Entities.Models.Config
         public DbOprConfigModel DbOprConfig => new DbOprConfigModel();
         internal BrokerConfigModel BrokerConfig => new BrokerConfigModel();
         public HostConfigModel HostConfig => new HostConfigModel();
-        public ScheduleConfigModel ScheduleConfig => new ScheduleConfigModel();
+        public TimingConfigModel TimingConfig => new TimingConfigModel();
         public PublisherConfigModel PublisherConfig => new PublisherConfigModel();
     }
 
@@ -78,9 +79,10 @@ namespace JoberMQ.Entities.Models.Config
         public int Port => ServerConst.Hosting.Port;
         public int PortSsl => ServerConst.Hosting.PortSsl;
     }
-    public class ScheduleConfigModel
+    public class TimingConfigModel
     {
-        internal ScheduleFactoryEnum ScheduleFactory => ServerConst.Schedule.ScheduleFactory;
+        internal ScheduleFactoryEnum ScheduleFactory => ServerConst.Timing.ScheduleFactory;
+        internal TimingFactoryEnum TimingFactory => ServerConst.Timing.TimingFactory;
     }
     public class PublisherConfigModel
     {

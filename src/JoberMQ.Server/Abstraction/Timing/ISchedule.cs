@@ -1,6 +1,6 @@
 ﻿using TimerFramework;
 
-namespace JoberMQ.Server.Abstraction.Schedule
+namespace JoberMQ.Server.Abstraction.Timing
 {
     internal interface ISchedule
     {
