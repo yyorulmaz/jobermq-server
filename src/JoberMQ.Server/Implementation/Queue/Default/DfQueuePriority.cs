@@ -59,7 +59,7 @@ namespace JoberMQ.Server.Implementation.Queue.Default
             {
                 IClient client;
 
-                if (MatchType == MatchTypeEnum.ClientKey)
+                if (MatchType == MatchTypeEnum.Special)
                     client = ClientGroup.Get(x => x.ClientKey == message.Value.ConsumerKey);
                 else
                     client = ClientGroup.Get(x => x.RowNumber > endConsumerNumber);

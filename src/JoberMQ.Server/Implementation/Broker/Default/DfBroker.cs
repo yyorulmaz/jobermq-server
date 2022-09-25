@@ -60,18 +60,35 @@ namespace JoberMQ.Server.Implementation.Broker.Default
             }
 
 
+            foreach (var item in serverConfig.BrokerConfig.DefaultDistributorConfigDatas)
+            {
+                var checkDistributor = distributors.Get(item.Key);
+                if (checkDistributor == null)
+                {
+                    var dis = DistributorFactory.CreateDistributor(serverConfig.BrokerConfig.DistributorFactory, item.Value.DistributorKey, item.Value.DistributorType, item.Value.PermissionType, item.Value.IsDurable);
+                    distributors.Add(item.Value.DistributorKey, dis);
+                }
+            }
 
 
+            foreach (var item in serverConfig.BrokerConfig.DefaultQueueConfigDatas)
+            {
+                var checkQueue = queues.Get(item.Key);
+                if (checkQueue == null)
+                {
+                    var clientGroup = clientService.AddClientGroup(item.Value.QueueKey);
+                    var que = QueueFactory.CreateQueue(serverConfig.BrokerConfig, item.Value.QueueKey, item.Value.MatchType, item.Value.SendType, item.Value.PermissionType, item.Value.IsDurable, clientGroup, dbOprService.Message);
+                    queues.Add(item.Value.QueueKey, que);
+                }
+            }
 
-            // default ddistributorlar ayağa kalkmamışsa oluştur
-            // default queue lar ayağa kalkmamışsa oluştur
 
-
-            // kuyruk mesajlarını kuyruklara aktar
-
-
-            // client gruplarını nasıl olacak. Bir client login olduğunda o işlemler kontrol edilir
-
+            // todo filitreyi düzenle burası yanlış olacak büyük ihtimalle
+            var messages = dbOprService.Message.GetAll(x=>x.IsActive == true && x.IsDelete ==false && x.StatusTypeMessage == Entities.Enums.Status.StatusTypeMessageEnum.None);
+            foreach (var item in messages)
+            {
+                QueueAdd(item);
+            }
 
             return true;
         }
