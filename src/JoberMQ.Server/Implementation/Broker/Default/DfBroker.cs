@@ -104,7 +104,7 @@ namespace JoberMQ.Server.Implementation.Broker.Default
 
         public bool QueueCreate(string distributorName, string queueKey, MatchTypeEnum matchType, SendTypeEnum sendType, bool isDurable)
         {
-            // todo kuşullar sağlandımı kontrol
+            // todo kuşullar sağlandımı kontrol (permission kontrol, bu kuyruk var mı vb.)
             var clientGroup = clientService.AddClientGroup(queueKey);
 
             var queue = QueueFactory.CreateQueue(
@@ -126,6 +126,8 @@ namespace JoberMQ.Server.Implementation.Broker.Default
             // todo kuşullar sağlandımı kontrol
             var distributorName = queues.Get(message.QueueKey).DistributorName;
             var distributor = distributors.Get(distributorName);
+
+
             return distributor.QueueAdd(message);
 
 

@@ -21,6 +21,11 @@ namespace JoberMQ.Entities.Base.Dbo
         public DateTime? UpdateDate { get; set; }
 
 
+        public Guid TransactionId { get; set; }
+        public bool IsTransactionCompleted { get; set; } = false;
+        public DateTime TransactionDate { get; set; }
+
+
         public DateTime ProcessTime { get; set; }
         public DataStatusTypeEnum DataStatusType { get; set; }
     }

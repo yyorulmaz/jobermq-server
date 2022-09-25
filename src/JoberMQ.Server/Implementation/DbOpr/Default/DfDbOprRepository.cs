@@ -38,6 +38,7 @@ namespace JoberMQ.Server.Implementation.DbOpr.Default
             dbText.WriteLine(dbo);
             dbMem.Add(dbo.Id, dbo);
             ChangedAdded?.Invoke(dbo);
+
             return true;
         }
         public virtual bool Update(D dbo)
@@ -50,6 +51,7 @@ namespace JoberMQ.Server.Implementation.DbOpr.Default
             dbText.WriteLine(dbo);
             dbMem.Update(dbo.Id, dbo);
             ChangedUpdated?.Invoke(dbo);
+
             return true;
         }
         public virtual bool Delete(D dbo)
@@ -61,7 +63,23 @@ namespace JoberMQ.Server.Implementation.DbOpr.Default
             dbText.WriteLine(dbo);
             dbMem.Remove(dbo.Id);
             ChangedRemoved?.Invoke(dbo);
+
             return true;
+        }
+
+        public bool Commit(D dbo)
+        {
+            dbo.IsTransactionCompleted = true;
+            dbo.TransactionDate = DateHelper.GetUniversalNow();
+
+            return Add(dbo);
+        }
+        public bool Rollback(D dbo)
+        {
+            dbo.IsTransactionCompleted = false;
+            dbo.TransactionDate = DateHelper.GetUniversalNow();
+
+            return Delete(dbo);
         }
         #endregion
 

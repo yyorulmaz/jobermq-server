@@ -19,6 +19,9 @@ namespace JoberMQ.Server.Abstraction.DbOpr
         public bool Add(D dbo);
         public bool Update(D dbo);
         public bool Delete(D dbo);
+
+        public bool Commit(D dbo);
+        public bool Rollback(D dbo);
         #endregion
 
         #region Changed

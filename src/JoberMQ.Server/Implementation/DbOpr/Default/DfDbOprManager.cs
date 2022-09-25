@@ -68,6 +68,9 @@ namespace JoberMQ.Server.Implementation.DbOpr.Default
         }
         private void CompletedDataRemoves(TimerModel timer)
         {
+            // TODO BURAYI KONTROL ET. tamamlanmış jobları silmeliyim
+            // veya DataStatusTypeEnum u Delete olan jobları silmeliyim
+            // bu durumumları yaparken ilişkili tablolarıda unutma, yani JobData silinmişse veya JobData tamamlanmış ise buna balı Job ve Message tablolarıda var
             if (isRuningCompletedDataRemove)
                 return;
 
