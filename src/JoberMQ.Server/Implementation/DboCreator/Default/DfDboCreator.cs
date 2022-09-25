@@ -159,6 +159,103 @@ namespace JoberMQ.Server.Implementation.DboCreator.Default
 
             return messageDbo;
         }
+        public List<MessageDbo> MessageDboCreates(JobDbo jobDbo)
+        {
+            var messageDbos = new List<MessageDbo>();
+            var creatorJobData = dbOprService.JobData.Get(jobDbo.CreatedJobDataId);
+
+            foreach (var item in jobDbo.Details)
+            {
+                var messageDbo = new MessageDbo();
+
+                #region 0 - BASE
+                messageDbo.Id = Guid.NewGuid();
+                #endregion
+
+                #region 1 - PRODUCER
+                messageDbo.ProducerClientKey = creatorJobData.ProducerClientKey;
+                messageDbo.ProducerClientGroupKey = creatorJobData.ProducerClientGroupKey;
+                #endregion
+
+                #region 3 - MESSAGE
+
+                var jobDataDetailDbo = creatorJobData.Details.Where(x => x.Id == item.CreatedJobDataDetailId).FirstOrDefault();
+
+                #region 3.1 - MESSAGE TYPE
+                messageDbo.MessageType = jobDataDetailDbo.MessageType;
+                #endregion
+
+                #region 3.2 - MESSAGE 
+                messageDbo.Message = jobDataDetailDbo.Message;
+                #endregion
+
+                #region 3.3 - ROUTING 
+                messageDbo.DistributorKey = jobDataDetailDbo.DistributorKey;
+                messageDbo.RoutingKey = jobDataDetailDbo.RoutingKey;
+                messageDbo.ConsumerKey = jobDataDetailDbo.ConsumerKey;
+                messageDbo.StartsWith = jobDataDetailDbo.StartsWith;
+                messageDbo.Contains = jobDataDetailDbo.Contains;
+                messageDbo.EndsWith = jobDataDetailDbo.EndsWith;
+                #endregion
+
+                #region 3.4 - RESULT ROUTING 
+                messageDbo.IsResult = jobDataDetailDbo.IsResult;
+                messageDbo.ResultDistributorKey = jobDataDetailDbo.ResultDistributorKey;
+                messageDbo.ResultRoutingKey = jobDataDetailDbo.ResultRoutingKey;
+                messageDbo.ResultConsumerKey = jobDataDetailDbo.ResultConsumerKey;
+                messageDbo.ResultStartsWith = jobDataDetailDbo.ResultStartsWith;
+                messageDbo.ResultContains = jobDataDetailDbo.ResultContains;
+                messageDbo.ResultEndsWith = jobDataDetailDbo.ResultEndsWith;
+                #endregion
+
+                #region 3.5 - OPTION
+                messageDbo.Name = jobDataDetailDbo.Name;
+                messageDbo.Description = jobDataDetailDbo.Description;
+                messageDbo.GeneralData = jobDataDetailDbo.GeneralData;
+                messageDbo.PriorityType = jobDataDetailDbo.PriorityType;
+                #endregion
+
+                #region 3.6 - CONSUMING
+                messageDbo.IsConsumingRetryPause = jobDataDetailDbo.IsConsumingRetryPause;
+                messageDbo.ConsumingRetryMaxCount = jobDataDetailDbo.ConsumingRetryMaxCount;
+                messageDbo.ConsumingRetryCounter = jobDataDetailDbo.ConsumingRetryCounter;
+                messageDbo.ConsumingClientId = null;
+                messageDbo.ConsumingClientGroupKey = null;
+                #endregion
+
+                #endregion
+
+                #region 5 - TIMING
+                messageDbo.TriggerGroupsId = jobDbo.TriggerGroupsId;
+                #endregion
+
+                #region 7 - STATUS
+                messageDbo.IsError = false;
+                messageDbo.StatusTypeMessage = StatusTypeMessageEnum.None;
+                messageDbo.TempAgainDate = null;
+                #endregion
+
+                #region 8 - CLONE CREATED
+                messageDbo.CreatedJobDataId = jobDbo.CreatedJobDataId;
+                messageDbo.CreatedJobDataDetailId = item.CreatedJobDataDetailId;
+                messageDbo.CreatedJobId = jobDbo.Id;
+                messageDbo.CreatedJobDetailId = item.Id;
+                #endregion
+
+                #region 9 - GROUP
+                //todo kontrol
+                //messageDbo.EventGroupsId = eventGroupId;
+                #endregion
+
+                messageDbos.Add(messageDbo);
+            }
+
+            return messageDbos;
+        }
+
+
+
+
         public List<JobDbo> CloneJobDataToJobs(JobDataDbo jobData)
         {
             var baseJobs = new List<JobDataDbo>();

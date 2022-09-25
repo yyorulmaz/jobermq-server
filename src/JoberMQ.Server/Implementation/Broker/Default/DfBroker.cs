@@ -120,12 +120,13 @@ namespace JoberMQ.Server.Implementation.Broker.Default
             return true;
         }
 
+        // todo bu method artık JobDataAddResponseModel dönemez, çünkü burası artık mesaj
         public JobDataAddResponseModel QueueAdd(MessageDbo message)
         {
-            //// todo kuşullar sağlandımı kontrol
-            //var distributorName = queues.Get(message.QueueKey).DistributorName;
-            //var distributor = distributors.Get(distributorName);
-            //return distributor.QueueAdd(message);
+            // todo kuşullar sağlandımı kontrol
+            var distributorName = queues.Get(message.QueueKey).DistributorName;
+            var distributor = distributors.Get(distributorName);
+            return distributor.QueueAdd(message);
 
 
             return null;

@@ -14,8 +14,21 @@ namespace JoberMQ.Server.Implementation.Timing.Default
 
         public override JobDataAddResponseModel Timing(JobDataDbo jobData)
         {
-            //todo yap
-            throw new NotImplementedException();
+            dbOprService.JobData.Add(jobData);
+            var createdJobDbo = dboCreator.JobDboCreate(jobData);
+            dbOprService.Job.Add(createdJobDbo);
+
+            var createdMessageDbos = dboCreator.MessageDboCreates(createdJobDbo);
+
+            foreach (var item in createdMessageDbos)
+            {
+                // burada tek tek brokıra göndericem
+                // veya toplu gönderme içinde bir method yazıcam
+            }
+
+
+
+            return null;
         }
     }
 }

@@ -8,6 +8,7 @@ namespace JoberMQ.Server.Abstraction.DboCreator
     {
         public JobDbo JobDboCreate(JobDataDbo jobDataDbo);
         public MessageDbo MessageDboCreate(JobDataDbo jobDataDbo, JobDataDetailDbo jobDataDetailDbo, JobDbo jobDbo, JobDetailDbo jobDetailDbo, Guid? eventGroupId);
+        public List<MessageDbo> MessageDboCreates(JobDbo jobDbo);
         public List<JobDbo> CloneJobDataToJobs(JobDataDbo jobData);
 
     }
