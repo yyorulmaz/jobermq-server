@@ -17,6 +17,7 @@ namespace JoberMQ.Entities.Constants
     {
         internal const ServerFactoryEnum ServerFactory = ServerFactoryEnum.Default;
         internal const ClientFactoryEnum ClientFactory = ClientFactoryEnum.Default;
+        internal const ClientGroupFactoryEnum ClientGroupFactory = ClientGroupFactoryEnum.Default;
         internal const ClientServiceFactoryEnum ClientServiceFactory = ClientServiceFactoryEnum.Default;
 
         internal class StatusCode

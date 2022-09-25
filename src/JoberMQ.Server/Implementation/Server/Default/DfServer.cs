@@ -81,7 +81,7 @@ namespace JoberMQ.Server.Implementation.Server.Default
             this.dboCreator = DboCreatorFactory.CreateDboCreator(serverConfig.DbOprConfig.DboCreatorFactory, dbOprService);
             this.clientService = ClientFactory.CreateClientService(serverConfig.ClientServiceFactory);
             this.schedule = ScheduleFactory.CreateSchedule(serverConfig.TimingConfig.ScheduleFactory, dbOprService, dboCreator);
-            this.broker = BrokerFactory.CreateBroker(serverConfig, clientService);
+            this.broker = BrokerFactory.CreateBroker(serverConfig, dbOprService,clientService);
 
 
 

@@ -41,6 +41,7 @@ namespace JoberMQ.Server.Implementation.Broker.Default
             distributors = new ConcurrentDictionaryRepository<string, IDistributor>(InMemoryDistributor.DistributorDatas);
             queues = new ConcurrentDictionaryRepository<string, IQueue>(InMemoryQueue.QueuesDatas);
 
+
             var dbDistributors = dbOprService.Distributor.GetAll(x => x.IsActive == true);
             foreach (var item in dbDistributors)
             {
@@ -48,12 +49,13 @@ namespace JoberMQ.Server.Implementation.Broker.Default
                 distributors.Add(item.DistributorKey, dis);
             }
 
+
             var dbQueues = dbOprService.Queue.GetAll(x => x.IsActive == true);
             foreach (var item in dbQueues)
             {
-                //var clientGroup = 
-                //var que = QueueFactory.CreateQueue(serverConfig.BrokerConfig, item.QueueKey, item.MatchType, item.SendType, item.);
-                //queues.Add(item.QueueKey, que);
+                var clientGroup = clientService.AddClientGroup(item.QueueKey);
+                var que = QueueFactory.CreateQueue(serverConfig.BrokerConfig, item.QueueKey, item.MatchType, item.SendType, clientGroup, dbOprService.Message);
+                queues.Add(item.QueueKey, que);
             }
 
 

@@ -18,6 +18,7 @@ namespace JoberMQ.Entities.Models.Config
     {
         internal ServerFactoryEnum ServerFactory => ServerConst.ServerFactory;
         internal ClientFactoryEnum ClientFactory => ServerConst.ClientFactory;
+        internal ClientGroupFactoryEnum ClientGroupFactory => ServerConst.ClientGroupFactory;
         internal ClientServiceFactoryEnum ClientServiceFactory => ServerConst.ClientServiceFactory;
 
         public StatusCodeConfigModel StatusCodeConfig => new StatusCodeConfigModel();

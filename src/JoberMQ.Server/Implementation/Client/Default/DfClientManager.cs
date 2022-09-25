@@ -1,4 +1,6 @@
-﻿using JoberMQNEW.Server.Abstraction.Client;
+﻿using JoberMQ.Entities.Models.Config;
+using JoberMQ.Server.Factories.Client;
+using JoberMQNEW.Server.Abstraction.Client;
 using System.Collections.Concurrent;
 using System.Linq;
 
@@ -6,15 +8,19 @@ namespace JoberMQ.Server.Implementation.Client.Default
 {
     internal class DfClientManager : IClientService
     {
+        private readonly ServerConfigModel serverConfig;
         private readonly ConcurrentDictionary<string, IClient> clients;
         private readonly ConcurrentDictionary<string, IClientGroup> clientGroups;
-        public DfClientManager(ConcurrentDictionary<string, IClient> clients, ConcurrentDictionary<string, IClientGroup> clientGroups)
+        public DfClientManager(ServerConfigModel serverConfig, ConcurrentDictionary<string, IClient> clients, ConcurrentDictionary<string, IClientGroup> clientGroups)
         {
+            this.serverConfig = serverConfig;
             this.clients = clients;
             this.clientGroups = clientGroups;
         }
         public ConcurrentDictionary<string, IClient> Clients => clients;
         public ConcurrentDictionary<string, IClientGroup> ClientGroups => clientGroups;
+
+
         public bool AddClient(IClient client) => AddClient(client.ClientKey, client);
         public bool AddClient(string clientKey, IClient client) => clients.TryAdd(clientKey, client);
         public IClientGroup AddClientGroup(string groupName)
@@ -22,7 +28,7 @@ namespace JoberMQ.Server.Implementation.Client.Default
             var checkClientGroup = CheckGroup(groupName);
             if (checkClientGroup == null)
             {
-                checkClientGroup = new DfClientGroup(groupName);
+                checkClientGroup = ClientFactory.CreateClientGroup(serverConfig.ClientGroupFactory, groupName);
                 clientGroups.TryAdd(groupName, checkClientGroup);
             }
 
@@ -32,6 +38,8 @@ namespace JoberMQ.Server.Implementation.Client.Default
         {
             return clientGroups.Where(x => x.Key == groupName).FirstOrDefault().Value.Add(client);
         }
+
+
         public bool UpdateClient(IClient client) => UpdateClient(client.ClientKey, client);
         public bool UpdateClient(string clientKey, IClient client)
         {
@@ -45,6 +53,8 @@ namespace JoberMQ.Server.Implementation.Client.Default
 
             return clients.TryUpdate(clientKey, client, null);
         }
+
+
         public bool RemoveClient(IClient client) => RemoveClient(client.ClientKey);
         public bool RemoveClient(string clientKey) => clients.TryRemove(clientKey, out var vvvvv);
         public bool RemoveClientAndChild(IClient client) => RemoveClientAndChild(client.ClientKey);
