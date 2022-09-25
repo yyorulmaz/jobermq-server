@@ -79,7 +79,7 @@ namespace JoberMQ.Server.Implementation.Server.Default
             this.statusCode = StatusCodeFactory.CreateStatusCodeService(serverConfig.StatusCodeConfig.StatusCodeMessageLanguage);
             this.dbOprService = DbOprServiceFactory.CreateDbOprService(serverConfig.DbOprConfig);
             this.dboCreator = DboCreatorFactory.CreateDboCreator(serverConfig.DbOprConfig.DboCreatorFactory, dbOprService);
-            this.clientService = ClientFactory.CreateClientService(serverConfig.ClientServiceFactory);
+            this.clientService = ClientFactory.CreateClientService(serverConfig);
             this.schedule = ScheduleFactory.CreateSchedule(serverConfig.TimingConfig.ScheduleFactory, dbOprService, dboCreator);
             this.broker = BrokerFactory.CreateBroker(serverConfig, dbOprService,clientService);
 

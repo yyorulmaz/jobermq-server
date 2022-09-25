@@ -1,4 +1,5 @@
 ﻿using JoberMQ.Entities.Dbos;
+using JoberMQ.Entities.Enums.Permission;
 using JoberMQ.Entities.Enums.Queue;
 using JoberMQ.Entities.Enums.Status;
 using JoberMQ.Entities.Models.Config;
@@ -19,7 +20,7 @@ namespace JoberMQ.Server.Implementation.Queue.Default
     {
         IQueueChildDataBasePriority ChildData;
 
-        public DfQueuePriority(BrokerConfigModel brokerConfig, string queueName, MatchTypeEnum matchType, SendTypeEnum sendType, IClientGroup clientGroup, IQueueDataBase queueDataBase, IMessageDbOpr messageDbOpr) : base(brokerConfig, queueName, matchType, sendType, clientGroup, queueDataBase, messageDbOpr)
+        public DfQueuePriority(BrokerConfigModel brokerConfig, string queueKey, MatchTypeEnum matchType, SendTypeEnum sendType, PermissionTypeEnum permissionType, bool isDurable, IClientGroup clientGroup, IQueueDataBase queueDataBase, IMessageDbOpr messageDbOpr) : base(brokerConfig, queueKey, matchType, sendType, permissionType, isDurable, clientGroup, queueDataBase, messageDbOpr)
         {
             ChildData = QueueChildDataBaseFactory.CreateQueueChildDataBasePriority(brokerConfig.QueueChildPriorityFactory, queueDataBase);
 

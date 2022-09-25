@@ -14,6 +14,7 @@ using System.Collections.Concurrent;
 using System;
 using JoberMQNEW.Server.Data;
 using JoberMQ.Server.Abstraction.DbOpr;
+using JoberMQ.Entities.Enums.Permission;
 
 namespace JoberMQ.Server.Implementation.Broker.Default
 {
@@ -45,7 +46,7 @@ namespace JoberMQ.Server.Implementation.Broker.Default
             var dbDistributors = dbOprService.Distributor.GetAll(x => x.IsActive == true);
             foreach (var item in dbDistributors)
             {
-                var dis = DistributorFactory.CreateDistributor(serverConfig.BrokerConfig.DistributorFactory, item.DistributorKey, item.DistributorType);
+                var dis = DistributorFactory.CreateDistributor(serverConfig.BrokerConfig.DistributorFactory, item.DistributorKey, item.DistributorType, item.PermissionType, item.IsDurable);
                 distributors.Add(item.DistributorKey, dis);
             }
 
@@ -54,7 +55,7 @@ namespace JoberMQ.Server.Implementation.Broker.Default
             foreach (var item in dbQueues)
             {
                 var clientGroup = clientService.AddClientGroup(item.QueueKey);
-                var que = QueueFactory.CreateQueue(serverConfig.BrokerConfig, item.QueueKey, item.MatchType, item.SendType, clientGroup, dbOprService.Message);
+                var que = QueueFactory.CreateQueue(serverConfig.BrokerConfig, item.QueueKey, item.MatchType, item.SendType, item.PermissionType, item.IsDurable, clientGroup, dbOprService.Message);
                 queues.Add(item.QueueKey, que);
             }
 
@@ -63,8 +64,6 @@ namespace JoberMQ.Server.Implementation.Broker.Default
 
 
             // default ddistributorlar ayağa kalkmamışsa oluştur
-
-
             // default queue lar ayağa kalkmamışsa oluştur
 
 
@@ -78,27 +77,28 @@ namespace JoberMQ.Server.Implementation.Broker.Default
         }
 
 
-        public bool DistributorCreate(string name, DistributorTypeEnum type)
+        public bool DistributorCreate(string distributorKey, DistributorTypeEnum distributorType, bool isDurable)
         {
             // todo kuşullar sağlandımı kontrol
-            var distributor = DistributorFactory.CreateDistributor(serverConfig.BrokerConfig.DistributorFactory, name, type);
-            distributors.Add(name, distributor);
+            var distributor = DistributorFactory.CreateDistributor(serverConfig.BrokerConfig.DistributorFactory, distributorKey, distributorType, PermissionTypeEnum.All, isDurable);
+            distributors.Add(distributorKey, distributor);
             return true;
         }
 
-        public bool QueueCreate(string distributorName, string queueName, MatchTypeEnum matchType, SendTypeEnum sendType)
+        public bool QueueCreate(string distributorName, string queueKey, MatchTypeEnum matchType, SendTypeEnum sendType, bool isDurable)
         {
             // todo kuşullar sağlandımı kontrol
-            var clientGroup = clientService.AddClientGroup(queueName);
+            var clientGroup = clientService.AddClientGroup(queueKey);
 
             var queue = QueueFactory.CreateQueue(
                 serverConfig.BrokerConfig,
-                distributorName,
-                queueName,
+                queueKey,
                 matchType,
                 sendType,
+                PermissionTypeEnum.All,
+                isDurable,
                 clientGroup,
-                Factory.Server.DbOprService.Message);
+                dbOprService.Message);
 
             return true;
         }

@@ -2,7 +2,8 @@
 {
     public enum MatchTypeEnum
     {
-        ClientKey = 1,
-        ClientGroupKey = 2
+        Special = 1,
+        Group = 2,
+        Free = 3
     }
 }

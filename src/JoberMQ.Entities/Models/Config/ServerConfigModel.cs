@@ -3,6 +3,7 @@ using JoberMQ.Entities.Enums.Broker;
 using JoberMQ.Entities.Enums.Client;
 using JoberMQ.Entities.Enums.DbOpr;
 using JoberMQ.Entities.Enums.Distributor;
+using JoberMQ.Entities.Enums.Permission;
 using JoberMQ.Entities.Enums.Publisher;
 using JoberMQ.Entities.Enums.Queue;
 using JoberMQ.Entities.Enums.Schedule;
@@ -75,6 +76,25 @@ namespace JoberMQ.Entities.Models.Config
         internal QueueChildFIFOFactoryEnum QueueChildFIFOFactory => ServerConst.Broker.QueueChildFIFOFactory;
         internal QueueChildLIFOFactoryEnum QueueChildLIFOFactory => ServerConst.Broker.QueueChildLIFOFactory;
         internal DistributorFactoryEnum DistributorFactory => ServerConst.Broker.DistributorFactory;
+    
+        internal ConcurrentDictionary<string, DefaultDistributorConfigModel> DefaultDistributorConfigDatas = ServerConst.Broker.DefaultDistributorConfigDatas;
+        internal ConcurrentDictionary<string, DefaultQueueConfigModel> DefaultQueueConfigDatas = ServerConst.Broker.DefaultQueueConfigDatas;
+
+    }
+    public class DefaultDistributorConfigModel
+    {
+        public string DistributorKey { get; set; }
+        public DistributorTypeEnum DistributorType { get; set; }
+        public PermissionTypeEnum PermissionType { get; set; }
+        public bool IsDurable { get; set; }
+    }
+    public class DefaultQueueConfigModel
+    {
+        public string QueueKey { get; set; }
+        public MatchTypeEnum MatchType { get; set; }
+        public SendTypeEnum SendType { get; set; }
+        public PermissionTypeEnum PermissionType { get; set; }
+        public bool IsDurable { get; set; }
     }
     public class HostConfigModel
     {

@@ -2,6 +2,7 @@
 using JoberMQ.Entities.Enums.Client;
 using JoberMQ.Entities.Enums.DbOpr;
 using JoberMQ.Entities.Enums.Distributor;
+using JoberMQ.Entities.Enums.Permission;
 using JoberMQ.Entities.Enums.Publisher;
 using JoberMQ.Entities.Enums.Queue;
 using JoberMQ.Entities.Enums.Schedule;
@@ -150,7 +151,40 @@ namespace JoberMQ.Entities.Constants
             internal const QueueChildFIFOFactoryEnum QueueChildFIFOFactory = QueueChildFIFOFactoryEnum.Default;
             internal const QueueChildLIFOFactoryEnum QueueChildLIFOFactory = QueueChildLIFOFactoryEnum.Default;
             internal const DistributorFactoryEnum DistributorFactory = DistributorFactoryEnum.Default;
-            
+
+            internal static ConcurrentDictionary<string, DefaultDistributorConfigModel> DefaultDistributorConfigDatas = DefaultDistributorConfigData();
+            private static ConcurrentDictionary<string, DefaultDistributorConfigModel> DefaultDistributorConfigData()
+            {
+                var clientDatas = new ConcurrentDictionary<string, DefaultDistributorConfigModel>();
+
+                clientDatas.TryAdd("dis.default.direct", new DefaultDistributorConfigModel
+                {
+                    DistributorKey = "dis.default.direct",
+                    DistributorType = DistributorTypeEnum.Direct,
+                    PermissionType = PermissionTypeEnum.All,
+                    IsDurable = true
+                });
+
+                return clientDatas;
+            }
+
+
+            internal static ConcurrentDictionary<string, DefaultQueueConfigModel> DefaultQueueConfigDatas = DefaultQueueConfigData();
+            private static ConcurrentDictionary<string, DefaultQueueConfigModel> DefaultQueueConfigData()
+            {
+                var clientDatas = new ConcurrentDictionary<string, DefaultQueueConfigModel>();
+
+                clientDatas.TryAdd("queue.default.special", new DefaultQueueConfigModel
+                {
+                    QueueKey = "queue.default.special",
+                    MatchType = MatchTypeEnum.Special,
+                    SendType = SendTypeEnum.FIFO,
+                    PermissionType = PermissionTypeEnum.All,
+                    IsDurable = true
+                });
+
+                return clientDatas;
+            }
         }
         internal class Hosting
         {
