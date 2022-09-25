@@ -1,13 +1,13 @@
 ﻿using JoberMQ.Entities.Dbos;
 using JoberMQ.Entities.Models.Config;
+using JoberMQ.Server.Abstraction.Broker;
 using JoberMQ.Server.Abstraction.DboCreator;
 using JoberMQ.Server.Abstraction.DbOpr;
-using JoberMQ.Server.Abstraction.Publisher;
 using JoberMQ.Server.Abstraction.Server;
 using JoberMQ.Server.Abstraction.Timing;
+using JoberMQ.Server.Factories.Broker;
 using JoberMQ.Server.Factories.Client;
 using JoberMQ.Server.Factories.DbOpr;
-using JoberMQ.Server.Factories.Publisher;
 using JoberMQ.Server.Factories.Timing;
 using JoberMQ.Server.Helpers;
 using JoberMQ.Server.Hubs;
@@ -23,7 +23,6 @@ using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using System;
 using System.Security.Claims;
-using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -64,6 +63,11 @@ namespace JoberMQ.Server.Implementation.Server.Default
         ISchedule IServer.Schedule => schedule;
         #endregion
 
+        #region Broker
+        private readonly IBroker broker;
+        IBroker IServer.Broker => broker;
+        #endregion
+
         #region JoberHubContext
         private IHubContext<JoberHub> joberHubContext;
         IHubContext<JoberHub> IServer.JoberHubContext => joberHubContext;
@@ -77,6 +81,7 @@ namespace JoberMQ.Server.Implementation.Server.Default
             this.dboCreator = DboCreatorFactory.CreateDboCreator(serverConfig.DbOprConfig.DboCreatorFactory, dbOprService);
             this.clientService = ClientFactory.CreateClientService(serverConfig.ClientServiceFactory);
             this.schedule = ScheduleFactory.CreateSchedule(serverConfig.TimingConfig.ScheduleFactory, dbOprService, dboCreator);
+            this.broker = BrokerFactory.CreateBroker(serverConfig, clientService);
 
 
 
@@ -116,8 +121,9 @@ namespace JoberMQ.Server.Implementation.Server.Default
                 throw new Exception(statusCode.GetStatusMessage("0.0.4"));
             #endregion
 
-
-
+            #region Broker Start
+            var brokerStartResult = broker.Start(); 
+            #endregion
 
 
 

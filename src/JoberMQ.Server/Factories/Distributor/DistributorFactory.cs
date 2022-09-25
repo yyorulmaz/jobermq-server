@@ -6,7 +6,7 @@ namespace JoberMQ.Server.Factories.Distributor
 {
     internal class DistributorFactory
     {
-        internal static IDistributor CreateDistributor(DistributorFactoryEnum distributorFactory, string name, DistributorTypeEnum type)
+        internal static IDistributor CreateDistributor(DistributorFactoryEnum distributorFactory, string distributorKey, DistributorTypeEnum type)
         {
             IDistributor distributor;
 
@@ -16,16 +16,16 @@ namespace JoberMQ.Server.Factories.Distributor
                     switch (type)
                     {
                         case DistributorTypeEnum.Direct:
-                            distributor = new DfDistributorDirect(name, type);
+                            distributor = new DfDistributorDirect(distributorKey, type);
                             break;
                         case DistributorTypeEnum.Filter:
-                            distributor = new DfDistributorFilter(name, type);
+                            distributor = new DfDistributorFilter(distributorKey, type);
                             break;
                         case DistributorTypeEnum.Event:
-                            distributor = new DfDistributorEvent(name, type);
+                            distributor = new DfDistributorEvent(distributorKey, type);
                             break;
                         default:
-                            distributor = new DfDistributorDirect(name, type);
+                            distributor = new DfDistributorDirect(distributorKey, type);
                             break;
                     }
                     break;
@@ -33,16 +33,16 @@ namespace JoberMQ.Server.Factories.Distributor
                     switch (type)
                     {
                         case DistributorTypeEnum.Direct:
-                            distributor = new DfDistributorDirect(name, type);
+                            distributor = new DfDistributorDirect(distributorKey, type);
                             break;
                         case DistributorTypeEnum.Filter:
-                            distributor = new DfDistributorFilter(name, type);
+                            distributor = new DfDistributorFilter(distributorKey, type);
                             break;
                         case DistributorTypeEnum.Event:
-                            distributor = new DfDistributorEvent(name, type);
+                            distributor = new DfDistributorEvent(distributorKey, type);
                             break;
                         default:
-                            distributor = new DfDistributorDirect(name, type);
+                            distributor = new DfDistributorDirect(distributorKey, type);
                             break;
                     }
                     break;

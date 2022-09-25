@@ -19,7 +19,7 @@ namespace JoberMQ.Server.Implementation.Queue.Default
     {
         IQueueChildDataBasePriority ChildData;
 
-        public DfQueuePriority(BrokerConfigModel brokerConfig, string distributorName, string queueName, MatchTypeEnum matchType, SendTypeEnum sendType, IClientGroup clientGroup, IQueueDataBase queueDataBase, IMessageDbOpr messageDbOpr) : base(brokerConfig, distributorName, queueName, matchType, sendType, clientGroup, queueDataBase, messageDbOpr)
+        public DfQueuePriority(BrokerConfigModel brokerConfig, string queueName, MatchTypeEnum matchType, SendTypeEnum sendType, IClientGroup clientGroup, IQueueDataBase queueDataBase, IMessageDbOpr messageDbOpr) : base(brokerConfig, queueName, matchType, sendType, clientGroup, queueDataBase, messageDbOpr)
         {
             ChildData = QueueChildDataBaseFactory.CreateQueueChildDataBasePriority(brokerConfig.QueueChildPriorityFactory, queueDataBase);
 

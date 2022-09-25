@@ -15,7 +15,7 @@ namespace JoberMQ.Server.Implementation.Queue.Default
     {
         IQueueChildDataBaseLIFO ChildData;
 
-        public DfQueueLIFO(BrokerConfigModel brokerConfig, string distributorName, string queueName, MatchTypeEnum matchType, SendTypeEnum sendType, IClientGroup clientGroup, IQueueDataBase queueDataBase, IMessageDbOpr messageDbOpr) : base(brokerConfig, distributorName, queueName, matchType, sendType, clientGroup, queueDataBase, messageDbOpr)
+        public DfQueueLIFO(BrokerConfigModel brokerConfig, string queueName, MatchTypeEnum matchType, SendTypeEnum sendType, IClientGroup clientGroup, IQueueDataBase queueDataBase, IMessageDbOpr messageDbOpr) : base(brokerConfig, queueName, matchType, sendType, clientGroup, queueDataBase, messageDbOpr)
         {
             ChildData = QueueChildDataBaseFactory.CreateQueueChildDataBaseLIFO(brokerConfig.QueueChildLIFOFactory, queueDataBase);
 

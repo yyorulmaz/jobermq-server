@@ -7,8 +7,7 @@ namespace JoberMQ.Server.Abstraction.Queue
 {
     internal interface IQueue
     {
-        public string DistributorName { get; }
-        public string QueueName { get; }
+        public string QueueKey { get; }
         public MatchTypeEnum MatchType { get; }
         public SendTypeEnum SendType { get; }
         public IClientGroup ClientGroup { get; }

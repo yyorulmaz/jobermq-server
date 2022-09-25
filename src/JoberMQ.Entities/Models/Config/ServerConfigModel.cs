@@ -1,4 +1,5 @@
 ﻿using JoberMQ.Entities.Constants;
+using JoberMQ.Entities.Enums.Broker;
 using JoberMQ.Entities.Enums.Client;
 using JoberMQ.Entities.Enums.DbOpr;
 using JoberMQ.Entities.Enums.Distributor;
@@ -67,6 +68,7 @@ namespace JoberMQ.Entities.Models.Config
     }
     public class BrokerConfigModel
     {
+        internal BrokerFactoryEnum BrokerFactory => ServerConst.Broker.BrokerFactory;
         internal QueueFactoryEnum QueueFactory => ServerConst.Broker.QueueFactory;
         internal QueueChildPriorityFactoryEnum QueueChildPriorityFactory => ServerConst.Broker.QueueChildPriorityFactory;
         internal QueueChildFIFOFactoryEnum QueueChildFIFOFactory => ServerConst.Broker.QueueChildFIFOFactory;

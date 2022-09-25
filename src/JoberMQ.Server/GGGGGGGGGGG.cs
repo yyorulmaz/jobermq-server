@@ -18,18 +18,6 @@ namespace JoberMQ.Server
 
 
 
-    internal interface IBroker
-    {
-        public IClientService ClientService { get; }
-        public IConcurrentDictionaryRepository<string, IDistributor> Distributors { get; }
-        public IConcurrentDictionaryRepository<string, IQueue> Queues { get; }
+    
 
-        public bool DistributorCreate(string name, DistributorTypeEnum type);
-        public bool QueueCreate(
-            string distributorName,
-            string queueName,
-            MatchTypeEnum matchType,
-            SendTypeEnum sendType);
-        public JobDataAddResponseModel QueueAdd(MessageDbo message);
-    }
 }
