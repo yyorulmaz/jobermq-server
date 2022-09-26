@@ -1,12 +1,13 @@
 ﻿using JoberMQ.Entities.Dbos;
 using JoberMQ.Entities.Models.Response;
+using JoberMQ.Server.Abstraction.Broker;
 using JoberMQ.Server.Abstraction.DbOpr;
 
 namespace JoberMQ.Server.Implementation.Timing.Default
 {
     internal class DfTiminTrigger : TimingBase
     {
-        public DfTiminTrigger(IDbOprService dbOprService) : base(dbOprService)
+        public DfTiminTrigger(IBroker broker, IDbOprService dbOprService) : base(broker, dbOprService)
         {
         }
 

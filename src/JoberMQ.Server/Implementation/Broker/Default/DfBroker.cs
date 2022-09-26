@@ -15,6 +15,7 @@ using System;
 using JoberMQNEW.Server.Data;
 using JoberMQ.Server.Abstraction.DbOpr;
 using JoberMQ.Entities.Enums.Permission;
+using System.Collections.Generic;
 
 namespace JoberMQ.Server.Implementation.Broker.Default
 {
@@ -120,20 +121,22 @@ namespace JoberMQ.Server.Implementation.Broker.Default
             return true;
         }
 
-        // todo bu method artık JobDataAddResponseModel dönemez, çünkü burası artık mesaj
-        public JobDataAddResponseModel QueueAdd(MessageDbo message)
+        public bool QueueAdd(List<MessageDbo> messages)
         {
             // todo kuşullar sağlandımı kontrol
-            var distributorName = queues.Get(message.QueueKey).DistributorName;
-            var distributor = distributors.Get(distributorName);
+
+            foreach (var item in messages)
+            {
+
+            }
+
+            //var distributorName = queues.Get(message.QueueKey).DistributorName;
+            //var distributor = distributors.Get(distributorName);
 
 
-            return distributor.QueueAdd(message);
+            //return distributor.QueueAdd(message);
 
-
-            return null;
+            throw new NotImplementedException();
         }
-
-
     }
 }
