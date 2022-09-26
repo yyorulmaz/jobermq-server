@@ -52,7 +52,7 @@ namespace JoberMQ.Server.Implementation.Queue
         public IClientGroup ClientGroup => clientGroup;
         public bool IsSendRuning { get => isSendRuning; set => isSendRuning = value; }
 
-        public abstract JobDataAddResponseModel QueueAdd(MessageDbo message);
+        public abstract bool QueueAdd(MessageDbo message);
         protected abstract void Qperation();
     }
 }

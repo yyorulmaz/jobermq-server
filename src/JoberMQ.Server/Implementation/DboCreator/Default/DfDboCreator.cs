@@ -101,6 +101,7 @@ namespace JoberMQ.Server.Implementation.DboCreator.Default
             #endregion
 
             #region 3.3 - ROUTING 
+            messageDbo.RoutingType = jobDataDetailDbo.RoutingType;
             messageDbo.DistributorKey = jobDataDetailDbo.DistributorKey;
             messageDbo.RoutingKey = jobDataDetailDbo.RoutingKey;
             messageDbo.ConsumerKey = jobDataDetailDbo.ConsumerKey;
@@ -110,6 +111,7 @@ namespace JoberMQ.Server.Implementation.DboCreator.Default
             #endregion
 
             #region 3.4 - RESULT ROUTING 
+            messageDbo.ResultRoutingType = jobDataDetailDbo.ResultRoutingType;
             messageDbo.IsResult = jobDataDetailDbo.IsResult;
             messageDbo.ResultDistributorKey = jobDataDetailDbo.ResultDistributorKey;
             messageDbo.ResultRoutingKey = jobDataDetailDbo.ResultRoutingKey;
@@ -190,6 +192,7 @@ namespace JoberMQ.Server.Implementation.DboCreator.Default
                 #endregion
 
                 #region 3.3 - ROUTING 
+                messageDbo.RoutingType = jobDataDetailDbo.RoutingType;
                 messageDbo.DistributorKey = jobDataDetailDbo.DistributorKey;
                 messageDbo.RoutingKey = jobDataDetailDbo.RoutingKey;
                 messageDbo.ConsumerKey = jobDataDetailDbo.ConsumerKey;
@@ -199,6 +202,7 @@ namespace JoberMQ.Server.Implementation.DboCreator.Default
                 #endregion
 
                 #region 3.4 - RESULT ROUTING 
+                messageDbo.ResultRoutingType = jobDataDetailDbo.ResultRoutingType;
                 messageDbo.IsResult = jobDataDetailDbo.IsResult;
                 messageDbo.ResultDistributorKey = jobDataDetailDbo.ResultDistributorKey;
                 messageDbo.ResultRoutingKey = jobDataDetailDbo.ResultRoutingKey;

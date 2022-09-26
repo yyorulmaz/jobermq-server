@@ -12,7 +12,7 @@ namespace JoberMQ.Server.Abstraction.Distributor
         public PermissionTypeEnum PermissionType { get; }
         public bool IsDurable { get; }
 
-        public JobDataAddResponseModel QueueAdd(MessageDbo message);
+        public bool QueueAdd(MessageDbo message);
     }
 }
 

@@ -20,6 +20,6 @@ namespace JoberMQ.Server.Abstraction.Queue
 
 
         public bool IsSendRuning { get; set; }
-        public JobDataAddResponseModel QueueAdd(MessageDbo message);
+        public bool QueueAdd(MessageDbo message);
     }
 }

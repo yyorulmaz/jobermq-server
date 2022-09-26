@@ -13,7 +13,7 @@ namespace JoberMQ.Server.Implementation.Timing
         protected readonly IDbOprService dbOprService;
         protected readonly IDboCreator dboCreator;
         protected readonly ISchedule schedule;
-        public TimingBase(IBroker broker, IDbOprService dbOprService)
+        public TimingBase(IDbOprService dbOprService)
         {
             this.broker = broker;
             this.dbOprService = dbOprService;

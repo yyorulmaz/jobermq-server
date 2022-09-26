@@ -37,17 +37,8 @@ namespace JoberMQ.Server.Implementation.Queue.Default
             }
         }
 
-        public override JobDataAddResponseModel QueueAdd(MessageDbo message)
-        {
-            var add = ChildData.Add(message);
-
-            var result = new JobDataAddResponseModel();
-            result.IsOnline = true;
-            result.IsSuccess = add;
-            result.JobId = message.Id;
-
-            return result;
-        }
+        public override bool QueueAdd(MessageDbo message)
+            => ChildData.Add(message);
 
         protected override void Qperation()
         {

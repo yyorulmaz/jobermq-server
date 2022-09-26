@@ -1,5 +1,6 @@
 ﻿using JoberMQ.Entities.Base.Dbo;
 using JoberMQ.Entities.Enums.Publisher;
+using JoberMQ.Entities.Enums.Routing;
 using JoberMQ.Entities.Enums.Timing;
 using System;
 using System.Collections.Generic;
@@ -44,6 +45,7 @@ namespace JoberMQ.Entities.Dbos
         #endregion
 
         #region 6 - RESULT ROUTING 
+        public RoutingTypeEnum RoutingType { get; set; }
         public bool IsResult { get; set; }
         public string ResultDistributorKey { get; set; }
         public string ResultRoutingKey { get; set; }

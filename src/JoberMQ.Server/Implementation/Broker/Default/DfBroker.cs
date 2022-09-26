@@ -16,6 +16,8 @@ using JoberMQNEW.Server.Data;
 using JoberMQ.Server.Abstraction.DbOpr;
 using JoberMQ.Entities.Enums.Permission;
 using System.Collections.Generic;
+using JoberMQ.Entities.Constants;
+using JoberMQ.Server.Implementation.Distributor;
 
 namespace JoberMQ.Server.Implementation.Broker.Default
 {
@@ -47,7 +49,7 @@ namespace JoberMQ.Server.Implementation.Broker.Default
             var dbDistributors = dbOprService.Distributor.GetAll(x => x.IsActive == true);
             foreach (var item in dbDistributors)
             {
-                var dis = DistributorFactory.CreateDistributor(serverConfig.BrokerConfig.DistributorFactory, item.DistributorKey, item.DistributorType, item.PermissionType, item.IsDurable);
+                var dis = DistributorFactory.CreateDistributor(serverConfig.BrokerConfig.DistributorFactory, item.DistributorKey, item.DistributorType, item.PermissionType, item.IsDurable, queues);
                 distributors.Add(item.DistributorKey, dis);
             }
 
@@ -66,7 +68,7 @@ namespace JoberMQ.Server.Implementation.Broker.Default
                 var checkDistributor = distributors.Get(item.Key);
                 if (checkDistributor == null)
                 {
-                    var dis = DistributorFactory.CreateDistributor(serverConfig.BrokerConfig.DistributorFactory, item.Value.DistributorKey, item.Value.DistributorType, item.Value.PermissionType, item.Value.IsDurable);
+                    var dis = DistributorFactory.CreateDistributor(serverConfig.BrokerConfig.DistributorFactory, item.Value.DistributorKey, item.Value.DistributorType, item.Value.PermissionType, item.Value.IsDurable, queues);
                     distributors.Add(item.Value.DistributorKey, dis);
                 }
             }
@@ -86,10 +88,7 @@ namespace JoberMQ.Server.Implementation.Broker.Default
 
             // todo filitreyi düzenle burası yanlış olacak büyük ihtimalle
             var messages = dbOprService.Message.GetAll(x=>x.IsActive == true && x.IsDelete ==false && x.StatusTypeMessage == Entities.Enums.Status.StatusTypeMessageEnum.None);
-            foreach (var item in messages)
-            {
-                QueueAdd(item);
-            }
+            QueueAdd(messages);
 
             return true;
         }
@@ -98,7 +97,7 @@ namespace JoberMQ.Server.Implementation.Broker.Default
         public bool DistributorCreate(string distributorKey, DistributorTypeEnum distributorType, bool isDurable)
         {
             // todo kuşullar sağlandımı kontrol
-            var distributor = DistributorFactory.CreateDistributor(serverConfig.BrokerConfig.DistributorFactory, distributorKey, distributorType, PermissionTypeEnum.All, isDurable);
+            var distributor = DistributorFactory.CreateDistributor(serverConfig.BrokerConfig.DistributorFactory, distributorKey, distributorType, PermissionTypeEnum.All, isDurable, queues);
             distributors.Add(distributorKey, distributor);
             return true;
         }
@@ -125,18 +124,34 @@ namespace JoberMQ.Server.Implementation.Broker.Default
         {
             // todo kuşullar sağlandımı kontrol
 
-            foreach (var item in messages)
-            {
 
+            // TODO BURADA BÖYLE BİR YAPI KURMAYA GEREK YOK YAVAŞLATIR
+            // CLIENT TARAFINDAN DistributorKey VE RoutingKey DOLU OLARAK GELECEK
+            // OZAMAN RoutingType 'a GEREK KALIR MI
+
+
+            bool isError = false;
+            foreach (var msg in messages)
+            {
+                var distributor = distributors.Get(msg.DistributorKey);
+                var addResult = distributor.QueueAdd(msg);
+
+                if (!addResult)
+                {
+                    isError = true;
+                    continue;
+                }
+            }
+            
+            if (isError)
+            {
+                foreach (var msg in messages)
+                    dbOprService.Message.Rollback(msg);
+
+                return false;
             }
 
-            //var distributorName = queues.Get(message.QueueKey).DistributorName;
-            //var distributor = distributors.Get(distributorName);
-
-
-            //return distributor.QueueAdd(message);
-
-            throw new NotImplementedException();
+            return true;
         }
     }
 }

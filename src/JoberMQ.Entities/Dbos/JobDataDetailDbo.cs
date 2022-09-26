@@ -1,6 +1,7 @@
 ﻿using JoberMQ.Entities.Base.Dbo;
 using JoberMQ.Entities.Enums.Message;
 using JoberMQ.Entities.Enums.Priority;
+using JoberMQ.Entities.Enums.Routing;
 using System;
 
 namespace JoberMQ.Entities.Dbos
@@ -18,6 +19,7 @@ namespace JoberMQ.Entities.Dbos
         #endregion
 
         #region 3.3 - ROUTING 
+        public RoutingTypeEnum RoutingType { get; set; }
         public string DistributorKey { get; set; }
         public string RoutingKey { get; set; }
         public string ConsumerKey { get; set; }
@@ -28,6 +30,7 @@ namespace JoberMQ.Entities.Dbos
         #endregion
 
         #region 3.4 - RESULT ROUTING 
+        public RoutingTypeEnum ResultRoutingType { get; set; }
         public bool IsResult { get; set; }
         public string ResultDistributorKey { get; set; }
         public string ResultRoutingKey { get; set; }

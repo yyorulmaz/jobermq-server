@@ -7,7 +7,7 @@ namespace JoberMQ.Server.Implementation.Timing.Default
 {
     internal class DfTiminTrigger : TimingBase
     {
-        public DfTiminTrigger(IBroker broker, IDbOprService dbOprService) : base(broker, dbOprService)
+        public DfTiminTrigger(IDbOprService dbOprService) : base(dbOprService)
         {
         }
 

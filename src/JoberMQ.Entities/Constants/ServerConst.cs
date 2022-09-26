@@ -152,6 +152,8 @@ namespace JoberMQ.Entities.Constants
             internal const QueueChildLIFOFactoryEnum QueueChildLIFOFactory = QueueChildLIFOFactoryEnum.Default;
             internal const DistributorFactoryEnum DistributorFactory = DistributorFactoryEnum.Default;
 
+
+            internal const string DefaultDistributorDirectKey = "dis.default.direct";
             internal static ConcurrentDictionary<string, DefaultDistributorConfigModel> DefaultDistributorConfigDatas = DefaultDistributorConfigData();
             private static ConcurrentDictionary<string, DefaultDistributorConfigModel> DefaultDistributorConfigData()
             {
@@ -169,6 +171,7 @@ namespace JoberMQ.Entities.Constants
             }
 
 
+            internal const string DefaultQueueSpecialKey = "queue.default.special";
             internal static ConcurrentDictionary<string, DefaultQueueConfigModel> DefaultQueueConfigDatas = DefaultQueueConfigData();
             private static ConcurrentDictionary<string, DefaultQueueConfigModel> DefaultQueueConfigData()
             {

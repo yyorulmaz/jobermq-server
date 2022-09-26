@@ -1,8 +1,10 @@
-﻿using JoberMQ.Entities.Dbos;
+﻿using GenRep.ConcurrentRepository.ConcurrentDictionary;
+using JoberMQ.Entities.Dbos;
 using JoberMQ.Entities.Enums.Distributor;
 using JoberMQ.Entities.Enums.Permission;
 using JoberMQ.Entities.Models.Response;
 using JoberMQ.Server.Abstraction.Distributor;
+using JoberMQ.Server.Abstraction.Queue;
 
 namespace JoberMQ.Server.Implementation.Distributor
 {
@@ -12,13 +14,16 @@ namespace JoberMQ.Server.Implementation.Distributor
         private readonly DistributorTypeEnum distributorType;
         private readonly PermissionTypeEnum permissionType;
         private readonly bool isDurable;
-        
-        public DistributorBase(string distributorKey, DistributorTypeEnum distributorType, PermissionTypeEnum permissionType, bool isDurable)
+        protected readonly IConcurrentDictionaryRepository<string, IQueue> queues;
+
+
+        public DistributorBase(string distributorKey, DistributorTypeEnum distributorType, PermissionTypeEnum permissionType, bool isDurable, IConcurrentDictionaryRepository<string, IQueue> queues)
         {
             this.distributorKey = distributorKey;
             this.distributorType = distributorType;
             this.permissionType = permissionType;
             this.isDurable = isDurable;
+            this.queues = queues;
         }
 
         public string DistributorKey => distributorKey;
@@ -27,6 +32,6 @@ namespace JoberMQ.Server.Implementation.Distributor
         public bool IsDurable => isDurable;
 
 
-        public abstract JobDataAddResponseModel QueueAdd(MessageDbo message);
+        public abstract bool QueueAdd(MessageDbo message);
     }
 }
