@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace JoberMQ.Server.Abstraction.Queue
 {
-    internal interface IQueueDataBase
+    internal interface IDb
     {
         #region Data
         public ConcurrentDictionary<Guid, MessageDbo> Data { get; }

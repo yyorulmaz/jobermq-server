@@ -3,10 +3,10 @@ using System.Collections.Concurrent;
 
 namespace JoberMQ.Server.Abstraction.Queue
 {
-    internal interface IQueueChildDataBaseLIFO : IQueueChildDataBase
+    internal interface IDbChildFIFO : IDbChild
     {
         #region Data
-        ConcurrentStack<MessageDbo> Data { get; }
+        ConcurrentQueue<MessageDbo> Data { get; }
         #endregion
     }
 }

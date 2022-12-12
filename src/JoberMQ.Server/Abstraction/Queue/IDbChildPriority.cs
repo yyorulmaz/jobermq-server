@@ -1,12 +1,13 @@
 ﻿using JoberMQ.Entities.Dbos;
+using System;
 using System.Collections.Concurrent;
 
 namespace JoberMQ.Server.Abstraction.Queue
 {
-    internal interface IQueueChildDataBaseFIFO : IQueueChildDataBase
+    internal interface IDbChildPriority : IDbChild
     {
         #region Data
-        ConcurrentQueue<MessageDbo> Data { get; }
+        ConcurrentDictionary<Guid, MessageDbo> Data { get; }
         #endregion
     }
 }

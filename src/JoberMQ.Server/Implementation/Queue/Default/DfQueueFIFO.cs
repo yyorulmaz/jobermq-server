@@ -17,9 +17,9 @@ namespace JoberMQ.Server.Implementation.Queue.Default
 {
     internal class DfQueueFIFO : QueueBase
     {
-        IQueueChildDataBaseFIFO ChildData;
+        IDbChildFIFO ChildData;
 
-        public DfQueueFIFO(BrokerConfigModel brokerConfig, string queueKey, MatchTypeEnum matchType, SendTypeEnum sendType, PermissionTypeEnum permissionType, bool isDurable, IClientGroup clientGroup, IQueueDataBase queueDataBase, IMessageDbOpr messageDbOpr) : base(brokerConfig, queueKey, matchType, sendType, permissionType, isDurable, clientGroup, queueDataBase, messageDbOpr)
+        public DfQueueFIFO(BrokerConfigModel brokerConfig, string queueKey, MatchTypeEnum matchType, SendTypeEnum sendType, PermissionTypeEnum permissionType, bool isDurable, IClientGroup clientGroup, IDb queueDataBase, IMessageDbOpr messageDbOpr) : base(brokerConfig, queueKey, matchType, sendType, permissionType, isDurable, clientGroup, queueDataBase, messageDbOpr)
         {
             ChildData = QueueChildDataBaseFactory.CreateQueueChildDataBaseFIFO(brokerConfig.QueueChildFIFOFactory, queueDataBase);
 

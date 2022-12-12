@@ -3,10 +3,10 @@ using System;
 
 namespace JoberMQ.Server.Abstraction.Queue
 {
-    internal interface IQueueChildDataBase
+    internal interface IDbChild
     {
         #region Data
-        public IQueueDataBase QueueDataBase { get; }
+        public IDb QueueDataBase { get; }
         #endregion
 
         #region Count

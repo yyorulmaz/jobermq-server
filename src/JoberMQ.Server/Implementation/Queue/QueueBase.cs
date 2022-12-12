@@ -18,7 +18,7 @@ namespace JoberMQ.Server.Implementation.Queue
         private readonly PermissionTypeEnum permissionType;
         private readonly bool isDurable;
         private readonly IClientGroup clientGroup;
-        protected IQueueDataBase queueDataBase;
+        protected IDb queueDataBase;
         protected readonly IMessageDbOpr messageDbOpr;
         private bool isSendRuning;
         protected int endConsumerNumber = 0;
@@ -30,7 +30,7 @@ namespace JoberMQ.Server.Implementation.Queue
             PermissionTypeEnum permissionType,
             bool isDurable,
             IClientGroup clientGroup,
-            IQueueDataBase queueDataBase, 
+            IDb queueDataBase, 
             IMessageDbOpr messageDbOpr)
         {
             this.brokerConfig = brokerConfig;

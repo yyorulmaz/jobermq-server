@@ -5,10 +5,10 @@ using System.Collections.Concurrent;
 
 namespace JoberMQ.Server.Implementation.Queue.Default
 {
-    internal class DfQueueChildDataBaseLIFO : IQueueChildDataBaseLIFO
+    internal class DfDbChildLIFO : IDbChildLIFO
     {
         #region Constructor
-        public DfQueueChildDataBaseLIFO(IQueueDataBase queueDataBase)
+        public DfDbChildLIFO(IDb queueDataBase)
         {
             this.queueDataBase = queueDataBase;
             data = new ConcurrentStack<MessageDbo>();
@@ -16,8 +16,8 @@ namespace JoberMQ.Server.Implementation.Queue.Default
         #endregion
 
         #region Data
-        private readonly IQueueDataBase queueDataBase;
-        public IQueueDataBase QueueDataBase => queueDataBase;
+        private readonly IDb queueDataBase;
+        public IDb QueueDataBase => queueDataBase;
 
 
         private readonly ConcurrentStack<MessageDbo> data;
