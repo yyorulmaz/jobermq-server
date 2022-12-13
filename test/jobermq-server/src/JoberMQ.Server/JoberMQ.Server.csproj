@@ -1,0 +1,51 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>dotnet-JoberMQ.Server-bc8009bb-a543-425c-bdbf-d82bffe6daee</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.0" />
+  </ItemGroup>
+
+	<ItemGroup Condition=" '$(Configuration)' == 'Release'">
+
+		<Compile Include="..\JoberMQ.Entities\**\*.cs" Exclude="..\JoberMQ.Entities\Properties\AssemblyInfo.cs;..\JoberMQ.Entities\obj\**;..\JoberMQ.Entities\bin\**">
+			<Link>Entities\%(RecursiveDir)%(Filename)%(Extension)</Link>
+			<Visible>false</Visible>
+		</Compile>
+
+		<Compile Include="..\JoberMQ.DataAccess\**\*.cs" Exclude="..\JoberMQ.DataAccess\Properties\AssemblyInfo.cs;..\JoberMQ.DataAccess\obj\**;..\JoberMQ.DataAccess\bin\**">
+			<Link>Entities\%(RecursiveDir)%(Filename)%(Extension)</Link>
+			<Visible>false</Visible>
+		</Compile>
+
+		<Compile Include="..\JoberMQ.Business\**\*.cs" Exclude="..\JoberMQ.Business\Properties\AssemblyInfo.cs;..\JoberMQ.Business\obj\**;..\JoberMQ.Business\bin\**">
+			<Link>Entities\%(RecursiveDir)%(Filename)%(Extension)</Link>
+			<Visible>false</Visible>
+		</Compile>
+
+	</ItemGroup>
+
+	<ItemGroup Condition=" '$(Configuration)' == 'Debug'">
+
+		<Compile Include="..\JoberMQ.Entities\**\*.cs" Exclude="..\JoberMQ.Entities\Properties\AssemblyInfo.cs;..\JoberMQ.Entities\obj\**;..\JoberMQ.Entities\bin\**">
+			<Link>Entities\%(RecursiveDir)%(Filename)%(Extension)</Link>
+			<Visible>false</Visible>
+		</Compile>
+
+		<Compile Include="..\JoberMQ.DataAccess\**\*.cs" Exclude="..\JoberMQ.DataAccess\Properties\AssemblyInfo.cs;..\JoberMQ.DataAccess\obj\**;..\JoberMQ.DataAccess\bin\**">
+			<Link>Entities\%(RecursiveDir)%(Filename)%(Extension)</Link>
+			<Visible>false</Visible>
+		</Compile>
+
+		<Compile Include="..\JoberMQ.Business\**\*.cs" Exclude="..\JoberMQ.Business\Properties\AssemblyInfo.cs;..\JoberMQ.Business\obj\**;..\JoberMQ.Business\bin\**">
+			<Link>Entities\%(RecursiveDir)%(Filename)%(Extension)</Link>
+			<Visible>false</Visible>
+		</Compile>
+
+	</ItemGroup>
+</Project>
