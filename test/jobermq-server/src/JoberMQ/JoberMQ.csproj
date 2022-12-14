@@ -1,0 +1,46 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <!--<Nullable>enable</Nullable>-->
+  </PropertyGroup>
+
+	<ItemGroup Condition=" '$(Configuration)' == 'Release'">
+
+		<Compile Include="..\JoberMQ.Entities\**\*.cs" Exclude="..\JoberMQ.Entities\Properties\AssemblyInfo.cs;..\JoberMQ.Entities\obj\**;..\JoberMQ.Entities\bin\**">
+			<Link>Entities\%(RecursiveDir)%(Filename)%(Extension)</Link>
+			<Visible>false</Visible>
+		</Compile>
+
+		<Compile Include="..\JoberMQ.Data\**\*.cs" Exclude="..\JoberMQ.Data\Properties\AssemblyInfo.cs;..\JoberMQ.Data\obj\**;..\JoberMQ.Data\bin\**">
+			<Link>Data\%(RecursiveDir)%(Filename)%(Extension)</Link>
+			<Visible>false</Visible>
+		</Compile>
+
+		<Compile Include="..\JoberMQ.Business\**\*.cs" Exclude="..\JoberMQ.Business\Properties\AssemblyInfo.cs;..\JoberMQ.Business\obj\**;..\JoberMQ.Business\bin\**">
+			<Link>Business\%(RecursiveDir)%(Filename)%(Extension)</Link>
+			<Visible>false</Visible>
+		</Compile>
+
+	</ItemGroup>
+
+	<ItemGroup Condition=" '$(Configuration)' == 'Debug'">
+
+		<Compile Include="..\JoberMQ.Entities\**\*.cs" Exclude="..\JoberMQ.Entities\Properties\AssemblyInfo.cs;..\JoberMQ.Entities\obj\**;..\JoberMQ.Entities\bin\**">
+			<Link>Entities\%(RecursiveDir)%(Filename)%(Extension)</Link>
+			<Visible>true</Visible>
+		</Compile>
+
+		<Compile Include="..\JoberMQ.Data\**\*.cs" Exclude="..\JoberMQ.Data\Properties\AssemblyInfo.cs;..\JoberMQ.Data\obj\**;..\JoberMQ.Data\bin\**">
+			<Link>Data\%(RecursiveDir)%(Filename)%(Extension)</Link>
+			<Visible>true</Visible>
+		</Compile>
+		
+		<Compile Include="..\JoberMQ.Business\**\*.cs" Exclude="..\JoberMQ.Business\Properties\AssemblyInfo.cs;..\JoberMQ.Business\obj\**;..\JoberMQ.Business\bin\**">
+			<Link>Business\%(RecursiveDir)%(Filename)%(Extension)</Link>
+			<Visible>true</Visible>
+		</Compile>
+
+	</ItemGroup>
+
+</Project>
