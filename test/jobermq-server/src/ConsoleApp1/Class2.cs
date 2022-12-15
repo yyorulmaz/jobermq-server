@@ -4,7 +4,8 @@ using System.Text;
 
 namespace JoberMQ
 {
-    internal class Class2
-    {
-    }
+    //internal interface IMessageBroker
+    //{
+
+    //}
 }

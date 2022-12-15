@@ -10,4 +10,8 @@
 	  <ProjectReference Include="..\JoberMQ.Entities\JoberMQ.Entities.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Implementation\Queue\" />
+	</ItemGroup>
+
 </Project>
