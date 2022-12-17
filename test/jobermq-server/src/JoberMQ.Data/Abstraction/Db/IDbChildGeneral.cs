@@ -2,7 +2,7 @@
 
 namespace JoberMQ.Data.Abstraction.Db
 {
-    internal interface IDbChildPriority<TKey, TValue> : IDbChild<TKey, TValue>
+    internal interface IDbChildGeneral<TKey, TValue> : IDbChild<TKey, TValue>
     {
         #region Data
         ConcurrentDictionary<TKey, TValue> ChildData { get; }

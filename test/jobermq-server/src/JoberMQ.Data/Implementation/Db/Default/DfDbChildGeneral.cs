@@ -6,10 +6,10 @@ using System.Text;
 
 namespace JoberMQ.Data.Implementation.Db.Default
 {
-    internal class DfDbChildPriority<TKey, TValue> : IDbChildPriority<TKey, TValue>
+    internal class DfDbChildGeneral<TKey, TValue> : IDbChildGeneral<TKey, TValue>
     {
         #region Constructor
-        public DfDbChildPriority(IDb<TKey, TValue> masterData)
+        public DfDbChildGeneral(IDb<TKey, TValue> masterData)
         {
             this.masterData = masterData;
             childData = new ConcurrentDictionary<TKey, TValue>();

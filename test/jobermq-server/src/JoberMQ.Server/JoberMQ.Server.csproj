@@ -9,9 +9,10 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.0" />
+	  <!--<PackageReference Include="Newtonsoft.Json" Version="13.0.2" />-->
   </ItemGroup>
 
-	<ItemGroup Condition=" '$(Configuration)' == 'Release'">
+	<!--<ItemGroup Condition=" '$(Configuration)' == 'Release'">
 
 		<Compile Include="..\JoberMQ.Entities\**\*.cs" Exclude="..\JoberMQ.Entities\Properties\AssemblyInfo.cs;..\JoberMQ.Entities\obj\**;..\JoberMQ.Entities\bin\**">
 			<Link>Entities\%(RecursiveDir)%(Filename)%(Extension)</Link>
@@ -47,5 +48,5 @@
 			<Visible>false</Visible>
 		</Compile>
 
-	</ItemGroup>
+	</ItemGroup>-->
 </Project>

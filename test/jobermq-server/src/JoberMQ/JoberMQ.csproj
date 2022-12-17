@@ -5,6 +5,10 @@
     <!--<Nullable>enable</Nullable>-->
   </PropertyGroup>
 
+	<ItemGroup>
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
+	</ItemGroup>
+
 	<ItemGroup Condition=" '$(Configuration)' == 'Release'">
 
 		<Compile Include="..\JoberMQ.Entities\**\*.cs" Exclude="..\JoberMQ.Entities\Properties\AssemblyInfo.cs;..\JoberMQ.Entities\obj\**;..\JoberMQ.Entities\bin\**">

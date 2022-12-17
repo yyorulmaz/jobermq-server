@@ -6,8 +6,35 @@
   </PropertyGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\JoberMQ.Data\JoberMQ.Data.csproj" />
-	  <ProjectReference Include="..\JoberMQ.Entities\JoberMQ.Entities.csproj" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
+	</ItemGroup>
+
+	<ItemGroup Condition=" '$(Configuration)' == 'Release'">
+
+		<Compile Include="..\JoberMQ.Entities\**\*.cs" Exclude="..\JoberMQ.Entities\Properties\AssemblyInfo.cs;..\JoberMQ.Entities\obj\**;..\JoberMQ.Entities\bin\**">
+			<Link>Entities\%(RecursiveDir)%(Filename)%(Extension)</Link>
+			<Visible>false</Visible>
+		</Compile>
+
+		<Compile Include="..\JoberMQ.Data\**\*.cs" Exclude="..\JoberMQ.Data\Properties\AssemblyInfo.cs;..\JoberMQ.Data\obj\**;..\JoberMQ.Data\bin\**">
+			<Link>Data\%(RecursiveDir)%(Filename)%(Extension)</Link>
+			<Visible>false</Visible>
+		</Compile>
+
+	</ItemGroup>
+
+	<ItemGroup Condition=" '$(Configuration)' == 'Debug'">
+
+		<Compile Include="..\JoberMQ.Entities\**\*.cs" Exclude="..\JoberMQ.Entities\Properties\AssemblyInfo.cs;..\JoberMQ.Entities\obj\**;..\JoberMQ.Entities\bin\**">
+			<Link>Entities\%(RecursiveDir)%(Filename)%(Extension)</Link>
+			<Visible>false</Visible>
+		</Compile>
+
+		<Compile Include="..\JoberMQ.Data\**\*.cs" Exclude="..\JoberMQ.Data\Properties\AssemblyInfo.cs;..\JoberMQ.Data\obj\**;..\JoberMQ.Data\bin\**">
+			<Link>Data\%(RecursiveDir)%(Filename)%(Extension)</Link>
+			<Visible>false</Visible>
+		</Compile>
+
 	</ItemGroup>
 
 	<ItemGroup>
