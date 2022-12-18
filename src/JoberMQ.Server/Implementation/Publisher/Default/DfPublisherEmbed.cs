@@ -11,26 +11,26 @@ namespace JoberMQ.Server.Implementation.Publisher.Default
         {
         }
 
-        public override JobDataAddResponseModel Publish(JobDataDbo jobData)
+        public override JobAddResponseModel Publish(JobDbo job)
         {
-            var response = new JobDataAddResponseModel();
+            var response = new JobAddResponseModel();
             response.IsOnline = true;
 
-            var isSuccess = dbOprService.JobData.Add(jobData);
+            var isSuccess = dbOprService.Job.Add(job);
 
             if (isSuccess)
             {
-                dbOprService.JobData.Commit(jobData);
+                dbOprService.Job.Commit(job);
                 response.IsSuccess = true;
             }
             else
             {
-                dbOprService.JobData.Rollback(jobData);
+                dbOprService.Job.Rollback(job);
                 response.IsSuccess = false;
                 response.Message = "error"; // todo error statuscode ekle
             }
             
-            response.JobId = jobData.Id;
+            response.JobId = job.Id;
             return response;
         }
     }

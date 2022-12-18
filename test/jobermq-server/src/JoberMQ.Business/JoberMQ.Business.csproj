@@ -37,8 +37,4 @@
 
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Folder Include="Implementation\Queue\" />
-	</ItemGroup>
-
 </Project>

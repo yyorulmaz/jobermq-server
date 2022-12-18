@@ -8,8 +8,8 @@ namespace JoberMQ.Server.Abstraction.DbOpr
         public IDistributorDbOpr Distributor { get; }
         public IQueueDbOpr Queue { get; }
         public IEventSubDbOpr EventSub { get; }
-        public IJobDataDbOpr JobData { get; }
         public IJobDbOpr Job { get; }
+        public IJobTransactionDbOpr JobTransaction { get; }
         public IMessageDbOpr Message { get; }
         public IMessageResultDbOpr MessageResult { get; }
 

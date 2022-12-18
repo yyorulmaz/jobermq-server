@@ -96,22 +96,22 @@ namespace JoberMQ.Entities.Constants
                     MaxRowCount = maxRowCount
                 });
 
-                clientDatas.TryAdd("JobData", new DbTextFileConfigModel
+                clientDatas.TryAdd("Job", new DbTextFileConfigModel
                 {
                     DbPath = dbPath,
-                    DbFolderPath = "JobData",
-                    DbFileName = "JobData",
+                    DbFolderPath = "Job",
+                    DbFileName = "Job",
                     DbFileSeparator = dbFileSeparator,
                     DbArchiveFileSeparator = dbArchiveFileSeparator,
                     DbFileExtension = dbFileExtension,
                     MaxRowCount = maxRowCount
                 });
 
-                clientDatas.TryAdd("Job", new DbTextFileConfigModel
+                clientDatas.TryAdd("JobTransaction", new DbTextFileConfigModel
                 {
                     DbPath = dbPath,
-                    DbFolderPath = "Job",
-                    DbFileName = "Job",
+                    DbFolderPath = "JobTransaction",
+                    DbFileName = "JobTransaction",
                     DbFileSeparator = dbFileSeparator,
                     DbArchiveFileSeparator = dbArchiveFileSeparator,
                     DbFileExtension = dbFileExtension,

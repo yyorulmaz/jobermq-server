@@ -112,7 +112,7 @@ namespace JoberMQ.Server.Implementation.Server.Default
             var textDataSetupResult = dbOprService.Setups();
             #endregion
 
-            #region Schedule JobData Start
+            #region Schedule Job Start
             var jobScheduleTimerStartResult = schedule.Start();
             if (!jobScheduleTimerStartResult)
                 throw new Exception(statusCode.GetStatusMessage("0.0.4"));

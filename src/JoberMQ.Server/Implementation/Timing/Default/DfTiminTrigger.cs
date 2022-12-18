@@ -11,52 +11,52 @@ namespace JoberMQ.Server.Implementation.Timing.Default
         {
         }
 
-        public override JobDataAddResponseModel Timing(JobDataDbo jobData)
+        public override JobAddResponseModel Timing(JobDbo job)
         {
-            var response = new JobDataAddResponseModel();
+            var response = new JobAddResponseModel();
             response.IsOnline = true;
-            response.JobId = jobData.Id;
+            response.JobId = job.Id;
 
-            var triggeredJobData = dbOprService.JobData.Get(jobData.TriggerJobId.Value);
-            var beforeTriggerGroupsId = triggeredJobData.TriggerGroupsId;
-            var beforeIsTriggerMain = triggeredJobData.IsTriggerMain;
-            var beforeIsTrigger = triggeredJobData.IsTrigger;
+            var triggeredJob = dbOprService.Job.Get(job.TriggerJobId.Value);
+            var beforeTriggerGroupsId = triggeredJob.TriggerGroupsId;
+            var beforeIsTriggerMain = triggeredJob.IsTriggerMain;
+            var beforeIsTrigger = triggeredJob.IsTrigger;
 
-            if (triggeredJobData.TriggerJobId == null)
+            if (triggeredJob.TriggerJobId == null)
             {
-                triggeredJobData.TriggerGroupsId = triggeredJobData.Id;
-                triggeredJobData.IsTriggerMain = true;
+                triggeredJob.TriggerGroupsId = triggeredJob.Id;
+                triggeredJob.IsTriggerMain = true;
             }
-            triggeredJobData.IsTrigger = true;
+            triggeredJob.IsTrigger = true;
 
-            var triggeredJobDataResult = dbOprService.JobData.Update(triggeredJobData);
-            if (!triggeredJobDataResult)
+            var triggeredJobResult = dbOprService.Job.Update(triggeredJob);
+            if (!triggeredJobResult)
             {
                 response.IsSuccess = false;
-                response.Message = "Triggerred JobData güncellenemedi, işlemler geri alındı."; // todo statuscode
+                response.Message = "Triggerred Job güncellenemedi, işlemler geri alındı."; // todo statuscode
                 return response;
             }
 
-            jobData.TriggerGroupsId = triggeredJobData.TriggerGroupsId;
-            // jobData.TriggerJobId client tarafından dolu geliyor 
-            var addJobDataResult = dbOprService.JobData.Add(jobData);
+            job.TriggerGroupsId = triggeredJob.TriggerGroupsId;
+            // job.TriggerJobId client tarafından dolu geliyor 
+            var addJobResult = dbOprService.Job.Add(job);
 
-            if (!addJobDataResult)
+            if (!addJobResult)
             {
-                triggeredJobData.TriggerGroupsId = beforeTriggerGroupsId;
-                triggeredJobData.IsTriggerMain = beforeIsTriggerMain;
-                triggeredJobData.IsTrigger = beforeIsTrigger;
+                triggeredJob.TriggerGroupsId = beforeTriggerGroupsId;
+                triggeredJob.IsTriggerMain = beforeIsTriggerMain;
+                triggeredJob.IsTrigger = beforeIsTrigger;
 
-                var triggeredJobDataRollbackResult = dbOprService.JobData.Update(triggeredJobData);
-                if (!triggeredJobDataRollbackResult)
+                var triggeredJobRollbackResult = dbOprService.Job.Update(triggeredJob);
+                if (!triggeredJobRollbackResult)
                 {
                     // todo error log
                     // burada triggered job bozuldu ama geri alınamadı. Buraya senaryo düşün
-                    response.Message = "JobData eklenemedi, işlemler geri alınamadı."; // todo statuscode
+                    response.Message = "Job eklenemedi, işlemler geri alınamadı."; // todo statuscode
                 }
                 else
                 {
-                    response.Message = "JobData eklenemedi, işlemler geri alındı."; // todo statuscode
+                    response.Message = "Job eklenemedi, işlemler geri alındı."; // todo statuscode
                 }
 
                 response.IsSuccess = false;

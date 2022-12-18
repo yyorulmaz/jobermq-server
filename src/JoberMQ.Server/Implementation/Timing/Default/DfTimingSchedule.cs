@@ -13,29 +13,29 @@ namespace JoberMQ.Server.Implementation.Timing.Default
         {
         }
 
-        public override JobDataAddResponseModel Timing(JobDataDbo jobData)
+        public override JobAddResponseModel Timing(JobDbo job)
         {
             // todo kontrol et, delayed ve recurrent için ayrım yapmadım. ikisinide cron time üzerinden bastım
-            var response = new JobDataAddResponseModel();
+            var response = new JobAddResponseModel();
             response.IsOnline = true;
-            response.JobId = jobData.Id;
+            response.JobId = job.Id;
 
-            var addJobDataResult = dbOprService.JobData.Add(jobData);
+            var addJobResult = dbOprService.Job.Add(job);
 
-            if (!addJobDataResult)
+            if (!addJobResult)
             {
                 response.IsSuccess = false;
-                response.Message = "JobData eklenemedi, işlemler geri alındı."; // todo statuscode
+                response.Message = "Job eklenemedi, işlemler geri alındı."; // todo statuscode
                 return response;
             }
 
             var timer = new TimerModel();
-            timer.Id = jobData.Id;
-            timer.CronTime = jobData.CronTime;
+            timer.Id = job.Id;
+            timer.CronTime = job.CronTime;
             timer.TimerGroup = "jobScheduleData";
             //timer.Data = JsonConvert.SerializeObject(jobScheduleDbo);
 
-            var timerResult = schedule.JobDataTimer.Add(timer);
+            var timerResult = schedule.JobTimer.Add(timer);
 
             if (!timerResult)
             {

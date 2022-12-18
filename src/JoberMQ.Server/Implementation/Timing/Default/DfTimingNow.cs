@@ -13,30 +13,30 @@ namespace JoberMQ.Server.Implementation.Timing.Default
         {
         }
 
-        public override JobDataAddResponseModel Timing(JobDataDbo jobData)
+        public override JobAddResponseModel Timing(JobDbo job)
         {
-            var response = new JobDataAddResponseModel();
+            var response = new JobAddResponseModel();
             response.IsOnline = true;
-            response.JobId = jobData.Id;
+            response.JobId = job.Id;
 
-            var addJobDataResult = dbOprService.JobData.Add(jobData);
-            if (!addJobDataResult)
+            var addJobResult = dbOprService.Job.Add(job);
+            if (!addJobResult)
             {
                 response.IsSuccess = false;
-                response.Message = "JobData eklenemedi, işlemler geri alındı."; // todo statuscode
+                response.Message = "Job eklenemedi, işlemler geri alındı."; // todo statuscode
                 return response;
             }
 
 
 
-            var createdJobDbo = dboCreator.JobDboCreate(jobData);
-            var addJobResult = dbOprService.Job.Add(createdJobDbo);
-            if (!addJobResult)
+            var createdJobDbo = dboCreator.JobTransactionDboCreate(job);
+            var addJobTransactionResult = dbOprService.JobTransaction.Add(createdJobDbo);
+            if (!addJobTransactionResult)
             {
-                dbOprService.JobData.Rollback(jobData);
+                dbOprService.Job.Rollback(job);
 
                 response.IsSuccess = false;
-                response.Message = "Job eklenemedi, işlemler geri alındı."; // todo statuscode
+                response.Message = "JobTransaction eklenemedi, işlemler geri alındı."; // todo statuscode
                 return response;
             }
 
@@ -46,8 +46,8 @@ namespace JoberMQ.Server.Implementation.Timing.Default
             var queueAddResult = broker.QueueAdd(createdMessageDbos);
             if (!queueAddResult)
             {
-                dbOprService.JobData.Rollback(jobData);
-                dbOprService.Job.Rollback(createdJobDbo);
+                dbOprService.Job.Rollback(job);
+                dbOprService.JobTransaction.Rollback(createdJobDbo);
 
                 response.IsSuccess = false;
                 response.Message = "Job eklenemedi, işlemler geri alındı."; // todo statuscode

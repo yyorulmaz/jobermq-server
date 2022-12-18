@@ -13,8 +13,8 @@ namespace JoberMQ.Server.Factories.DbOpr
             IDistributorTextDal DistributorTextDal,
             IQueueTextDal QueueTextDal,
             IEventSubTextDal EventSubTextDal,
-            IJobDataTextDal JobDataTextDal,
             IJobTextDal JobTextDal,
+            IJobTransactionTextDal JobTransactionTextDal,
             IMessageTextDal MessageTextDal,
             IMessageResultTextDal MessageResultTextDal)
             CreateDbTexts(DbTextConfigModel dbTextConfig)
@@ -23,8 +23,8 @@ namespace JoberMQ.Server.Factories.DbOpr
             IDistributorTextDal distributorTextDal;
             IQueueTextDal queueTextDal;
             IEventSubTextDal eventSubTextDal;
-            IJobDataTextDal jobDataTextDal;
             IJobTextDal jobTextDal;
+            IJobTransactionTextDal jobTransactionTextDal;
             IMessageTextDal messageTextDal;
             IMessageResultTextDal messageResultTextDal;
 
@@ -35,8 +35,8 @@ namespace JoberMQ.Server.Factories.DbOpr
                     distributorTextDal = new DfDistributorTextDal(dbTextConfig.DbTextFileConfigDatas.FirstOrDefault(x => x.Key == "Distributor").Value);
                     queueTextDal = new DfQueueTextDal(dbTextConfig.DbTextFileConfigDatas.FirstOrDefault(x => x.Key == "Queue").Value);
                     eventSubTextDal = new DfEventSubTextDal(dbTextConfig.DbTextFileConfigDatas.FirstOrDefault(x => x.Key == "EventSub").Value);
-                    jobDataTextDal = new DfJobDataTextDal(dbTextConfig.DbTextFileConfigDatas.FirstOrDefault(x => x.Key == "JobData").Value);
                     jobTextDal = new DfJobTextDal(dbTextConfig.DbTextFileConfigDatas.FirstOrDefault(x => x.Key == "Job").Value);
+                    jobTransactionTextDal = new DfJobTransactionTextDal(dbTextConfig.DbTextFileConfigDatas.FirstOrDefault(x => x.Key == "JobTransaction").Value);
                     messageTextDal = new DfMessageTextDal(dbTextConfig.DbTextFileConfigDatas.FirstOrDefault(x => x.Key == "Message").Value);
                     messageResultTextDal = new DfMessageResultTextDal(dbTextConfig.DbTextFileConfigDatas.FirstOrDefault(x => x.Key == "MessageResult").Value);
                     break;
@@ -45,14 +45,14 @@ namespace JoberMQ.Server.Factories.DbOpr
                     distributorTextDal = new DfDistributorTextDal(dbTextConfig.DbTextFileConfigDatas.FirstOrDefault(x => x.Key == "Distributor").Value);
                     queueTextDal = new DfQueueTextDal(dbTextConfig.DbTextFileConfigDatas.FirstOrDefault(x => x.Key == "Queue").Value);
                     eventSubTextDal = new DfEventSubTextDal(dbTextConfig.DbTextFileConfigDatas.FirstOrDefault(x => x.Key == "EventSub").Value);
-                    jobDataTextDal = new DfJobDataTextDal(dbTextConfig.DbTextFileConfigDatas.FirstOrDefault(x => x.Key == "JobData").Value);
                     jobTextDal = new DfJobTextDal(dbTextConfig.DbTextFileConfigDatas.FirstOrDefault(x => x.Key == "Job").Value);
+                    jobTransactionTextDal = new DfJobTransactionTextDal(dbTextConfig.DbTextFileConfigDatas.FirstOrDefault(x => x.Key == "JobTransaction").Value);
                     messageTextDal = new DfMessageTextDal(dbTextConfig.DbTextFileConfigDatas.FirstOrDefault(x => x.Key == "Message").Value);
                     messageResultTextDal = new DfMessageResultTextDal(dbTextConfig.DbTextFileConfigDatas.FirstOrDefault(x => x.Key == "MessageResult").Value);
                     break;
             }
 
-            return (userTextDal, distributorTextDal, queueTextDal, eventSubTextDal, jobDataTextDal, jobTextDal, messageTextDal, messageResultTextDal);
+            return (userTextDal, distributorTextDal, queueTextDal, eventSubTextDal, jobTextDal, jobTransactionTextDal, messageTextDal, messageResultTextDal);
         }
     }
 }

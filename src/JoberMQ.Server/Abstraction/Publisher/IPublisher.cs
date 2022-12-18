@@ -5,6 +5,6 @@ namespace JoberMQ.Server.Abstraction.Publisher
 {
     internal interface IPublisher
     {
-        public JobDataAddResponseModel Publish(JobDataDbo jobData);
+        public JobAddResponseModel Publish(JobDbo job);
     }
 }

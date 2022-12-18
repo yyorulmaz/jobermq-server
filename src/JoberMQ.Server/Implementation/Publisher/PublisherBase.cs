@@ -29,6 +29,6 @@ namespace JoberMQ.Server.Implementation.Publisher
             this.schedule = schedule;
         }
 
-        public abstract JobDataAddResponseModel Publish(JobDataDbo jobData);
+        public abstract JobAddResponseModel Publish(JobDbo job);
     }
 }

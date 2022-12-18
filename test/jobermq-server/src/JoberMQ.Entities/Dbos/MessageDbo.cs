@@ -77,10 +77,10 @@ namespace JoberMQ.Entities.Dbos
         #endregion
 
         #region 8 - CLONE CREATED
-        public Guid? CreatedJobDataId { get; set; }
-        public Guid? CreatedJobDataDetailId { get; set; }
         public Guid? CreatedJobId { get; set; }
         public Guid? CreatedJobDetailId { get; set; }
+        public Guid? CreatedJobTransactionId { get; set; }
+        public Guid? CreatedJobTransactionDetailId { get; set; }
         #endregion
 
         #region 9 - GROUP

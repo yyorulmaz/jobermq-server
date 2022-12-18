@@ -5,6 +5,12 @@
     <!--<Nullable>enable</Nullable>-->
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="Repository\**" />
+    <EmbeddedResource Remove="Repository\**" />
+    <None Remove="Repository\**" />
+  </ItemGroup>
+
 	<ItemGroup>
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
 	</ItemGroup>
@@ -25,13 +31,6 @@
 			<Visible>false</Visible>
 		</Compile>
 
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="Abstraction\Repository\" />
-	  <Folder Include="Implementation\Repository\" />
-	  <Folder Include="Repository\DbMem\Abstraction\" />
-	  <Folder Include="Repository\DbMem\Implementation\" />
 	</ItemGroup>
 
 

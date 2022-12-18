@@ -15,69 +15,69 @@ namespace JoberMQ.Server.Implementation.DboCreator.Default
         {
             this.dbOprService = dbOprService;
         }
-        public JobDbo JobDboCreate(JobDataDbo jobDataDbo)
+        public JobTransactionDbo JobTransactionDboCreate(JobDbo jobDbo)
         {
-            var jobDbo = new JobDbo();
-            jobDbo.Details = new List<JobDetailDbo>();
+            var jobTransactionDbo = new JobTransactionDbo();
+            jobTransactionDbo.Details = new List<JobTransactionDetailDbo>();
 
             #region 0 - BASE
-            jobDbo.Id = Guid.NewGuid();
+            jobTransactionDbo.Id = Guid.NewGuid();
             #endregion
 
             #region 5 - TIMING
-            jobDbo.IsTrigger = jobDataDbo.IsTrigger;
-            jobDbo.ErrorWorkflowStop = jobDataDbo.ErrorWorkflowStop;
-            jobDbo.TriggerJobId = jobDataDbo.TriggerJobId;
-            jobDbo.IsTriggerMain = jobDataDbo.IsTriggerMain;
-            jobDbo.TriggerGroupsId = jobDataDbo.TriggerGroupsId;
+            jobTransactionDbo.IsTrigger = jobTransactionDbo.IsTrigger;
+            jobTransactionDbo.ErrorWorkflowStop = jobTransactionDbo.ErrorWorkflowStop;
+            jobTransactionDbo.TriggerJobId = jobTransactionDbo.TriggerJobId;
+            jobTransactionDbo.IsTriggerMain = jobTransactionDbo.IsTriggerMain;
+            jobTransactionDbo.TriggerGroupsId = jobTransactionDbo.TriggerGroupsId;
             #endregion
 
             #region 6 - RESULT
-            jobDbo.IsResultMessageClientSend = false;
+            jobTransactionDbo.IsResultMessageClientSend = false;
             #endregion
 
             #region 7 - STATUS
-            jobDbo.IsCompleted = false;
-            jobDbo.IsError = false;
+            jobTransactionDbo.IsCompleted = false;
+            jobTransactionDbo.IsError = false;
             #endregion
 
             #region 8 - CLONE CREATED
-            jobDbo.Version = jobDataDbo.Version;
-            jobDbo.CreatedJobDataId = jobDataDbo.Id;
+            jobTransactionDbo.Version = jobTransactionDbo.Version;
+            jobTransactionDbo.CreatedJobId = jobTransactionDbo.Id;
             #endregion
 
             #region 99 - CHILD PARENT
-            foreach (var item in jobDataDbo.Details)
+            foreach (var item in jobTransactionDbo.Details)
             {
-                var jobDetailDbo = new JobDetailDbo();
+                var jobTransactionDetailDbo = new JobTransactionDetailDbo();
 
                 #region 0 - BASE
-                jobDetailDbo.Id = Guid.NewGuid();
+                jobTransactionDetailDbo.Id = Guid.NewGuid();
                 #endregion
 
                 #region 3 - MESSAGE
 
                 #region 3.4 - RESULT ROUTING 
-                jobDetailDbo.IsResultMessageClientSend = false;
+                jobTransactionDetailDbo.IsResultMessageClientSend = false;
                 #endregion
 
                 #endregion
 
                 #region 8 - CLONE CREATED
-                jobDetailDbo.CreatedJobDataDetailId = item.Id;
+                jobTransactionDetailDbo.CreatedJobDetailId = item.Id;
                 #endregion
 
                 #region 99 - CHILD PARENT
-                jobDetailDbo.JobId = jobDbo.Id;
+                jobTransactionDetailDbo.JobId = jobTransactionDbo.Id;
                 #endregion
 
-                jobDbo.Details.Add(jobDetailDbo);
+                jobTransactionDbo.Details.Add(jobTransactionDetailDbo);
             }
             #endregion
 
-            return jobDbo;
+            return jobTransactionDbo;
         }
-        public MessageDbo MessageDboCreate(JobDataDbo jobDataDbo, JobDataDetailDbo jobDataDetailDbo, JobDbo jobDbo, JobDetailDbo jobDetailDbo, Guid? eventGroupId)
+        public MessageDbo MessageDboCreate(JobDbo jobDbo, JobDetailDbo jobDetailDbo, JobTransactionDbo jobTransactionDbo, JobTransactionDetailDbo jobTransactionDetailDbo, Guid? eventGroupId)
         {
             var messageDbo = new MessageDbo();
 
@@ -86,52 +86,52 @@ namespace JoberMQ.Server.Implementation.DboCreator.Default
             #endregion
 
             #region 1 - PRODUCER
-            messageDbo.ProducerClientKey = jobDataDbo.ProducerClientKey;
-            messageDbo.ProducerClientGroupKey = jobDataDbo.ProducerClientGroupKey;
+            messageDbo.ProducerClientKey = jobDbo.ProducerClientKey;
+            messageDbo.ProducerClientGroupKey = jobDbo.ProducerClientGroupKey;
             #endregion
 
             #region 3 - MESSAGE
 
             #region 3.1 - MESSAGE TYPE
-            messageDbo.MessageType = jobDataDetailDbo.MessageType;
+            messageDbo.MessageType = jobDetailDbo.MessageType;
             #endregion
 
             #region 3.2 - MESSAGE 
-            messageDbo.Message = jobDataDetailDbo.Message;
+            messageDbo.Message = jobDetailDbo.Message;
             #endregion
 
             #region 3.3 - ROUTING 
-            messageDbo.RoutingType = jobDataDetailDbo.RoutingType;
-            messageDbo.DistributorKey = jobDataDetailDbo.DistributorKey;
-            messageDbo.RoutingKey = jobDataDetailDbo.RoutingKey;
-            messageDbo.ConsumerKey = jobDataDetailDbo.ConsumerKey;
-            messageDbo.StartsWith = jobDataDetailDbo.StartsWith;
-            messageDbo.Contains = jobDataDetailDbo.Contains;
-            messageDbo.EndsWith = jobDataDetailDbo.EndsWith;
+            messageDbo.RoutingType = jobDetailDbo.RoutingType;
+            messageDbo.DistributorKey = jobDetailDbo.DistributorKey;
+            messageDbo.RoutingKey = jobDetailDbo.RoutingKey;
+            messageDbo.ConsumerKey = jobDetailDbo.ConsumerKey;
+            messageDbo.StartsWith = jobDetailDbo.StartsWith;
+            messageDbo.Contains = jobDetailDbo.Contains;
+            messageDbo.EndsWith = jobDetailDbo.EndsWith;
             #endregion
 
             #region 3.4 - RESULT ROUTING 
-            messageDbo.ResultRoutingType = jobDataDetailDbo.ResultRoutingType;
-            messageDbo.IsResult = jobDataDetailDbo.IsResult;
-            messageDbo.ResultDistributorKey = jobDataDetailDbo.ResultDistributorKey;
-            messageDbo.ResultRoutingKey = jobDataDetailDbo.ResultRoutingKey;
-            messageDbo.ResultConsumerKey = jobDataDetailDbo.ResultConsumerKey;
-            messageDbo.ResultStartsWith = jobDataDetailDbo.ResultStartsWith;
-            messageDbo.ResultContains = jobDataDetailDbo.ResultContains;
-            messageDbo.ResultEndsWith = jobDataDetailDbo.ResultEndsWith;
+            messageDbo.ResultRoutingType = jobDetailDbo.ResultRoutingType;
+            messageDbo.IsResult = jobDetailDbo.IsResult;
+            messageDbo.ResultDistributorKey = jobDetailDbo.ResultDistributorKey;
+            messageDbo.ResultRoutingKey = jobDetailDbo.ResultRoutingKey;
+            messageDbo.ResultConsumerKey = jobDetailDbo.ResultConsumerKey;
+            messageDbo.ResultStartsWith = jobDetailDbo.ResultStartsWith;
+            messageDbo.ResultContains = jobDetailDbo.ResultContains;
+            messageDbo.ResultEndsWith = jobDetailDbo.ResultEndsWith;
             #endregion
 
             #region 3.5 - OPTION
-            messageDbo.Name = jobDataDetailDbo.Name;
-            messageDbo.Description = jobDataDetailDbo.Description;
-            messageDbo.GeneralData = jobDataDetailDbo.GeneralData;
-            messageDbo.PriorityType = jobDataDetailDbo.PriorityType;
+            messageDbo.Name = jobDetailDbo.Name;
+            messageDbo.Description = jobDetailDbo.Description;
+            messageDbo.GeneralData = jobDetailDbo.GeneralData;
+            messageDbo.PriorityType = jobDetailDbo.PriorityType;
             #endregion
 
             #region 3.6 - CONSUMING
-            messageDbo.IsConsumingRetryPause = jobDataDetailDbo.IsConsumingRetryPause;
-            messageDbo.ConsumingRetryMaxCount = jobDataDetailDbo.ConsumingRetryMaxCount;
-            messageDbo.ConsumingRetryCounter = jobDataDetailDbo.ConsumingRetryCounter;
+            messageDbo.IsConsumingRetryPause = jobDetailDbo.IsConsumingRetryPause;
+            messageDbo.ConsumingRetryMaxCount = jobDetailDbo.ConsumingRetryMaxCount;
+            messageDbo.ConsumingRetryCounter = jobDetailDbo.ConsumingRetryCounter;
             messageDbo.ConsumingClientId = null;
             messageDbo.ConsumingClientGroupKey = null;
             #endregion
@@ -139,7 +139,7 @@ namespace JoberMQ.Server.Implementation.DboCreator.Default
             #endregion
 
             #region 5 - TIMING
-            messageDbo.TriggerGroupsId = jobDbo.TriggerGroupsId;
+            messageDbo.TriggerGroupsId = jobTransactionDbo.TriggerGroupsId;
             #endregion
 
             #region 7 - STATUS
@@ -149,10 +149,10 @@ namespace JoberMQ.Server.Implementation.DboCreator.Default
             #endregion
 
             #region 8 - CLONE CREATED
-            messageDbo.CreatedJobDataId = jobDataDbo.Id;
-            messageDbo.CreatedJobDataDetailId = jobDataDetailDbo.Id;
             messageDbo.CreatedJobId = jobDbo.Id;
             messageDbo.CreatedJobDetailId = jobDetailDbo.Id;
+            messageDbo.CreatedJobTransactionId = jobTransactionDbo.Id;
+            messageDbo.CreatedJobTransactionDetailId = jobTransactionDetailDbo.Id;
             #endregion
 
             #region 9 - GROUP
@@ -161,12 +161,12 @@ namespace JoberMQ.Server.Implementation.DboCreator.Default
 
             return messageDbo;
         }
-        public List<MessageDbo> MessageDboCreates(JobDbo jobDbo)
+        public List<MessageDbo> MessageDboCreates(JobTransactionDbo jobTransactionDbo)
         {
             var messageDbos = new List<MessageDbo>();
-            var creatorJobData = dbOprService.JobData.Get(jobDbo.CreatedJobDataId);
+            var creatorJob = dbOprService.Job.Get(jobTransactionDbo.CreatedJobId);
 
-            foreach (var item in jobDbo.Details)
+            foreach (var item in jobTransactionDbo.Details)
             {
                 var messageDbo = new MessageDbo();
 
@@ -175,54 +175,54 @@ namespace JoberMQ.Server.Implementation.DboCreator.Default
                 #endregion
 
                 #region 1 - PRODUCER
-                messageDbo.ProducerClientKey = creatorJobData.ProducerClientKey;
-                messageDbo.ProducerClientGroupKey = creatorJobData.ProducerClientGroupKey;
+                messageDbo.ProducerClientKey = creatorJob.ProducerClientKey;
+                messageDbo.ProducerClientGroupKey = creatorJob.ProducerClientGroupKey;
                 #endregion
 
                 #region 3 - MESSAGE
 
-                var jobDataDetailDbo = creatorJobData.Details.Where(x => x.Id == item.CreatedJobDataDetailId).FirstOrDefault();
+                var jobDetailDbo = creatorJob.Details.Where(x => x.Id == item.CreatedJobDetailId).FirstOrDefault();
 
                 #region 3.1 - MESSAGE TYPE
-                messageDbo.MessageType = jobDataDetailDbo.MessageType;
+                messageDbo.MessageType = jobDetailDbo.MessageType;
                 #endregion
 
                 #region 3.2 - MESSAGE 
-                messageDbo.Message = jobDataDetailDbo.Message;
+                messageDbo.Message = jobDetailDbo.Message;
                 #endregion
 
                 #region 3.3 - ROUTING 
-                messageDbo.RoutingType = jobDataDetailDbo.RoutingType;
-                messageDbo.DistributorKey = jobDataDetailDbo.DistributorKey;
-                messageDbo.RoutingKey = jobDataDetailDbo.RoutingKey;
-                messageDbo.ConsumerKey = jobDataDetailDbo.ConsumerKey;
-                messageDbo.StartsWith = jobDataDetailDbo.StartsWith;
-                messageDbo.Contains = jobDataDetailDbo.Contains;
-                messageDbo.EndsWith = jobDataDetailDbo.EndsWith;
+                messageDbo.RoutingType = jobDetailDbo.RoutingType;
+                messageDbo.DistributorKey = jobDetailDbo.DistributorKey;
+                messageDbo.RoutingKey = jobDetailDbo.RoutingKey;
+                messageDbo.ConsumerKey = jobDetailDbo.ConsumerKey;
+                messageDbo.StartsWith = jobDetailDbo.StartsWith;
+                messageDbo.Contains = jobDetailDbo.Contains;
+                messageDbo.EndsWith = jobDetailDbo.EndsWith;
                 #endregion
 
                 #region 3.4 - RESULT ROUTING 
-                messageDbo.ResultRoutingType = jobDataDetailDbo.ResultRoutingType;
-                messageDbo.IsResult = jobDataDetailDbo.IsResult;
-                messageDbo.ResultDistributorKey = jobDataDetailDbo.ResultDistributorKey;
-                messageDbo.ResultRoutingKey = jobDataDetailDbo.ResultRoutingKey;
-                messageDbo.ResultConsumerKey = jobDataDetailDbo.ResultConsumerKey;
-                messageDbo.ResultStartsWith = jobDataDetailDbo.ResultStartsWith;
-                messageDbo.ResultContains = jobDataDetailDbo.ResultContains;
-                messageDbo.ResultEndsWith = jobDataDetailDbo.ResultEndsWith;
+                messageDbo.ResultRoutingType = jobDetailDbo.ResultRoutingType;
+                messageDbo.IsResult = jobDetailDbo.IsResult;
+                messageDbo.ResultDistributorKey = jobDetailDbo.ResultDistributorKey;
+                messageDbo.ResultRoutingKey = jobDetailDbo.ResultRoutingKey;
+                messageDbo.ResultConsumerKey = jobDetailDbo.ResultConsumerKey;
+                messageDbo.ResultStartsWith = jobDetailDbo.ResultStartsWith;
+                messageDbo.ResultContains = jobDetailDbo.ResultContains;
+                messageDbo.ResultEndsWith = jobDetailDbo.ResultEndsWith;
                 #endregion
 
                 #region 3.5 - OPTION
-                messageDbo.Name = jobDataDetailDbo.Name;
-                messageDbo.Description = jobDataDetailDbo.Description;
-                messageDbo.GeneralData = jobDataDetailDbo.GeneralData;
-                messageDbo.PriorityType = jobDataDetailDbo.PriorityType;
+                messageDbo.Name = jobDetailDbo.Name;
+                messageDbo.Description = jobDetailDbo.Description;
+                messageDbo.GeneralData = jobDetailDbo.GeneralData;
+                messageDbo.PriorityType = jobDetailDbo.PriorityType;
                 #endregion
 
                 #region 3.6 - CONSUMING
-                messageDbo.IsConsumingRetryPause = jobDataDetailDbo.IsConsumingRetryPause;
-                messageDbo.ConsumingRetryMaxCount = jobDataDetailDbo.ConsumingRetryMaxCount;
-                messageDbo.ConsumingRetryCounter = jobDataDetailDbo.ConsumingRetryCounter;
+                messageDbo.IsConsumingRetryPause = jobDetailDbo.IsConsumingRetryPause;
+                messageDbo.ConsumingRetryMaxCount = jobDetailDbo.ConsumingRetryMaxCount;
+                messageDbo.ConsumingRetryCounter = jobDetailDbo.ConsumingRetryCounter;
                 messageDbo.ConsumingClientId = null;
                 messageDbo.ConsumingClientGroupKey = null;
                 #endregion
@@ -230,7 +230,7 @@ namespace JoberMQ.Server.Implementation.DboCreator.Default
                 #endregion
 
                 #region 5 - TIMING
-                messageDbo.TriggerGroupsId = jobDbo.TriggerGroupsId;
+                messageDbo.TriggerGroupsId = jobTransactionDbo.TriggerGroupsId;
                 #endregion
 
                 #region 7 - STATUS
@@ -240,10 +240,10 @@ namespace JoberMQ.Server.Implementation.DboCreator.Default
                 #endregion
 
                 #region 8 - CLONE CREATED
-                messageDbo.CreatedJobDataId = jobDbo.CreatedJobDataId;
-                messageDbo.CreatedJobDataDetailId = item.CreatedJobDataDetailId;
-                messageDbo.CreatedJobId = jobDbo.Id;
-                messageDbo.CreatedJobDetailId = item.Id;
+                messageDbo.CreatedJobId = jobTransactionDbo.CreatedJobId;
+                messageDbo.CreatedJobDetailId = item.CreatedJobDetailId;
+                messageDbo.CreatedJobTransactionId = jobTransactionDbo.Id;
+                messageDbo.CreatedJobTransactionDetailId = item.Id;
                 #endregion
 
                 #region 9 - GROUP
@@ -260,30 +260,30 @@ namespace JoberMQ.Server.Implementation.DboCreator.Default
 
 
 
-        public List<JobDbo> CloneJobDataToJobs(JobDataDbo jobData)
+        public List<JobTransactionDbo> CloneJobToJobTransactions(JobDbo job)
         {
-            var baseJobs = new List<JobDataDbo>();
-            var cloneJobs = new List<JobDbo>();
+            var baseJobs = new List<JobDbo>();
+            var cloneJobs = new List<JobTransactionDbo>();
 
-            if (jobData.IsTrigger)
-                baseJobs = dbOprService.JobData.GetAll(x => x.TriggerGroupsId == jobData.TriggerGroupsId);
+            if (job.IsTrigger)
+                baseJobs = dbOprService.Job.GetAll(x => x.TriggerGroupsId == job.TriggerGroupsId);
             else
-                baseJobs = dbOprService.JobData.GetAll(x => x.Id == jobData.Id);
+                baseJobs = dbOprService.Job.GetAll(x => x.Id == job.Id);
 
 
             foreach (var item in baseJobs)
             {
-                var job = JobDboCreate(item);
-                cloneJobs.Add(job);
+                var jobTransaction = JobTransactionDboCreate(item);
+                cloneJobs.Add(jobTransaction);
             }
 
-            if (jobData.IsTrigger)
+            if (job.IsTrigger)
             {
                 var mainJob = cloneJobs.FirstOrDefault(x => x.IsTrigger == true && x.TriggerJobId == null);
                 foreach (var item in cloneJobs.OrderBy(x => x.CreateDate))
                 {
                     if (item.TriggerJobId != null)
-                        item.TriggerJobId = cloneJobs.FirstOrDefault(x => x.CreatedJobDataId == item.TriggerJobId).Id;
+                        item.TriggerJobId = cloneJobs.FirstOrDefault(x => x.CreatedJobId == item.TriggerJobId).Id;
 
                     item.TriggerGroupsId = mainJob.Id;
                 }

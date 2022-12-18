@@ -7,7 +7,7 @@ namespace JoberMQ.Server.Implementation.Timing
 {
     internal abstract class ScheduleBase : ISchedule
     {
-        protected ITimer jobDataTimer;
+        protected ITimer jobTimer;
         protected readonly IDbOprService dbOprService;
         protected readonly IDboCreator dboCreator;
 
@@ -17,7 +17,7 @@ namespace JoberMQ.Server.Implementation.Timing
             this.dboCreator = dboCreator;
         }
 
-        public ITimer JobDataTimer { get => jobDataTimer; set => jobDataTimer = value; }
+        public ITimer JobTimer { get => jobTimer; set => jobTimer = value; }
         public abstract bool Start();
         public abstract void Action(TimerModel timer);
     }

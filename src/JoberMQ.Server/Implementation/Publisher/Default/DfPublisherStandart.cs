@@ -15,7 +15,7 @@ namespace JoberMQ.Server.Implementation.Publisher.Default
         {
         }
 
-        public override JobDataAddResponseModel Publish(JobDataDbo jobData)
-             => TimingFactory.CreateTiming(serverConfig.TimingConfig.TimingFactory, jobData.TimingType, broker, dbOprService, dboCreator, schedule).Timing(jobData);
+        public override JobAddResponseModel Publish(JobDbo job)
+             => TimingFactory.CreateTiming(serverConfig.TimingConfig.TimingFactory, job.TimingType, broker, dbOprService, dboCreator, schedule).Timing(job);
     }
 }

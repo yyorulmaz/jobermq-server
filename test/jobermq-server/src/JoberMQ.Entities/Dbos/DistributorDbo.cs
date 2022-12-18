@@ -1,7 +1,6 @@
 ﻿using JoberMQ.Entities.Base.Dbo;
 using JoberMQ.Entities.Enums.Distributor;
 using JoberMQ.Entities.Enums.Permission;
-using Newtonsoft.Json;
 
 namespace JoberMQ.Entities.Dbos
 {

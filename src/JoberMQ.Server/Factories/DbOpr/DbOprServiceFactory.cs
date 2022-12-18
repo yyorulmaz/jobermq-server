@@ -21,8 +21,8 @@ namespace JoberMQ.Server.Factories.DbOpr
                 dbOprs.DistributorDbOpr,
                 dbOprs.QueueDbOpr,
                 dbOprs.EventSubDbOpr,
-                dbOprs.JobDataDbOpr,
                 dbOprs.JobDbOpr,
+                dbOprs.JobTransactionDbOpr,
                 dbOprs.MessageDbOpr,
                 dbOprs.MessageResultDbOpr);
                     break;
@@ -32,8 +32,8 @@ namespace JoberMQ.Server.Factories.DbOpr
                 dbOprs.DistributorDbOpr,
                 dbOprs.QueueDbOpr,
                 dbOprs.EventSubDbOpr,
-                dbOprs.JobDataDbOpr,
                 dbOprs.JobDbOpr,
+                dbOprs.JobTransactionDbOpr,
                 dbOprs.MessageDbOpr,
                 dbOprs.MessageResultDbOpr);
                     break;

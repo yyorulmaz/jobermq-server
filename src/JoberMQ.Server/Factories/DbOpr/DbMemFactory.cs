@@ -12,8 +12,8 @@ namespace JoberMQ.Server.Factories.DbOpr
             IDistributorMemDal DistributorMemDal,
             IQueueMemDal QueueMemDal,
             IEventSubMemDal EventSubMemDal,
-            IJobDataMemDal JobDataMemDal,
             IJobMemDal JobMemDal,
+            IJobTransactionMemDal JobTransactionMemDal,
             IMessageMemDal MessageMemDal,
             IMessageResultMemDal MessageResultMemDal)
             CreateDbMems(DbMemFactoryEnum dbMemFactory, DbMemDataFactoryEnum dbMemDataFactory)
@@ -22,8 +22,8 @@ namespace JoberMQ.Server.Factories.DbOpr
             IDistributorMemDal distributorMemDal;
             IQueueMemDal queueMemDal;
             IEventSubMemDal eventSubMemDal;
-            IJobDataMemDal jobDataMemDal;
             IJobMemDal jobMemDal;
+            IJobTransactionMemDal jobTransactionMemDal;
             IMessageMemDal messageMemDal;
             IMessageResultMemDal messageResultMemDal;
 
@@ -37,8 +37,8 @@ namespace JoberMQ.Server.Factories.DbOpr
                             distributorMemDal = new DfDistributorMemDal();
                             queueMemDal = new DfQueueMemDal();
                             eventSubMemDal = new DfEventSubMemDal();
-                            jobDataMemDal = new DfJobDataMemDal();
                             jobMemDal = new DfJobMemDal();
+                            jobTransactionMemDal = new DfJobTransactionMemDal();
                             messageMemDal = new DfMessageMemDal();
                             messageResultMemDal = new DfMessageResultMemDal();
                             break;
@@ -47,8 +47,8 @@ namespace JoberMQ.Server.Factories.DbOpr
                             distributorMemDal = new DfDistributorMemDal(DboInMemory.DistributorDatas);
                             queueMemDal = new DfQueueMemDal(DboInMemory.QueueDatas);
                             eventSubMemDal = new DfEventSubMemDal(DboInMemory.EventSubDatas);
-                            jobDataMemDal = new DfJobDataMemDal(DboInMemory.JobDataDatas);
-                            jobMemDal = new DfJobMemDal(DboInMemory.JobDatas);
+                            jobMemDal = new DfJobMemDal(DboInMemory.Jobs);
+                            jobTransactionMemDal = new DfJobTransactionMemDal(DboInMemory.JobTransactionDatas);
                             messageMemDal = new DfMessageMemDal(DboInMemory.MessageDatas);
                             messageResultMemDal = new DfMessageResultMemDal(DboInMemory.MessageResultDatas);
                             break;
@@ -57,8 +57,8 @@ namespace JoberMQ.Server.Factories.DbOpr
                             distributorMemDal = new DfDistributorMemDal(DboInMemory.DistributorDatas);
                             queueMemDal = new DfQueueMemDal(DboInMemory.QueueDatas);
                             eventSubMemDal = new DfEventSubMemDal(DboInMemory.EventSubDatas);
-                            jobDataMemDal = new DfJobDataMemDal(DboInMemory.JobDataDatas);
-                            jobMemDal = new DfJobMemDal(DboInMemory.JobDatas);
+                            jobMemDal = new DfJobMemDal(DboInMemory.Jobs);
+                            jobTransactionMemDal = new DfJobTransactionMemDal(DboInMemory.JobTransactionDatas);
                             messageMemDal = new DfMessageMemDal(DboInMemory.MessageDatas);
                             messageResultMemDal = new DfMessageResultMemDal(DboInMemory.MessageResultDatas);
                             break;
@@ -72,8 +72,8 @@ namespace JoberMQ.Server.Factories.DbOpr
                             distributorMemDal = new DfDistributorMemDal();
                             queueMemDal = new DfQueueMemDal();
                             eventSubMemDal = new DfEventSubMemDal();
-                            jobDataMemDal = new DfJobDataMemDal();
                             jobMemDal = new DfJobMemDal();
+                            jobTransactionMemDal = new DfJobTransactionMemDal();
                             messageMemDal = new DfMessageMemDal();
                             messageResultMemDal = new DfMessageResultMemDal();
                             break;
@@ -82,8 +82,8 @@ namespace JoberMQ.Server.Factories.DbOpr
                             distributorMemDal = new DfDistributorMemDal(DboInMemory.DistributorDatas);
                             queueMemDal = new DfQueueMemDal(DboInMemory.QueueDatas);
                             eventSubMemDal = new DfEventSubMemDal(DboInMemory.EventSubDatas);
-                            jobDataMemDal = new DfJobDataMemDal(DboInMemory.JobDataDatas);
-                            jobMemDal = new DfJobMemDal(DboInMemory.JobDatas);
+                            jobMemDal = new DfJobMemDal(DboInMemory.Jobs);
+                            jobTransactionMemDal = new DfJobTransactionMemDal(DboInMemory.JobTransactionDatas);
                             messageMemDal = new DfMessageMemDal(DboInMemory.MessageDatas);
                             messageResultMemDal = new DfMessageResultMemDal(DboInMemory.MessageResultDatas);
                             break;
@@ -92,8 +92,8 @@ namespace JoberMQ.Server.Factories.DbOpr
                             distributorMemDal = new DfDistributorMemDal(DboInMemory.DistributorDatas);
                             queueMemDal = new DfQueueMemDal(DboInMemory.QueueDatas);
                             eventSubMemDal = new DfEventSubMemDal(DboInMemory.EventSubDatas);
-                            jobDataMemDal = new DfJobDataMemDal(DboInMemory.JobDataDatas);
-                            jobMemDal = new DfJobMemDal(DboInMemory.JobDatas);
+                            jobMemDal = new DfJobMemDal(DboInMemory.Jobs);
+                            jobTransactionMemDal = new DfJobTransactionMemDal(DboInMemory.JobTransactionDatas);
                             messageMemDal = new DfMessageMemDal(DboInMemory.MessageDatas);
                             messageResultMemDal = new DfMessageResultMemDal(DboInMemory.MessageResultDatas);
                             break;
@@ -103,7 +103,7 @@ namespace JoberMQ.Server.Factories.DbOpr
 
 
 
-            return (userMemDal, distributorMemDal, queueMemDal, eventSubMemDal, jobDataMemDal, jobMemDal, messageMemDal, messageResultMemDal);
+            return (userMemDal, distributorMemDal, queueMemDal, eventSubMemDal, jobMemDal, jobTransactionMemDal, messageMemDal, messageResultMemDal);
         }
     }
 }

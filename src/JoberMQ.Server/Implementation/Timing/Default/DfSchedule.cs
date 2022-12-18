@@ -20,12 +20,12 @@ namespace JoberMQ.Server.Implementation.Timing.Default
         {
             try
             {
-                jobDataTimer = new TimerFactory().CreateTimer();
-                jobDataTimer.Receive += Action;
+                jobTimer = new TimerFactory().CreateTimer();
+                jobTimer.Receive += Action;
 
-                var jobSchedules = dbOprService.JobData.GetAll(x => x.IsActive == true && x.IsDelete == false && x.CronTime != null && x.IsCompleted == false
+                var jobSchedules = dbOprService.Job.GetAll(x => x.IsActive == true && x.IsDelete == false && x.CronTime != null && x.IsCompleted == false
                 && (x.ExecuteCountMax == 0 && x.CreatedCount == 0 || x.ExecuteCountMax != x.CreatedCount));
-                var timerData = new List<JobDataDbo>();
+                var timerData = new List<JobDbo>();
                 foreach (var item in jobSchedules)
                 {
                     timerData.Add(item);
@@ -37,7 +37,7 @@ namespace JoberMQ.Server.Implementation.Timing.Default
                     var timer = new TimerModel();
                     timer.Id = item.Id;
                     timer.CronTime = item.CronTime;
-                    timer.TimerGroup = "jobDataSchedule";
+                    timer.TimerGroup = "jobSchedule";
                     timer.Data = JsonConvert.SerializeObject(item);
 
                     timers.Add(timer);
@@ -45,10 +45,10 @@ namespace JoberMQ.Server.Implementation.Timing.Default
 
                 foreach (var item in timers)
                 {
-                    var result = jobDataTimer.Add(item);
+                    var result = jobTimer.Add(item);
                     if (result == false)
                     {
-                        jobDataTimer.Update(item);
+                        jobTimer.Update(item);
                     }
                 }
 
@@ -62,32 +62,32 @@ namespace JoberMQ.Server.Implementation.Timing.Default
 
         public override void Action(TimerModel timer)
         {
-            var jobDataDbo = dbOprService.JobData.Get(timer.Id);
+            var jobDbo = dbOprService.Job.Get(timer.Id);
 
             #region SCHEDULE JOB TIMER COMPLETED CHECK
-            jobDataDbo.CreatedCount = jobDataDbo.CreatedCount + 1;
-            if (jobDataDbo.ExecuteCountMax != null && jobDataDbo.ExecuteCountMax != 0 && jobDataDbo.ExecuteCountMax == jobDataDbo.CreatedCount)
+            jobDbo.CreatedCount = jobDbo.CreatedCount + 1;
+            if (jobDbo.ExecuteCountMax != null && jobDbo.ExecuteCountMax != 0 && jobDbo.ExecuteCountMax == jobDbo.CreatedCount)
             {
-                jobDataDbo.IsCountMax = true;
-                jobDataTimer.Remove(jobDataDbo.Id);
+                jobDbo.IsCountMax = true;
+                jobTimer.Remove(jobDbo.Id);
             }
             #endregion
 
-            var clones = dboCreator.CloneJobDataToJobs(jobDataDbo);
+            var clones = dboCreator.CloneJobToJobTransactions(jobDbo);
 
             foreach (var clone in clones)
             {
-                dbOprService.Job.Add(clone);
+                dbOprService.JobTransaction.Add(clone);
 
                 foreach (var item in clone.Details)
                 {
-                    var creatorJobDataDetail = jobDataDbo.Details.FirstOrDefault(x => x.Id == item.CreatedJobDataDetailId);
+                    var creatorJobDetail = jobDbo.Details.FirstOrDefault(x => x.Id == item.CreatedJobDetailId);
                     var eventGroupId = Guid.NewGuid();
 
                     //todo düzelt
-                    //if (creatorJobDataDetail.TransportType == TransportTypeEnum.Route)
+                    //if (creatorJobDetail.TransportType == TransportTypeEnum.Route)
                     //{
-                    //    var createJobMessageDbo = dboCreatorService.JobMessageDboCreate(jobDataDbo, creatorJobDataDetail, clone, item, null);
+                    //    var createJobMessageDbo = dboCreatorService.JobMessageDboCreate(jobDbo, creatorJobDetail, clone, item, null);
 
                     //    if (clone.IsTriggerMain)
                     //    {
@@ -100,10 +100,10 @@ namespace JoberMQ.Server.Implementation.Timing.Default
                     //        dbOprService.Message.Add(createJobMessageDbo);
                     //    }
                     //}
-                    //else if (creatorJobDataDetail.TransportType == TransportTypeEnum.Event)
+                    //else if (creatorJobDetail.TransportType == TransportTypeEnum.Event)
                     //{
-                    //    var createJobMessageDbo = dboCreatorService.JobMessageDboCreate(jobDataDbo, creatorJobDataDetail, clone, item, eventGroupId);
-                    //    var eventSubscribers = dbOprService.EventSubscriber.GetAll(x => x.EventName == creatorJobDataDetail.EventName);
+                    //    var createJobMessageDbo = dboCreatorService.JobMessageDboCreate(jobDbo, creatorJobDetail, clone, item, eventGroupId);
+                    //    var eventSubscribers = dbOprService.EventSubscriber.GetAll(x => x.EventName == creatorJobDetail.EventName);
 
                     //    foreach (var itemevent in eventSubscribers)
                     //    {
@@ -141,7 +141,7 @@ namespace JoberMQ.Server.Implementation.Timing.Default
             }
 
             #region UPDATE JobSchedule
-            dbOprService.JobData.Update(jobDataDbo);
+            dbOprService.Job.Update(jobDbo);
             #endregion
         }
     }

@@ -39,6 +39,6 @@ namespace JoberMQ.Server.Implementation.Timing
         }
 
 
-        public abstract JobDataAddResponseModel Timing(JobDataDbo jobData);
+        public abstract JobAddResponseModel Timing(JobDbo job);
     }
 }
