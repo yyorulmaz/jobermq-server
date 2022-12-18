@@ -1,12 +1,13 @@
 ﻿using JoberMQ.Entities.Dbos;
 using JoberMQ.Entities.Enums.Distributor;
 using JoberMQ.Entities.Enums.Queue;
-using JoberMQ.Entities.Models.Response;
+using System;
 using System.Collections.Generic;
+using System.Text;
 
-namespace JoberMQ.Server.Abstraction.Broker
+namespace JoberMQ.Business.Abstraction.Broker
 {
-    internal interface IBroker
+    internal interface IMessageBroker
     {
         public bool Start();
         public bool DistributorCreate(string distributorKey, DistributorTypeEnum distributorType, bool isDurable);

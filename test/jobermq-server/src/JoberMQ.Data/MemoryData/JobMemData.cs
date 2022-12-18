@@ -8,6 +8,6 @@ namespace JoberMQ.Data.MemoryData
 {
     internal class JobMemData
     {
-        internal static ConcurrentDictionary<Guid, JobDbo> Jobs = new ConcurrentDictionary<Guid, JobDbo>();
+        internal static ConcurrentDictionary<Guid, JobDbo> JobDatas = new ConcurrentDictionary<Guid, JobDbo>();
     }
 }

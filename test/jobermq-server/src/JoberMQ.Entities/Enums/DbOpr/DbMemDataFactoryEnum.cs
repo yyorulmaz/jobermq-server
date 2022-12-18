@@ -2,7 +2,6 @@
 {
     internal enum DbMemDataFactoryEnum
     {
-        None = 1,
-        Data = 2
+        Data = 1
     }
 }
