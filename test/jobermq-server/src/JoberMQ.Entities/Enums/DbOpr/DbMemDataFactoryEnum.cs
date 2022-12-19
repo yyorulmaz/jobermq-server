@@ -1,6 +1,6 @@
 ﻿namespace JoberMQ.Entities.Enums.DbOpr
 {
-    internal enum DbMemDataFactoryEnum
+    public enum DbMemDataFactoryEnum
     {
         Data = 1
     }

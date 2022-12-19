@@ -39,6 +39,13 @@ namespace JoberMQ.Entities.Models.Config
     {
         public string SecurityKey { get; set; }
     }
+
+
+    public class DbMemConfigModel
+    {
+        internal DbMemFactoryEnum DbMemFactory => ServerConst.DbOpr.DbMemFactory;
+        internal DbMemDataFactoryEnum DbMemDataFactory => ServerConst.DbOpr.DbMemDataFactory;
+    }
     public class DbOprConfigModel
     {
         internal DbOprServiceFactoryEnum DbOprServiceFactory => ServerConst.DbOpr.DbOprServiceFactory;
@@ -47,11 +54,6 @@ namespace JoberMQ.Entities.Models.Config
         internal DbTextConfigModel DbTextConfig => new DbTextConfigModel();
         internal DboCreatorFactoryEnum DboCreatorFactory => ServerConst.DbOpr.DboCreatorFactory;
         public string CompletedDataRemovesTimer => ServerConst.DbOpr.CompletedDataRemovesTimer;
-    }
-    public class DbMemConfigModel
-    {
-        internal DbMemFactoryEnum DbMemFactory => ServerConst.DbOpr.DbMemFactory;
-        internal DbMemDataFactoryEnum DbMemDataFactory => ServerConst.DbOpr.DbMemDataFactory;
     }
     public class DbTextConfigModel
     {
@@ -68,6 +70,9 @@ namespace JoberMQ.Entities.Models.Config
         public string DbFileExtension { get; set; }
         public int MaxRowCount { get; set; }
     }
+    
+    
+    
     public class BrokerConfigModel
     {
         internal BrokerFactoryEnum BrokerFactory => ServerConst.Broker.BrokerFactory;

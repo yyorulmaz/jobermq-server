@@ -39,9 +39,4 @@
 
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Folder Include="Abstraction\Server\" />
-	  <Folder Include="Implementation\Server\" />
-	</ItemGroup>
-
 </Project>
