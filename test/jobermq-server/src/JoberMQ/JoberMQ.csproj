@@ -7,7 +7,7 @@
 		<Description>Message Queue</Description>
 		<Authors>Yusuf Yorulmaz</Authors>
 		<Company>yorulmaz software</Company>
-		<Version>0.0.1</Version>
+		<Version>0.0.2</Version>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<!--<GenerateDocumentationFile>true</GenerateDocumentationFile>-->
 		<PublishRepositoryUrl>true</PublishRepositoryUrl>
@@ -43,8 +43,8 @@
 			<Visible>false</Visible>
 		</Compile>
 
-		<Compile Include="..\JoberMQ.Data\**\*.cs" Exclude="..\JoberMQ.Data\Properties\AssemblyInfo.cs;..\JoberMQ.Data\obj\**;..\JoberMQ.Data\bin\**">
-			<Link>Data\%(RecursiveDir)%(Filename)%(Extension)</Link>
+		<Compile Include="..\JoberMQ.Database\**\*.cs" Exclude="..\JoberMQ.Database\Properties\AssemblyInfo.cs;..\JoberMQ.Database\obj\**;..\JoberMQ.Database\bin\**">
+			<Link>Database\%(RecursiveDir)%(Filename)%(Extension)</Link>
 			<Visible>false</Visible>
 		</Compile>
 
@@ -62,8 +62,8 @@
 			<Visible>false</Visible>
 		</Compile>
 
-		<Compile Include="..\JoberMQ.Data\**\*.cs" Exclude="..\JoberMQ.Data\Properties\AssemblyInfo.cs;..\JoberMQ.Data\obj\**;..\JoberMQ.Data\bin\**">
-			<Link>Data\%(RecursiveDir)%(Filename)%(Extension)</Link>
+		<Compile Include="..\JoberMQ.Database\**\*.cs" Exclude="..\JoberMQ.Database\Properties\AssemblyInfo.cs;..\JoberMQ.Database\obj\**;..\JoberMQ.Database\bin\**">
+			<Link>Database\%(RecursiveDir)%(Filename)%(Extension)</Link>
 			<Visible>false</Visible>
 		</Compile>
 

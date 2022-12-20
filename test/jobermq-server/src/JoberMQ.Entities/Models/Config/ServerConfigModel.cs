@@ -16,7 +16,6 @@ namespace JoberMQ.Entities.Models.Config
 
         public StatusCodeConfigModel StatusCodeConfig => new StatusCodeConfigModel();
         public SecurityConfigModel SecurityConfig => new SecurityConfigModel();
-        public DbOprConfigModel DbOprConfig => new DbOprConfigModel();
         internal BrokerConfigModel BrokerConfig => new BrokerConfigModel();
         public HostConfigModel HostConfig => new HostConfigModel();
         public TimingConfigModel TimingConfig => new TimingConfigModel();

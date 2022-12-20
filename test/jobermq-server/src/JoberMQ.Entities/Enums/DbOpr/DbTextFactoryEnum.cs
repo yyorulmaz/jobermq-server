@@ -1,6 +1,6 @@
 ﻿namespace JoberMQ.Entities.Enums.DbOpr
 {
-    internal enum DbTextFactoryEnum
+    public enum DbTextFactoryEnum
     {
         Default = 1
     }

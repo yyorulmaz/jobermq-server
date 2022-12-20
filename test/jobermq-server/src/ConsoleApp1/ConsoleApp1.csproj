@@ -17,8 +17,13 @@
 	<ItemGroup>
 		<PackageReference Include="Quartz" Version="3.4.0" />
 		<PackageReference Include="GenRep.ConcurrentRepository" Version="0.0.1" />
-		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
 		<PackageReference Include="TimerFramework" Version="0.0.2" />
+	</ItemGroup>
+
+
+	<ItemGroup>
+	  <ProjectReference Include="..\JoberMQ\JoberMQ.csproj" />
 	</ItemGroup>
 
 </Project>
