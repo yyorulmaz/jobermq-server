@@ -5,4 +5,33 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+
+	<ItemGroup Condition=" '$(Configuration)' == 'Release'">
+
+		<Compile Include="..\JoberMQ.Entities\**\*.cs" Exclude="..\JoberMQ.Entities\Properties\AssemblyInfo.cs;..\JoberMQ.Entities\obj\**;..\JoberMQ.Entities\bin\**">
+			<Link>Entities\%(RecursiveDir)%(Filename)%(Extension)</Link>
+			<Visible>false</Visible>
+		</Compile>
+
+		<Compile Include="..\JoberMQ.Database\**\*.cs" Exclude="..\JoberMQ.Database\Properties\AssemblyInfo.cs;..\JoberMQ.Database\obj\**;..\JoberMQ.Database\bin\**">
+			<Link>Database\%(RecursiveDir)%(Filename)%(Extension)</Link>
+			<Visible>false</Visible>
+		</Compile>
+
+	</ItemGroup>
+
+	<ItemGroup Condition=" '$(Configuration)' == 'Debug'">
+
+		<Compile Include="..\JoberMQ.Entities\**\*.cs" Exclude="..\JoberMQ.Entities\Properties\AssemblyInfo.cs;..\JoberMQ.Entities\obj\**;..\JoberMQ.Entities\bin\**">
+			<Link>Entities\%(RecursiveDir)%(Filename)%(Extension)</Link>
+			<Visible>false</Visible>
+		</Compile>
+
+		<Compile Include="..\JoberMQ.Database\**\*.cs" Exclude="..\JoberMQ.Database\Properties\AssemblyInfo.cs;..\JoberMQ.Database\obj\**;..\JoberMQ.Database\bin\**">
+			<Link>Database\%(RecursiveDir)%(Filename)%(Extension)</Link>
+			<Visible>false</Visible>
+		</Compile>
+
+	</ItemGroup>
+
 </Project>

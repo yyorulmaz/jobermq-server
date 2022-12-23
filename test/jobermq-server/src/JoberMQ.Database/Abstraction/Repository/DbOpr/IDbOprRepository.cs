@@ -10,8 +10,8 @@ namespace JoberMQ.Database.Abstraction.Repository.DbOpr
     internal interface IDbOprRepository<D>
     where D : DboPropertyGuidBase, new()
     {
-        public IDbMemRepository<Guid, D> DbMem { get; }
-        public IDbTextRepository<D> DbText { get; }
+        public IDbMemRepository<Guid, D> DbMem { get; set; }
+        public IDbTextRepository<D> DbText { get; set; }
 
 
         #region CRUD

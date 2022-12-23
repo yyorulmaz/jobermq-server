@@ -1,6 +1,8 @@
 ﻿using JoberMQ.Abstraction.Database;
+using JoberMQ.Database.Abstraction.Configuration;
 using JoberMQ.Database.Abstraction.DbOpr;
 using JoberMQ.Entities.Dbos;
+using JoberMQ.Server.Factories.DbOpr;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -21,27 +23,20 @@ namespace JoberMQ.Implementation.Database.Default
         private readonly IMessageDbOpr message;
         private readonly IMessageResultDbOpr messageResult;
 
-        public DfDatabaseManager(
-            IUserDbOpr user,
-            IDistributorDbOpr distributor,
-            IQueueDbOpr queue,
-            IEventSubDbOpr eventSub,
-            IJobDbOpr job,
-            IJobTransactionDbOpr jobTransaction,
-            IMessageDbOpr message,
-            IMessageResultDbOpr messageResult)
+        public DfDatabaseManager(IConfigurationDatabase configuration)
         {
-            this.user = user;
-            this.distributor = distributor;
-            this.queue = queue;
-            this.eventSub = eventSub;
-            this.job = job;
-            this.jobTransaction = jobTransaction;
-            this.message = message;
-            this.messageResult = messageResult;
+            var dbOprs = DbOprFactory.CreateDbOprs(configuration);
 
-
+            this.user = dbOprs.UserDbOpr;
+            this.distributor = dbOprs.DistributorDbOpr;
+            this.queue = dbOprs.QueueDbOpr;
+            this.eventSub = dbOprs.EventSubDbOpr;
+            this.job = dbOprs.JobDbOpr;
+            this.jobTransaction = dbOprs.JobTransactionDbOpr;
+            this.message = dbOprs.MessageDbOpr;
+            this.messageResult = dbOprs.MessageResultDbOpr;
         }
+
 
         public IUserDbOpr User => user;
         public IDistributorDbOpr Distributor => distributor;

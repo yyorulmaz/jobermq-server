@@ -1,9 +1,11 @@
-﻿using JoberMQ.Database.Abstraction.Repository.DbMem;
+﻿using JoberMQ.Database.Abstraction.Configuration;
+using JoberMQ.Database.Abstraction.Repository.DbMem;
 using JoberMQ.Database.Abstraction.Repository.DbOpr;
 using JoberMQ.Database.Abstraction.Repository.DbText;
 using JoberMQ.Entities.Base.Dbo;
 using JoberMQ.Entities.Enums.Data;
 using JoberMQ.Entities.Helper;
+using JoberMQ.Server.Factories.DbOpr;
 using System;
 using System.Collections.Generic;
 
@@ -12,8 +14,6 @@ namespace JoberMQ.Database.Implementation.Repository.DbOpr.Default
     internal class DfDbOprRepository<D> : IDbOprRepository<D>
         where D : DboPropertyGuidBase, new()
     {
-        private readonly IDbMemRepository<Guid, D> dbMem;
-        private readonly IDbTextRepository<D> dbText;
         internal DfDbOprRepository(
             IDbMemRepository<Guid, D> dbMem,
             IDbTextRepository<D> dbText)
@@ -21,9 +21,17 @@ namespace JoberMQ.Database.Implementation.Repository.DbOpr.Default
             this.dbMem = dbMem;
             this.dbText = dbText;
         }
+        internal DfDbOprRepository()
+        {
 
-        public IDbMemRepository<Guid, D> DbMem => dbMem;
-        public IDbTextRepository<D> DbText => dbText;
+        }
+
+        //public IDbMemRepository<Guid, D> DbMem => dbMem;
+        //public IDbTextRepository<D> DbText => dbText;
+        private IDbMemRepository<Guid, D> dbMem;
+        public IDbMemRepository<Guid, D> DbMem { get => dbMem; set => dbMem = value; }
+        private IDbTextRepository<D> dbText;
+        public IDbTextRepository<D> DbText { get => dbText; set => dbText = value; }
 
         #region CRUD
         public D Get(Guid id) => dbMem.Get(id);
@@ -109,5 +117,6 @@ namespace JoberMQ.Database.Implementation.Repository.DbOpr.Default
             => dbText.DataGroupingAndSize();
 
         public int ArsiveFileCounter { get => dbText.ArsiveFileCounter; set => dbText.ArsiveFileCounter = value; }
+
     }
 }

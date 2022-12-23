@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace JoberMQ.Business.Abstraction.Queue
+namespace JoberMQ.Broker.Abstraction
 {
-    internal interface IMessageQueue
+    internal interface IMessageDistributor
     {
     }
 }

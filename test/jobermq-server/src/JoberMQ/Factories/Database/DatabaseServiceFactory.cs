@@ -2,7 +2,6 @@
 using JoberMQ.Database.Abstraction.Configuration;
 using JoberMQ.Entities.Enums.DbOpr;
 using JoberMQ.Implementation.Database.Default;
-using JoberMQ.Server.Factories.DbOpr;
 
 namespace JoberMQ.Factories.Database
 {
@@ -10,33 +9,15 @@ namespace JoberMQ.Factories.Database
     {
         internal static IDatabaseService CreateDatabaseService(IConfigurationDatabase configuration)
         {
-            var dbOprs = DbOprFactory.CreateDbOprs(configuration);
-
             IDatabaseService databaseService;
 
             switch (configuration.DatabaseServiceFactory)
             {
                 case DatabaseServiceFactoryEnum.Default:
-                    databaseService = new DfDatabaseManager(
-                        dbOprs.UserDbOpr,
-                        dbOprs.DistributorDbOpr,
-                        dbOprs.QueueDbOpr,
-                        dbOprs.EventSubDbOpr,
-                        dbOprs.JobDbOpr,
-                        dbOprs.JobTransactionDbOpr,
-                        dbOprs.MessageDbOpr,
-                        dbOprs.MessageResultDbOpr);
+                    databaseService = new DfDatabaseManager(configuration);
                     break;
                 default:
-                    databaseService = new DfDatabaseManager(
-                        dbOprs.UserDbOpr,
-                        dbOprs.DistributorDbOpr,
-                        dbOprs.QueueDbOpr,
-                        dbOprs.EventSubDbOpr,
-                        dbOprs.JobDbOpr,
-                        dbOprs.JobTransactionDbOpr,
-                        dbOprs.MessageDbOpr,
-                        dbOprs.MessageResultDbOpr);
+                    databaseService = new DfDatabaseManager(configuration);
                     break;
             }
 
