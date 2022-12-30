@@ -1,2 +1,0 @@
-# jobermq-server
-JoberMQ Server

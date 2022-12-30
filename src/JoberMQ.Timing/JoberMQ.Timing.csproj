@@ -1,0 +1,86 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<!--<TargetFramework>netstandard2.1</TargetFramework>-->
+		<TargetFramework>net7.0</TargetFramework>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
+		<PackageReference Include="TimerFramework" Version="0.0.2" />
+		<PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.1.0" />
+	</ItemGroup>
+
+	<ItemGroup Condition=" '$(Configuration)' == 'Release'">
+
+		<Compile Include="..\JoberMQ.Common\**\*.cs" Exclude="..\JoberMQ.Common\Properties\AssemblyInfo.cs;..\JoberMQ.Common\obj\**;..\JoberMQ.Common\bin\**">
+			<Link>Common\%(RecursiveDir)%(Filename)%(Extension)</Link>
+			<Visible>false</Visible>
+		</Compile>
+
+		<Compile Include="..\JoberMQ.Database\**\*.cs" Exclude="..\JoberMQ.Database\Properties\AssemblyInfo.cs;..\JoberMQ.Database\obj\**;..\JoberMQ.Database\bin\**">
+			<Link>Database\%(RecursiveDir)%(Filename)%(Extension)</Link>
+			<Visible>false</Visible>
+		</Compile>
+
+		<Compile Include="..\JoberMQ.Client\**\*.cs" Exclude="..\JoberMQ.Client\Properties\AssemblyInfo.cs;..\JoberMQ.Client\obj\**;..\JoberMQ.Client\bin\**">
+			<Link>Client\%(RecursiveDir)%(Filename)%(Extension)</Link>
+			<Visible>false</Visible>
+		</Compile>
+
+		<Compile Include="..\JoberMQ.Queue\**\*.cs" Exclude="..\JoberMQ.Queue\Properties\AssemblyInfo.cs;..\JoberMQ.Queue\obj\**;..\JoberMQ.Queue\bin\**">
+			<Link>Queue\%(RecursiveDir)%(Filename)%(Extension)</Link>
+			<Visible>false</Visible>
+		</Compile>
+
+		<Compile Include="..\JoberMQ.Distributor\**\*.cs" Exclude="..\JoberMQ.Distributor\Properties\AssemblyInfo.cs;..\JoberMQ.Distributor\obj\**;..\JoberMQ.Distributor\bin\**">
+			<Link>Distributor\%(RecursiveDir)%(Filename)%(Extension)</Link>
+			<Visible>false</Visible>
+		</Compile>
+
+		<Compile Include="..\JoberMQ.Broker\**\*.cs" Exclude="..\JoberMQ.Broker\Properties\AssemblyInfo.cs;..\JoberMQ.Broker\obj\**;..\JoberMQ.Broker\bin\**">
+			<Link>Broker\%(RecursiveDir)%(Filename)%(Extension)</Link>
+			<Visible>false</Visible>
+		</Compile>
+
+	</ItemGroup>
+
+	<ItemGroup Condition=" '$(Configuration)' == 'Debug'">
+
+		<Compile Include="..\JoberMQ.Common\**\*.cs" Exclude="..\JoberMQ.Common\Properties\AssemblyInfo.cs;..\JoberMQ.Common\obj\**;..\JoberMQ.Common\bin\**">
+			<Link>Common\%(RecursiveDir)%(Filename)%(Extension)</Link>
+			<Visible>false</Visible>
+		</Compile>
+
+		<Compile Include="..\JoberMQ.Database\**\*.cs" Exclude="..\JoberMQ.Database\Properties\AssemblyInfo.cs;..\JoberMQ.Database\obj\**;..\JoberMQ.Database\bin\**">
+			<Link>Database\%(RecursiveDir)%(Filename)%(Extension)</Link>
+			<Visible>false</Visible>
+		</Compile>
+
+		<Compile Include="..\JoberMQ.Client\**\*.cs" Exclude="..\JoberMQ.Client\Properties\AssemblyInfo.cs;..\JoberMQ.Client\obj\**;..\JoberMQ.Client\bin\**">
+			<Link>Client\%(RecursiveDir)%(Filename)%(Extension)</Link>
+			<Visible>false</Visible>
+		</Compile>
+
+		<Compile Include="..\JoberMQ.Queue\**\*.cs" Exclude="..\JoberMQ.Queue\Properties\AssemblyInfo.cs;..\JoberMQ.Queue\obj\**;..\JoberMQ.Queue\bin\**">
+			<Link>Queue\%(RecursiveDir)%(Filename)%(Extension)</Link>
+			<Visible>false</Visible>
+		</Compile>
+
+		<Compile Include="..\JoberMQ.Distributor\**\*.cs" Exclude="..\JoberMQ.Distributor\Properties\AssemblyInfo.cs;..\JoberMQ.Distributor\obj\**;..\JoberMQ.Distributor\bin\**">
+			<Link>Distributor\%(RecursiveDir)%(Filename)%(Extension)</Link>
+			<Visible>false</Visible>
+		</Compile>
+
+		<Compile Include="..\JoberMQ.Broker\**\*.cs" Exclude="..\JoberMQ.Broker\Properties\AssemblyInfo.cs;..\JoberMQ.Broker\obj\**;..\JoberMQ.Broker\bin\**">
+			<Link>Broker\%(RecursiveDir)%(Filename)%(Extension)</Link>
+			<Visible>false</Visible>
+		</Compile>
+
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Data\" />
+	</ItemGroup>
+</Project>

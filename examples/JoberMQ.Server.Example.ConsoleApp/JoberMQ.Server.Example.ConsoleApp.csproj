@@ -16,9 +16,5 @@
 		<PackageReference Include="GenRep.ConcurrentRepository" Version="0.0.1" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
 	</ItemGroup>
-	
-  <ItemGroup>
-    <ProjectReference Include="..\..\src\JoberMQ.Server\JoberMQ.Server.csproj" />
-  </ItemGroup>
 
 </Project>
