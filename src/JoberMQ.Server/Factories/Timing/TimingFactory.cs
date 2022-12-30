@@ -1,4 +1,5 @@
 ﻿using JoberMQ.Entities.Enums.Timing;
+using JoberMQ.Server.Abstraction.Broker;
 using JoberMQ.Server.Abstraction.DboCreator;
 using JoberMQ.Server.Abstraction.DbOpr;
 using JoberMQ.Server.Abstraction.Timing;
@@ -8,7 +9,7 @@ namespace JoberMQ.Server.Factories.Timing
 {
     internal class TimingFactory
     {
-        internal static ITiming CreateTiming(TimingFactoryEnum timingFactory, TimingTypeEnum timingType, IDbOprService dbOprService, IDboCreator dboCreator, ISchedule schedule)
+        internal static ITiming CreateTiming(TimingFactoryEnum timingFactory, TimingTypeEnum timingType, IBroker broker, IDbOprService dbOprService, IDboCreator dboCreator, ISchedule schedule)
         {
             ITiming timing;
 
@@ -18,10 +19,10 @@ namespace JoberMQ.Server.Factories.Timing
                     switch (timingType)
                     {
                         case TimingTypeEnum.Now:
-                            timing = new DfTimingNow(dbOprService, dboCreator);
+                            timing = new DfTimingNow(broker,dbOprService, dboCreator);
                             break;
                         case TimingTypeEnum.Schedule:
-                            timing = new DfTimingSchedule(dbOprService, schedule);
+                            timing = new DfTimingSchedule(broker,dbOprService, schedule);
                             break;
                         case TimingTypeEnum.Trigger:
                             timing = new DfTiminTrigger(dbOprService);
@@ -35,10 +36,10 @@ namespace JoberMQ.Server.Factories.Timing
                     switch (timingType)
                     {
                         case TimingTypeEnum.Now:
-                            timing = new DfTimingNow(dbOprService, dboCreator);
+                            timing = new DfTimingNow(broker, dbOprService, dboCreator);
                             break;
                         case TimingTypeEnum.Schedule:
-                            timing = new DfTimingSchedule(dbOprService, schedule);
+                            timing = new DfTimingSchedule(broker, dbOprService, schedule);
                             break;
                         case TimingTypeEnum.Trigger:
                             timing = new DfTiminTrigger(dbOprService);

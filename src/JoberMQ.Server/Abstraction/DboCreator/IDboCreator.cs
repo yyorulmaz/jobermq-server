@@ -6,9 +6,10 @@ namespace JoberMQ.Server.Abstraction.DboCreator
 {
     internal interface IDboCreator
     {
-        public JobDbo JobDboCreate(JobDataDbo jobDataDbo);
-        public MessageDbo MessageDboCreate(JobDataDbo jobDataDbo, JobDataDetailDbo jobDataDetailDbo, JobDbo jobDbo, JobDetailDbo jobDetailDbo, Guid? eventGroupId);
-        public List<JobDbo> CloneJobDataToJobs(JobDataDbo jobData);
+        public JobTransactionDbo JobTransactionDboCreate(JobDbo jobDbo);
+        public MessageDbo MessageDboCreate(JobDbo jobDbo, JobDetailDbo jobDetailDbo, JobTransactionDbo jobTransactionDbo, JobTransactionDetailDbo jobTransactionDetailDbo, Guid? eventGroupId);
+        public List<MessageDbo> MessageDboCreates(JobTransactionDbo jobDbo);
+        public List<JobTransactionDbo> CloneJobToJobTransactions(JobDbo job);
 
     }
 }

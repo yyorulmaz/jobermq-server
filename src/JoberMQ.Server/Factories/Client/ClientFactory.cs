@@ -1,4 +1,5 @@
 ﻿using JoberMQ.Entities.Enums.Client;
+using JoberMQ.Entities.Models.Config;
 using JoberMQ.Server.Implementation.Client.Default;
 using JoberMQNEW.Server.Abstraction.Client;
 using JoberMQNEW.Server.Data;
@@ -23,18 +24,33 @@ namespace JoberMQ.Server.Factories.Client
             return client;
         }
 
+        internal static IClientGroup CreateClientGroup(ClientGroupFactoryEnum clientGroupFactory, string groupName)
+        {
+            IClientGroup clientGroup;
+            switch (clientGroupFactory)
+            {
+                case ClientGroupFactoryEnum.Default:
+                    clientGroup = new DfClientGroup(groupName);
+                    break;
+                default:
+                    clientGroup = new DfClientGroup(groupName);
+                    break;
+            }
 
-        internal static IClientService CreateClientService(ClientServiceFactoryEnum clientServiceFactory)
+            return clientGroup;
+        }
+
+        internal static IClientService CreateClientService(ServerConfigModel serverConfig)
         {
             IClientService clientService; ;
 
-            switch (clientServiceFactory)
+            switch (serverConfig.ClientServiceFactory)
             {
                 case ClientServiceFactoryEnum.Default:
-                    clientService = new DfClientManager(InMemoryClient.ClientDatas, InMemoryClient.ClientGroupDatas);
+                    clientService = new DfClientManager(serverConfig,InMemoryClient.ClientDatas, InMemoryClient.ClientGroupDatas);
                     break;
                 default:
-                    clientService = new DfClientManager(InMemoryClient.ClientDatas, InMemoryClient.ClientGroupDatas);
+                    clientService = new DfClientManager(serverConfig,InMemoryClient.ClientDatas, InMemoryClient.ClientGroupDatas);
                     break;
             }
             return clientService;

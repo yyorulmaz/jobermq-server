@@ -6,4 +6,4 @@ namespace JoberMQ.DataAccess.Abstract.DBTEXT
     internal interface IJobTextDal : IDbTextRepository<JobDbo>
     {
     }
-}
+} 

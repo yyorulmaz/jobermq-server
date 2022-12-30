@@ -6,49 +6,49 @@ namespace JoberMQ.Server.Factories.Queue
 {
     internal class QueueChildDataBaseFactory
     {
-        internal static IQueueChildDataBasePriority CreateQueueChildDataBasePriority(QueueChildPriorityFactoryEnum queueChildPriorityFactory, IQueueDataBase queueDataBase)
+        internal static IDbChildPriority CreateQueueChildDataBasePriority(QueueChildPriorityFactoryEnum queueChildPriorityFactory, IDb queueDataBase)
         {
-            IQueueChildDataBasePriority queueChildDataBase;
+            IDbChildPriority queueChildDataBase;
 
             switch (queueChildPriorityFactory)
             {
                 case QueueChildPriorityFactoryEnum.Default:
-                    queueChildDataBase = new DfQueueChildDataBasePriority(queueDataBase);
+                    queueChildDataBase = new DfDbChildPriority(queueDataBase);
                     break;
                 default:
-                    queueChildDataBase = new DfQueueChildDataBasePriority(queueDataBase);
+                    queueChildDataBase = new DfDbChildPriority(queueDataBase);
                     break;
             }
 
             return queueChildDataBase;
         }
-        internal static IQueueChildDataBaseFIFO CreateQueueChildDataBaseFIFO(QueueChildFIFOFactoryEnum queueChildFIFOFactory, IQueueDataBase queueDataBase)
+        internal static IDbChildFIFO CreateQueueChildDataBaseFIFO(QueueChildFIFOFactoryEnum queueChildFIFOFactory, IDb queueDataBase)
         {
-            IQueueChildDataBaseFIFO queueChildDataBaseFIFO;
+            IDbChildFIFO queueChildDataBaseFIFO;
 
             switch (queueChildFIFOFactory)
             {
                 case QueueChildFIFOFactoryEnum.Default:
-                    queueChildDataBaseFIFO = new DfQueueChildDataBaseFIFO(queueDataBase);
+                    queueChildDataBaseFIFO = new DfDbChildFIFO(queueDataBase);
                     break;
                 default:
-                    queueChildDataBaseFIFO = new DfQueueChildDataBaseFIFO(queueDataBase);
+                    queueChildDataBaseFIFO = new DfDbChildFIFO(queueDataBase);
                     break;
             }
 
             return queueChildDataBaseFIFO;
         }
-        internal static IQueueChildDataBaseLIFO CreateQueueChildDataBaseLIFO(QueueChildLIFOFactoryEnum queueChildLIFOFactory, IQueueDataBase queueDataBase)
+        internal static IDbChildLIFO CreateQueueChildDataBaseLIFO(QueueChildLIFOFactoryEnum queueChildLIFOFactory, IDb queueDataBase)
         {
-            IQueueChildDataBaseLIFO queueChildDataBaseLIFO;
+            IDbChildLIFO queueChildDataBaseLIFO;
 
             switch (queueChildLIFOFactory)
             {
                 case QueueChildLIFOFactoryEnum.Default:
-                    queueChildDataBaseLIFO = new DfQueueChildDataBaseLIFO(queueDataBase);
+                    queueChildDataBaseLIFO = new DfDbChildLIFO(queueDataBase);
                     break;
                 default:
-                    queueChildDataBaseLIFO = new DfQueueChildDataBaseLIFO(queueDataBase);
+                    queueChildDataBaseLIFO = new DfDbChildLIFO(queueDataBase);
                     break;
             }
 

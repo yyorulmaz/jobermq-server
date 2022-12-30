@@ -1,7 +1,9 @@
 ﻿using JoberMQ.Entities.Constants;
+using JoberMQ.Entities.Enums.Broker;
 using JoberMQ.Entities.Enums.Client;
 using JoberMQ.Entities.Enums.DbOpr;
 using JoberMQ.Entities.Enums.Distributor;
+using JoberMQ.Entities.Enums.Permission;
 using JoberMQ.Entities.Enums.Publisher;
 using JoberMQ.Entities.Enums.Queue;
 using JoberMQ.Entities.Enums.Schedule;
@@ -17,6 +19,7 @@ namespace JoberMQ.Entities.Models.Config
     {
         internal ServerFactoryEnum ServerFactory => ServerConst.ServerFactory;
         internal ClientFactoryEnum ClientFactory => ServerConst.ClientFactory;
+        internal ClientGroupFactoryEnum ClientGroupFactory => ServerConst.ClientGroupFactory;
         internal ClientServiceFactoryEnum ClientServiceFactory => ServerConst.ClientServiceFactory;
 
         public StatusCodeConfigModel StatusCodeConfig => new StatusCodeConfigModel();
@@ -36,6 +39,13 @@ namespace JoberMQ.Entities.Models.Config
     {
         public string SecurityKey { get; set; }
     }
+
+
+    public class DbMemConfigModel
+    {
+        internal DbMemFactoryEnum DbMemFactory => ServerConst.DbOpr.DbMemFactory;
+        internal DbMemDataFactoryEnum DbMemDataFactory => ServerConst.DbOpr.DbMemDataFactory;
+    }
     public class DbOprConfigModel
     {
         internal DbOprServiceFactoryEnum DbOprServiceFactory => ServerConst.DbOpr.DbOprServiceFactory;
@@ -44,11 +54,6 @@ namespace JoberMQ.Entities.Models.Config
         internal DbTextConfigModel DbTextConfig => new DbTextConfigModel();
         internal DboCreatorFactoryEnum DboCreatorFactory => ServerConst.DbOpr.DboCreatorFactory;
         public string CompletedDataRemovesTimer => ServerConst.DbOpr.CompletedDataRemovesTimer;
-    }
-    public class DbMemConfigModel
-    {
-        internal DbMemFactoryEnum DbMemFactory => ServerConst.DbOpr.DbMemFactory;
-        internal DbMemDataFactoryEnum DbMemDataFactory => ServerConst.DbOpr.DbMemDataFactory;
     }
     public class DbTextConfigModel
     {
@@ -65,13 +70,36 @@ namespace JoberMQ.Entities.Models.Config
         public string DbFileExtension { get; set; }
         public int MaxRowCount { get; set; }
     }
+    
+    
+    
     public class BrokerConfigModel
     {
+        internal BrokerFactoryEnum BrokerFactory => ServerConst.Broker.BrokerFactory;
         internal QueueFactoryEnum QueueFactory => ServerConst.Broker.QueueFactory;
         internal QueueChildPriorityFactoryEnum QueueChildPriorityFactory => ServerConst.Broker.QueueChildPriorityFactory;
         internal QueueChildFIFOFactoryEnum QueueChildFIFOFactory => ServerConst.Broker.QueueChildFIFOFactory;
         internal QueueChildLIFOFactoryEnum QueueChildLIFOFactory => ServerConst.Broker.QueueChildLIFOFactory;
         internal DistributorFactoryEnum DistributorFactory => ServerConst.Broker.DistributorFactory;
+    
+        internal ConcurrentDictionary<string, DefaultDistributorConfigModel> DefaultDistributorConfigDatas = ServerConst.Broker.DefaultDistributorConfigDatas;
+        internal ConcurrentDictionary<string, DefaultQueueConfigModel> DefaultQueueConfigDatas = ServerConst.Broker.DefaultQueueConfigDatas;
+
+    }
+    public class DefaultDistributorConfigModel
+    {
+        public string DistributorKey { get; set; }
+        public DistributorTypeEnum DistributorType { get; set; }
+        public PermissionTypeEnum PermissionType { get; set; }
+        public bool IsDurable { get; set; }
+    }
+    public class DefaultQueueConfigModel
+    {
+        public string QueueKey { get; set; }
+        public MatchTypeEnum MatchType { get; set; }
+        public SendTypeEnum SendType { get; set; }
+        public PermissionTypeEnum PermissionType { get; set; }
+        public bool IsDurable { get; set; }
     }
     public class HostConfigModel
     {

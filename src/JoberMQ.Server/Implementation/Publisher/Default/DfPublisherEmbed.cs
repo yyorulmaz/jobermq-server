@@ -1,6 +1,7 @@
 ﻿using JoberMQ.Entities.Dbos;
 using JoberMQ.Entities.Models.Response;
 using JoberMQ.Server.Abstraction.DbOpr;
+using System;
 
 namespace JoberMQ.Server.Implementation.Publisher.Default
 {
@@ -10,12 +11,26 @@ namespace JoberMQ.Server.Implementation.Publisher.Default
         {
         }
 
-        public override JobDataAddResponseModel Publish(JobDataDbo jobData)
+        public override JobAddResponseModel Publish(JobDbo job)
         {
-            var response = new JobDataAddResponseModel();
+            var response = new JobAddResponseModel();
             response.IsOnline = true;
-            response.IsSuccess = dbOprService.JobData.Add(jobData);
-            response.JobId = jobData.Id;
+
+            var isSuccess = dbOprService.Job.Add(job);
+
+            if (isSuccess)
+            {
+                dbOprService.Job.Commit(job);
+                response.IsSuccess = true;
+            }
+            else
+            {
+                dbOprService.Job.Rollback(job);
+                response.IsSuccess = false;
+                response.Message = "error"; // todo error statuscode ekle
+            }
+            
+            response.JobId = job.Id;
             return response;
         }
     }

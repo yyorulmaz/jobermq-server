@@ -1,4 +1,5 @@
 ﻿using JoberMQ.Entities.Dbos;
+using JoberMQ.Entities.Enums.Permission;
 using JoberMQ.Entities.Enums.Queue;
 using JoberMQ.Entities.Enums.Status;
 using JoberMQ.Entities.Models.Config;
@@ -17,9 +18,9 @@ namespace JoberMQ.Server.Implementation.Queue.Default
 {
     internal class DfQueuePriority : QueueBase
     {
-        IQueueChildDataBasePriority ChildData;
+        IDbChildPriority ChildData;
 
-        public DfQueuePriority(BrokerConfigModel brokerConfig, string distributorName, string queueName, MatchTypeEnum matchType, SendTypeEnum sendType, IClientGroup clientGroup, IQueueDataBase queueDataBase, IMessageDbOpr messageDbOpr) : base(brokerConfig, distributorName, queueName, matchType, sendType, clientGroup, queueDataBase, messageDbOpr)
+        public DfQueuePriority(BrokerConfigModel brokerConfig, string queueKey, MatchTypeEnum matchType, SendTypeEnum sendType, PermissionTypeEnum permissionType, bool isDurable, IClientGroup clientGroup, IDb queueDataBase, IMessageDbOpr messageDbOpr) : base(brokerConfig, queueKey, matchType, sendType, permissionType, isDurable, clientGroup, queueDataBase, messageDbOpr)
         {
             ChildData = QueueChildDataBaseFactory.CreateQueueChildDataBasePriority(brokerConfig.QueueChildPriorityFactory, queueDataBase);
 
@@ -40,17 +41,8 @@ namespace JoberMQ.Server.Implementation.Queue.Default
             }
         }
 
-        public override JobDataAddResponseModel QueueAdd(MessageDbo message)
-        {
-            var add = ChildData.Add(message);
-
-            var result = new JobDataAddResponseModel();
-            result.IsOnline = true;
-            result.IsSuccess = add;
-            result.JobId = message.Id;
-
-            return result;
-        }
+        public override bool QueueAdd(MessageDbo message) 
+            => ChildData.Add(message);
 
         protected override void Qperation()
         {
@@ -58,7 +50,7 @@ namespace JoberMQ.Server.Implementation.Queue.Default
             {
                 IClient client;
 
-                if (MatchType == MatchTypeEnum.ClientKey)
+                if (MatchType == MatchTypeEnum.Special)
                     client = ClientGroup.Get(x => x.ClientKey == message.Value.ConsumerKey);
                 else
                     client = ClientGroup.Get(x => x.RowNumber > endConsumerNumber);

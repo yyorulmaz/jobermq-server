@@ -5,6 +5,6 @@ namespace JoberMQ.Server.Abstraction.Timing
 {
     internal interface ITiming
     {
-        public JobDataAddResponseModel Timing(JobDataDbo jobData);
+        public JobAddResponseModel Timing(JobDbo job);
     }
 }

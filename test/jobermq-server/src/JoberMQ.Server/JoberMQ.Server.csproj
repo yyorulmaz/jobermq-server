@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>dotnet-JoberMQ.Server-bc8009bb-a543-425c-bdbf-d82bffe6daee</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="JoberMQ" Version="0.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.0" />
+	  <!--<PackageReference Include="Newtonsoft.Json" Version="13.0.2" />-->
+  </ItemGroup>
+
+
+</Project>

@@ -6,7 +6,7 @@ namespace JoberMQ.Server.Factories.Queue
 {
     internal class QueueDataBaseFactory
     {
-        internal static IQueueDataBase GetQueueDataBase()
-            => new QueueDataBase(InMemoryQueue.QueueDatas);
+        internal static IDb GetQueueDataBase()
+            => new DfDb(InMemoryQueue.QueueDataBase);
     }
 }
