@@ -33,9 +33,7 @@ namespace JoberMQ.Common.Database.Repository.Implementation.Text.Default
         }
         #endregion
 
-
         public int ArsiveFileCounter { get => arsiveFileCounter; set => arsiveFileCounter = value; }
-
 
         #region Setup
         public bool CreateDatabase()
@@ -74,7 +72,6 @@ namespace JoberMQ.Common.Database.Repository.Implementation.Text.Default
             }
         }
         #endregion
-
 
         #region WRITE
         public bool WriteLine(string message)
@@ -248,9 +245,6 @@ namespace JoberMQ.Common.Database.Repository.Implementation.Text.Default
         private Mutex MutexCreate(bool initiallyOwned, string name)
             => new Mutex(initiallyOwned, name);
         #endregion
-
-
-
 
         public bool DataGroupingAndSize()
         {
