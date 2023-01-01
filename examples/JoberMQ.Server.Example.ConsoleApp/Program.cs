@@ -1,4 +1,21 @@
-﻿
+﻿using System.Reflection;
+
+var dddddddddddd = Assembly.GetEntryAssembly();
+
+
+string applicationDirectory = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
+Console.WriteLine(applicationDirectory);
+Console.ReadLine();
+
+
+
+
+
+
+
+
+
+
 //using System.Threading.Channels;
 
 //var config = JoberMQ.Server.Factory.GetServerConfig();
@@ -14,7 +31,7 @@
 //var endDate = DateTime.Now;
 
 //Console.WriteLine(endDate - startDate);
-Console.ReadLine();
+
 
 
 
@@ -90,4 +107,28 @@ Console.ReadLine();
 //        return 5;
 //    }
 //} 
+#endregion
+
+
+
+
+#region senaryo 1
+////var jober = JoberMQ.JoberHost
+////.CreateDefaultBuilder()
+////.Build();
+
+////jober.StartAsync(); 
+#endregion
+
+
+#region senaryo 2
+//var configuration = JoberMQ.Factories.Configuration.ConfigurationFactory.CreateConfiguration(ConfigurationFactoryEnum.Default);
+
+//var jober = JoberMQ.JoberHost
+//.CreateDefaultBuilder()
+//.Configuration(configuration)
+//.Build();
+
+
+//jober.StartAsync();
 #endregion

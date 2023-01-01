@@ -7,12 +7,16 @@ using JoberMQ.Common.StatusCode.Enums;
 using JoberMQ.Common.StatusCode.Models;
 using JoberMQ.Constants;
 using JoberMQ.Database.Abstraction.Configuration;
+using JoberMQ.Database.Factories;
 using JoberMQ.Distributor.Abstraction;
 using JoberMQ.Distributor.Constants;
 using JoberMQ.Factories.Configuration;
 using JoberMQ.Queue.Abstraction;
 using JoberMQ.Timing.Abstraction;
+using System;
 using System.Collections.Concurrent;
+using System.IO;
+using System.Reflection;
 
 namespace JoberMQ.Implementation.Configuration.Default
 {
@@ -21,6 +25,18 @@ namespace JoberMQ.Implementation.Configuration.Default
         public DfConfiguration()
         {
             configurationDatabase = JoberMQ.Database.Factories.ConfigurationDatabaseFactory.Create(DefaultConst.ConfigurationDatabaseFactory);
+            if (DefaultConst.ConfigurationDatabaseFactory == Common.Enums.Configuration.ConfigurationDatabaseFactoryEnum.Default)
+            {
+                string applicationDirectory = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
+
+                Console.WriteLine(applicationDirectory);
+                foreach (var item in configurationDatabase.DbTextFileConfigDatas)
+                {
+                    item.Value.DbPath = Path.Combine(new string[] { applicationDirectory, item.Value.DbPath });
+                }
+            }
+
+
             configurationClient = JoberMQ.Client.Factories.ConfigurationClientFactory.Create(DefaultConst.ConfigurationClientFactory);
             configurationQueue = JoberMQ.Queue.Factories.ConfigurationQueueFactory.Create(DefaultConst.ConfigurationQueueFactory);
             configurationDistributor = JoberMQ.Distributor.Factories.ConfigurationDistributorFactory.Create(DefaultConst.ConfigurationDistributorFactory);
