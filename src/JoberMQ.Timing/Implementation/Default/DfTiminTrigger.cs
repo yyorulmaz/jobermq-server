@@ -6,7 +6,7 @@ namespace JoberMQ.Timing.Implementation.Default
 {
     internal class DfTiminTrigger : TimingBase
     {
-        public DfTiminTrigger(IDatabaseService databaseService) : base(databaseService)
+        public DfTiminTrigger(IDatabase database) : base(database)
         {
         }
 
@@ -16,7 +16,7 @@ namespace JoberMQ.Timing.Implementation.Default
             response.IsOnline = true;
             response.JobId = job.Id;
 
-            var triggeredJob = databaseService.Job.Get(job.TriggerJobId.Value);
+            var triggeredJob = database.Job.Get(job.TriggerJobId.Value);
             var beforeTriggerGroupsId = triggeredJob.TriggerGroupsId;
             var beforeIsTriggerMain = triggeredJob.IsTriggerMain;
             var beforeIsTrigger = triggeredJob.IsTrigger;
@@ -28,7 +28,7 @@ namespace JoberMQ.Timing.Implementation.Default
             }
             triggeredJob.IsTrigger = true;
 
-            var triggeredJobResult = databaseService.Job.Update(triggeredJob);
+            var triggeredJobResult = database.Job.Update(triggeredJob.Id, triggeredJob);
             if (!triggeredJobResult)
             {
                 response.IsSuccess = false;
@@ -38,7 +38,7 @@ namespace JoberMQ.Timing.Implementation.Default
 
             job.TriggerGroupsId = triggeredJob.TriggerGroupsId;
             // job.TriggerJobId client tarafından dolu geliyor 
-            var addJobResult = databaseService.Job.Add(job);
+            var addJobResult = database.Job.Add(job.Id, job);
 
             if (!addJobResult)
             {
@@ -46,7 +46,7 @@ namespace JoberMQ.Timing.Implementation.Default
                 triggeredJob.IsTriggerMain = beforeIsTriggerMain;
                 triggeredJob.IsTrigger = beforeIsTrigger;
 
-                var triggeredJobRollbackResult = databaseService.Job.Update(triggeredJob);
+                var triggeredJobRollbackResult = database.Job.Update(triggeredJob.Id, triggeredJob);
                 if (!triggeredJobRollbackResult)
                 {
                     // todo error log

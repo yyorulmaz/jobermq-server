@@ -1,14 +1,10 @@
-﻿using JoberMQ.Abstraction.Configuration;
-using JoberMQ.Abstraction.Host;
-using JoberMQ.Abstraction.Jober;
-using JoberMQ.Constants;
-using JoberMQ.Factories.Jober;
+﻿using JoberMQ.Abstraction.Host;
 
 namespace JoberMQ.Extensions
 {
     public static class JoberBuilderExtensions
     {
-        public static IJoberHostBuilder Configuration(this IJoberHostBuilder joberHostBuilder, IConfiguration configuration)
+        public static IJoberHostBuilder Configuration(this IJoberHostBuilder joberHostBuilder, JoberMQ.Configuration.Abstraction.IConfiguration configuration)
         {
             joberHostBuilder.Configuration = configuration;
             return joberHostBuilder;

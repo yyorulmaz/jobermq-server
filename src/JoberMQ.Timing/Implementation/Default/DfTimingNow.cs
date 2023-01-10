@@ -1,14 +1,13 @@
 ﻿using JoberMQ.Broker.Abstraction;
 using JoberMQ.Common.Dbos;
 using JoberMQ.Common.Models.Response;
-using JoberMQ.Database.Abstraction.DBOCreator;
 using JoberMQ.Database.Abstraction.DbService;
 
 namespace JoberMQ.Timing.Implementation.Default
 {
     internal class DfTimingNow : TimingBase
     {
-        public DfTimingNow(IMessageBroker messageBroker, IDatabaseService databaseService) : base(messageBroker, databaseService)
+        public DfTimingNow(IMessageBroker messageBroker, IDatabase database) : base(messageBroker, database)
         {
         }
 
@@ -18,7 +17,7 @@ namespace JoberMQ.Timing.Implementation.Default
             response.IsOnline = true;
             response.JobId = job.Id;
 
-            var addJobResult = databaseService.Job.Add(job);
+            var addJobResult = database.Job.Add(job.Id, job);
             if (!addJobResult)
             {
                 response.IsSuccess = false;
@@ -28,11 +27,11 @@ namespace JoberMQ.Timing.Implementation.Default
 
 
 
-            var createdJobDbo = databaseService.DboCreator.JobTransactionDboCreate(job);
-            var addJobTransactionResult = databaseService.JobTransaction.Add(createdJobDbo);
+            var createdJobDbo = database.DboCreator.JobTransactionDboCreate(job);
+            var addJobTransactionResult = database.JobTransaction.Add(createdJobDbo.Id, createdJobDbo);
             if (!addJobTransactionResult)
             {
-                databaseService.Job.Rollback(job);
+                database.Job.Rollback(job.Id, job);
 
                 response.IsSuccess = false;
                 response.Message = "JobTransaction eklenemedi, işlemler geri alındı."; // todo statuscode
@@ -41,12 +40,12 @@ namespace JoberMQ.Timing.Implementation.Default
 
 
 
-            var createdMessageDbos = databaseService.DboCreator.MessageDboCreates(createdJobDbo);
+            var createdMessageDbos = database.DboCreator.MessageDboCreates(createdJobDbo);
             var queueAddResult = messageBroker.QueueAdd(createdMessageDbos);
             if (!queueAddResult)
             {
-                databaseService.Job.Rollback(job);
-                databaseService.JobTransaction.Rollback(createdJobDbo);
+                database.Job.Rollback(job.Id, job);
+                database.JobTransaction.Rollback(createdJobDbo.Id, createdJobDbo);
 
                 response.IsSuccess = false;
                 response.Message = "Job eklenemedi, işlemler geri alındı."; // todo statuscode

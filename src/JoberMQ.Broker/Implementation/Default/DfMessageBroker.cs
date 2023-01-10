@@ -1,128 +1,161 @@
 ﻿using JoberMQ.Broker.Abstraction;
 using JoberMQ.Client.Abstraction;
-using JoberMQ.Common.Database.Factories;
-using JoberMQ.Common.Database.Repository.Abstraction.Mem;
 using JoberMQ.Common.Dbos;
 using JoberMQ.Common.Enums.Distributor;
 using JoberMQ.Common.Enums.Permission;
 using JoberMQ.Common.Enums.Queue;
 using JoberMQ.Common.Enums.Status;
+using JoberMQ.Configuration.Abstraction;
 using JoberMQ.Database.Abstraction.DbService;
 using JoberMQ.Distributor.Abstraction;
-using JoberMQ.Distributor.Data;
 using JoberMQ.Distributor.Factories;
+using JoberMQ.Library.Database.Factories;
+using JoberMQ.Library.Database.Repository.Abstraction.Mem;
 using JoberMQ.Queue.Abstraction;
 using JoberMQ.Queue.Data;
 using JoberMQ.Queue.Factories;
 using Microsoft.AspNetCore.SignalR;
+using System;
 using System.Collections.Generic;
 
 namespace JoberMQ.Server.Implementation.Broker.Default
 {
-    internal class DfMessageBroker<THubContext> : IMessageBroker where THubContext : Hub
+    internal class DfMessageBroker<THub> : IMessageBroker
+        where THub : Hub
     {
-        IConfigurationDistributor configurationDistributor;
-        IConfigurationQueue configurationQueue;
-        IDatabaseService databaseService;
-        IClientService clientService;
-        IHubContext<THubContext> context;
-
-        public DfMessageBroker(
-            IConfigurationDistributor configurationDistributor,
-            IConfigurationQueue configurationQueue,
-            IDatabaseService databaseService,
-            IClientService clientService,
-            IHubContext<THubContext> context)
-        {
-            this.configurationDistributor = configurationDistributor;
-            this.configurationQueue = configurationQueue;
-            this.databaseService = databaseService;
-            this.clientService = clientService;
-            this.context = context;
-
-            messageDistributors = MemFactory.CreateMem<string, IMessageDistributor>(configurationDistributor.DistributorMemFactory, configurationDistributor.DistributorMemDataFactory, InMemoryDistributor.DistributorDatas);
-            messageQueues = MemFactory.CreateMem<string, IMessageQueue>(configurationQueue.QueueMemFactory, configurationQueue.QueueMemDataFactory, InMemoryQueue.QueuesDatas);
-        }
-
-
+        IMemRepository<Guid, MessageDbo> messageMaster;
+        IMemRepository<string, IClient> clientMaster;
         IMemRepository<string, IMessageDistributor> messageDistributors;
-        IMemRepository<string, IMessageQueue> messageQueues;
         public IMemRepository<string, IMessageDistributor> MessageDistributors { get => messageDistributors; set => messageDistributors = value; }
+        IMemRepository<string, IMessageQueue> messageQueues;
         public IMemRepository<string, IMessageQueue> MessageQueues { get => messageQueues; set => messageQueues = value; }
 
-        public bool Start()
+
+
+        IConfiguration configuration;
+        IDatabase database;
+        IHubContext<THub> hubContext;
+        bool isJoberActive;
+
+        public DfMessageBroker(
+            IConfiguration configuration,
+            IMemRepository<Guid, MessageDbo> messageMaster,
+            IMemRepository<string, IClient> clientMaster,
+            IDatabase database,
+            IHubContext<THub> hubContext,
+            ref bool isJoberActive)
         {
-            var dbDistributors = databaseService.Distributor.GetAll(x => x.IsActive == true);
+            this.configuration = configuration;
+            this.database = database;
+            this.hubContext = hubContext;
+            this.isJoberActive = isJoberActive;
+
+            this.messageMaster = messageMaster;
+            this.clientMaster = clientMaster;
+            messageDistributors = MemFactory.Create<string, IMessageDistributor>(configuration.ConfigurationDistributor.DistributorsMemFactory, configuration.ConfigurationDistributor.DistributorsMemDataFactory);
+            messageQueues = MemFactory.Create<string, IMessageQueue>(configuration.ConfigurationQueue.QueuesMemFactory, configuration.ConfigurationQueue.QueuesMemDataFactory);
+
+
+            ImportDatabaseDistributor();
+            ImportDatabaseQueue();
+
+            CreateDefaultDistributor();
+            CreateDefaultQueue();
+        }
+        void ImportDatabaseDistributor()
+        {
+            var dbDistributors = database.Distributor.GetAll(x => x.IsActive == true);
             foreach (var item in dbDistributors)
             {
-                var dis = DistributorFactory.CreateDistributor(configurationDistributor.DistributorFactory, item.DistributorKey, item.DistributorType, item.PermissionType, item.IsDurable, messageQueues);
+                var dis = DistributorFactory.CreateDistributor(configuration.ConfigurationDistributor.DistributorFactory, item.DistributorKey, item.DistributorType, item.PermissionType, item.IsDurable, messageQueues);
                 messageDistributors.Add(item.DistributorKey, dis);
             }
-
-
-            var dbQueues = databaseService.Queue.GetAll(x => x.IsActive == true);
+        }
+        void ImportDatabaseQueue()
+        {
+            var dbQueues = database.Queue.GetAll(x => x.IsActive == true);
             foreach (var item in dbQueues)
             {
-                var clientGroup = clientService.AddClientGroup(item.QueueKey);
-                var que = QueueFactory.CreateQueue<THubContext>(configurationQueue, item.QueueKey, item.MatchType, item.SendType, item.PermissionType, item.IsDurable, clientGroup, databaseService.Message, context);
+                var clientChild = MemChildFactory.CreateChildGeneral<string, IClient>(Library.Database.Enums.MemChildFactoryEnum.Default, clientMaster, false, true, true);
+                var que = QueueFactory.Create<THub>(configuration.ConfigurationQueue, item.QueueKey, item.MatchType, item.SendType, item.PermissionType, item.IsDurable, clientMaster, messageMaster, database.Message, ref isJoberActive, hubContext);
                 messageQueues.Add(item.QueueKey, que);
             }
-
-
-            foreach (var item in configurationDistributor.DefaultDistributorConfigDatas)
-            {
-                var checkDistributor = messageDistributors.Get(item.Key);
-                if (checkDistributor == null)
-                {
-                    var dis = DistributorFactory.CreateDistributor(configurationDistributor.DistributorFactory, item.Value.DistributorKey, item.Value.DistributorType, item.Value.PermissionType, item.Value.IsDurable, messageQueues);
-                    messageDistributors.Add(item.Value.DistributorKey, dis);
-                }
-            }
-
-
-            foreach (var item in configurationQueue.DefaultQueueConfigDatas)
-            {
-                var checkQueue = messageQueues.Get(item.Key);
-                if (checkQueue == null)
-                {
-                    var clientGroup = clientService.AddClientGroup(item.Value.QueueKey);
-                    var que = QueueFactory.CreateQueue<THubContext>(configurationQueue, item.Value.QueueKey, item.Value.MatchType, item.Value.SendType, item.Value.PermissionType, item.Value.IsDurable, clientGroup, databaseService.Message,context);
-                    messageQueues.Add(item.Value.QueueKey, que);
-                }
-            }
-
-
-            // todo filitreyi düzenle burası yanlış olacak büyük ihtimalle
-            var messages = databaseService.Message.GetAll(x=>x.IsActive == true && x.IsDelete ==false && x.StatusTypeMessage == StatusTypeMessageEnum.None);
-            QueueAdd(messages);
-
-            return true;
         }
-        public bool DistributorCreate(string distributorKey, DistributorTypeEnum distributorType, bool isDurable)
+        void CreateDefaultDistributor()
+        {
+            foreach (var item in configuration.ConfigurationDistributor.DefaultDistributorConfigDatas)
+            {
+                if (messageDistributors != null && messageDistributors.MasterData != null)
+                {
+                    var checkDistributor = messageDistributors.Get(item.Key);
+                    if (checkDistributor == null)
+                    {
+                        var dis = DistributorFactory.CreateDistributor(configuration.ConfigurationDistributor.DistributorFactory, item.Value.DistributorKey, item.Value.DistributorType, item.Value.PermissionType, item.Value.IsDurable, messageQueues);
+                        messageDistributors.Add(item.Value.DistributorKey, dis);
+                    }
+                }
+            }
+        }
+        void CreateDefaultQueue()
+        {
+            foreach (var item in configuration.ConfigurationQueue.DefaultQueueConfigDatas)
+            {
+                if (messageQueues != null && messageQueues.MasterData != null)
+                {
+                    var checkQueue = messageQueues.Get(item.Key);
+                    if (checkQueue == null)
+                    {
+                        var que = QueueFactory.Create<THub>(configuration.ConfigurationQueue, item.Value.QueueKey, item.Value.MatchType, item.Value.SendType, item.Value.PermissionType, item.Value.IsDurable, clientMaster, messageMaster, database.Message, ref isJoberActive, hubContext);
+                        messageQueues.Add(item.Value.QueueKey, que);
+                    }
+                }
+            }
+        }
+
+
+
+
+
+        public bool CreateDistributor(string distributorKey, DistributorTypeEnum distributorType, bool isDurable)
         {
             // todo kuşullar sağlandımı kontrol
-            var distributor = DistributorFactory.CreateDistributor(configurationDistributor.DistributorFactory, distributorKey, distributorType, PermissionTypeEnum.All, isDurable, messageQueues);
+            var distributor = DistributorFactory.CreateDistributor(configuration.ConfigurationDistributor.DistributorFactory, distributorKey, distributorType, PermissionTypeEnum.All, isDurable, messageQueues);
             messageDistributors.Add(distributorKey, distributor);
             return true;
         }
-        public bool QueueCreate(string distributorName, string queueKey, MatchTypeEnum matchType, SendTypeEnum sendType, bool isDurable)
+        public bool CreateQueue(string distributorName, string queueKey, MatchTypeEnum matchType, SendTypeEnum sendType, bool isDurable)
         {
             // todo kuşullar sağlandımı kontrol (permission kontrol, bu kuyruk var mı vb.)
-            var clientGroup = clientService.AddClientGroup(queueKey);
 
-            var queue = QueueFactory.CreateQueue<THubContext>(
-                configurationQueue,
+            var queue = QueueFactory.Create<THub>(
+                configuration.ConfigurationQueue,
                 queueKey,
                 matchType,
                 sendType,
                 PermissionTypeEnum.All,
                 isDurable,
-                clientGroup,
-                databaseService.Message,
-                context);
+                clientMaster,
+                messageMaster,
+                database.Message,
+                ref isJoberActive,
+                hubContext);
 
             return true;
         }
+
+
+
+        public bool Start()
+        {
+
+            // todo filitreyi düzenle burası yanlış olacak büyük ihtimalle
+            var messages = database.Message.GetAll(x => x.IsActive == true && x.IsDelete ==false && x.StatusTypeMessage == StatusTypeMessageEnum.None);
+            QueueAdd(messages);
+
+            return true;
+        }
+
+
         public bool QueueAdd(List<MessageDbo> messages)
         {
             // todo kuşullar sağlandımı kontrol
@@ -137,7 +170,7 @@ namespace JoberMQ.Server.Implementation.Broker.Default
             foreach (var msg in messages)
             {
                 var distributor = messageDistributors.Get(msg.DistributorKey);
-                var addResult = distributor.QueueAdd(msg);
+                var addResult = distributor.MessageAdd(msg);
 
                 if (!addResult)
                 {
@@ -145,11 +178,11 @@ namespace JoberMQ.Server.Implementation.Broker.Default
                     continue;
                 }
             }
-            
+
             if (isError)
             {
                 foreach (var msg in messages)
-                    databaseService.Message.Rollback(msg);
+                    database.Message.Rollback(msg.Id, msg);
 
                 return false;
             }

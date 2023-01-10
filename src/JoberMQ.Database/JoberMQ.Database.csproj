@@ -1,12 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<!--<TargetFramework>netstandard2.1</TargetFramework>-->
 		<TargetFramework>net7.0</TargetFramework>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
+		<PackageReference Include="JoberMQ.Library" Version="0.1.3" />
 		<PackageReference Include="TimerFramework" Version="0.0.2" />
 	</ItemGroup>
 
@@ -17,12 +16,22 @@
 			<Visible>false</Visible>
 		</Compile>
 
+		<Compile Include="..\JoberMQ.Configuration\**\*.cs" Exclude="..\JoberMQ.Configuration\Properties\AssemblyInfo.cs;..\JoberMQ.Configuration\obj\**;..\JoberMQ.Configuration\bin\**">
+			<Link>Configuration\%(RecursiveDir)%(Filename)%(Extension)</Link>
+			<Visible>false</Visible>
+		</Compile>
+
 	</ItemGroup>
 
 	<ItemGroup Condition=" '$(Configuration)' == 'Debug'">
 
 		<Compile Include="..\JoberMQ.Common\**\*.cs" Exclude="..\JoberMQ.Common\Properties\AssemblyInfo.cs;..\JoberMQ.Common\obj\**;..\JoberMQ.Common\bin\**">
 			<Link>Common\%(RecursiveDir)%(Filename)%(Extension)</Link>
+			<Visible>false</Visible>
+		</Compile>
+
+		<Compile Include="..\JoberMQ.Configuration\**\*.cs" Exclude="..\JoberMQ.Configuration\Properties\AssemblyInfo.cs;..\JoberMQ.Configuration\obj\**;..\JoberMQ.Configuration\bin\**">
+			<Link>Configuration\%(RecursiveDir)%(Filename)%(Extension)</Link>
 			<Visible>false</Visible>
 		</Compile>
 

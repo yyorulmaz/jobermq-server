@@ -1,5 +1,4 @@
 ﻿using JoberMQ.Common.Dbos;
-using JoberMQ.Database.Abstraction.DBOCreator;
 using JoberMQ.Database.Abstraction.DbService;
 using Newtonsoft.Json;
 using System;
@@ -11,7 +10,7 @@ namespace JoberMQ.Timing.Implementation.Default
 {
     internal class DfSchedule : ScheduleBase
     {
-        public DfSchedule(IDatabaseService databaseService) : base(databaseService)
+        public DfSchedule(IDatabase database) : base(database)
         {
         }
 
@@ -22,7 +21,7 @@ namespace JoberMQ.Timing.Implementation.Default
                 jobTimer = new TimerFactory().CreateTimer();
                 jobTimer.Receive += Action;
 
-                var jobSchedules = databaseService.Job.GetAll(x => x.IsActive == true && x.IsDelete == false && x.CronTime != null && x.IsCompleted == false
+                var jobSchedules = database.Job.GetAll(x => x.IsActive == true && x.IsDelete == false && x.CronTime != null && x.IsCompleted == false
                 && (x.ExecuteCountMax == 0 && x.CreatedCount == 0 || x.ExecuteCountMax != x.CreatedCount));
                 var timerData = new List<JobDbo>();
                 foreach (var item in jobSchedules)
@@ -61,7 +60,7 @@ namespace JoberMQ.Timing.Implementation.Default
 
         public override void Action(TimerModel timer)
         {
-            var jobDbo = databaseService.Job.Get(timer.Id);
+            var jobDbo = database.Job.Get(timer.Id);
 
             #region SCHEDULE JOB TIMER COMPLETED CHECK
             jobDbo.CreatedCount = jobDbo.CreatedCount + 1;
@@ -72,11 +71,11 @@ namespace JoberMQ.Timing.Implementation.Default
             }
             #endregion
 
-            var clones = databaseService.DboCreator.CloneJobToJobTransactions(jobDbo);
+            var clones = database.DboCreator.CloneJobToJobTransactions(jobDbo);
 
             foreach (var clone in clones)
             {
-                databaseService.JobTransaction.Add(clone);
+                database.JobTransaction.Add(clone.Id, clone);
 
                 foreach (var item in clone.Details)
                 {
@@ -140,7 +139,7 @@ namespace JoberMQ.Timing.Implementation.Default
             }
 
             #region UPDATE JobSchedule
-            databaseService.Job.Update(jobDbo);
+            database.Job.Update(jobDbo.Id, jobDbo);
             #endregion
         }
     }

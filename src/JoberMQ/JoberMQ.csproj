@@ -1,28 +1,18 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<!--<TargetFramework>netstandard2.1</TargetFramework>-->
 		<TargetFramework>net7.0</TargetFramework>
-
-		<Copyright>2022 © Yusuf Yorulmaz</Copyright>
-		<Description>Message Queue</Description>
-		<Authors>Yusuf Yorulmaz</Authors>
-		<Company>yorulmaz software</Company>
-		<Version>0.0.1</Version>
-		<PackageReadmeFile>README.md</PackageReadmeFile>
-		<!--<GenerateDocumentationFile>true</GenerateDocumentationFile>-->
-		<PublishRepositoryUrl>true</PublishRepositoryUrl>
-		<RepositoryType>git</RepositoryType>
-		<RepositoryUrl>https://github.com/yyorulmaz/jobermq-server</RepositoryUrl>
-		<PackageTags>message queue;job;schedule recurrent job;schedule delayed job;trigger job;embedded job</PackageTags>
-		<PackageDescription>Message Queue</PackageDescription>
-		<IncludeSymbols>true</IncludeSymbols>
-		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
-		<EmbedUntrackedSources>true</EmbedUntrackedSources>
-		<PackageId>JoberMQ</PackageId>
-		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="JoberMQ.Library" Version="0.1.3" />
+		<PackageReference Include="TimerFramework" Version="0.0.2" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.1" />
+		<PackageReference Include="Microsoft.AspNetCore.Owin" Version="7.0.1" />
+		<PackageReference Include="Microsoft.AspNetCore.SignalR.Protocols.NewtonsoftJson" Version="7.0.1" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
+		<PackageReference Include="Quartz" Version="3.5.0" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<None Include="..\..\README.md">
@@ -31,19 +21,15 @@
 		</None>
 	</ItemGroup>
 
-	<ItemGroup>
-		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.1" />
-		<PackageReference Include="Microsoft.AspNetCore.Owin" Version="7.0.1" />
-		<PackageReference Include="Microsoft.AspNetCore.SignalR.Protocols.NewtonsoftJson" Version="7.0.1" />
-		<PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
-		<PackageReference Include="TimerFramework" Version="0.0.2" />
-		<PackageReference Include="Quartz" Version="3.5.0" />
-	</ItemGroup>
-
 	<ItemGroup Condition=" '$(Configuration)' == 'Release'">
 
 		<Compile Include="..\JoberMQ.Common\**\*.cs" Exclude="..\JoberMQ.Common\Properties\AssemblyInfo.cs;..\JoberMQ.Common\obj\**;..\JoberMQ.Common\bin\**">
 			<Link>Common\%(RecursiveDir)%(Filename)%(Extension)</Link>
+			<Visible>false</Visible>
+		</Compile>
+
+		<Compile Include="..\JoberMQ.Configuration\**\*.cs" Exclude="..\JoberMQ.Configuration\Properties\AssemblyInfo.cs;..\JoberMQ.Configuration\obj\**;..\JoberMQ.Configuration\bin\**">
+			<Link>Configuration\%(RecursiveDir)%(Filename)%(Extension)</Link>
 			<Visible>false</Visible>
 		</Compile>
 
@@ -74,6 +60,11 @@
 
 		<Compile Include="..\JoberMQ.Timing\**\*.cs" Exclude="..\JoberMQ.Timing\Properties\AssemblyInfo.cs;..\JoberMQ.Timing\obj\**;..\JoberMQ.Timing\bin\**">
 			<Link>Timing\%(RecursiveDir)%(Filename)%(Extension)</Link>
+			<Visible>false</Visible>
+		</Compile>
+
+		<Compile Include="..\JoberMQ.Publisher\**\*.cs" Exclude="..\JoberMQ.Publisher\Properties\AssemblyInfo.cs;..\JoberMQ.Publisher\obj\**;..\JoberMQ.Publisher\bin\**">
+			<Link>Publisher\%(RecursiveDir)%(Filename)%(Extension)</Link>
 			<Visible>false</Visible>
 		</Compile>
 
@@ -86,6 +77,11 @@
 			<Visible>false</Visible>
 		</Compile>
 
+		<Compile Include="..\JoberMQ.Configuration\**\*.cs" Exclude="..\JoberMQ.Configuration\Properties\AssemblyInfo.cs;..\JoberMQ.Configuration\obj\**;..\JoberMQ.Configuration\bin\**">
+			<Link>Configuration\%(RecursiveDir)%(Filename)%(Extension)</Link>
+			<Visible>false</Visible>
+		</Compile>
+
 		<Compile Include="..\JoberMQ.Database\**\*.cs" Exclude="..\JoberMQ.Database\Properties\AssemblyInfo.cs;..\JoberMQ.Database\obj\**;..\JoberMQ.Database\bin\**">
 			<Link>Database\%(RecursiveDir)%(Filename)%(Extension)</Link>
 			<Visible>false</Visible>
@@ -113,6 +109,11 @@
 
 		<Compile Include="..\JoberMQ.Timing\**\*.cs" Exclude="..\JoberMQ.Timing\Properties\AssemblyInfo.cs;..\JoberMQ.Timing\obj\**;..\JoberMQ.Timing\bin\**">
 			<Link>Timing\%(RecursiveDir)%(Filename)%(Extension)</Link>
+			<Visible>false</Visible>
+		</Compile>
+
+		<Compile Include="..\JoberMQ.Publisher\**\*.cs" Exclude="..\JoberMQ.Publisher\Properties\AssemblyInfo.cs;..\JoberMQ.Publisher\obj\**;..\JoberMQ.Publisher\bin\**">
+			<Link>Publisher\%(RecursiveDir)%(Filename)%(Extension)</Link>
 			<Visible>false</Visible>
 		</Compile>
 

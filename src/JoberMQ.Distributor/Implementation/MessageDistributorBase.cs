@@ -1,8 +1,8 @@
-﻿using JoberMQ.Common.Database.Repository.Abstraction.Mem;
-using JoberMQ.Distributor.Abstraction;
-using JoberMQ.Common.Dbos;
+﻿using JoberMQ.Common.Dbos;
 using JoberMQ.Common.Enums.Distributor;
 using JoberMQ.Common.Enums.Permission;
+using JoberMQ.Distributor.Abstraction;
+using JoberMQ.Library.Database.Repository.Abstraction.Mem;
 using JoberMQ.Queue.Abstraction;
 
 namespace JoberMQ.Distributor.Implementation
@@ -31,6 +31,6 @@ namespace JoberMQ.Distributor.Implementation
         public bool IsDurable => isDurable;
 
 
-        public abstract bool QueueAdd(MessageDbo message);
+        public abstract bool MessageAdd(MessageDbo message);
     }
 }

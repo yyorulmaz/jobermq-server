@@ -1,12 +1,11 @@
-﻿using JoberMQ.Common.Helpers;
-using JoberMQ.Common.Models.Login;
+﻿using JoberMQ.Common.Models.Login;
+using JoberMQ.Library.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
@@ -35,7 +34,7 @@ namespace JoberMQ.Controllers
         {
             var result = new ResponseLoginModel();
 
-            if (!JoberHost.Jober.IsServerActive)
+            if (!JoberHost.Jober.IsJoberActive)
             {
                 result.IsSuccess = false;
                 result.StatusCode = "0.0.13";
@@ -50,7 +49,7 @@ namespace JoberMQ.Controllers
             var password = split[1];
             var clientKey = HttpContext.Request.Headers["clientKey"].ToString();
 
-            JoberHost.Jober.ClientService.Clients.TryGetValue(clientKey, out var clientCheck);
+            var clientCheck = JoberHost.Jober.ClientMaster.Get(x=>x.ClientKey == clientKey);
             //var clientCheck = Startup.ClientService.ClientData.Get(x => x.ClientKey == clientKey);
 
             if (clientCheck != null)
@@ -61,8 +60,8 @@ namespace JoberMQ.Controllers
                 return Unauthorized(JsonConvert.SerializeObject(result));
             }
 
-            var userCheck = JoberHost.Jober.DatabaseService.User.Check(userName, CryptionHashHelper.SHA256EnCryption(password));
-            if (!userCheck)
+            var userCheck = JoberHost.Jober.Database.User.DbMem.Get(x => x.UserName == userName && x.Password == CryptionHashHelper.SHA256EnCryption(password));
+            if (userCheck == null)
             {
                 result.IsSuccess = false;
                 result.StatusCode = "0.0.11";
@@ -71,7 +70,7 @@ namespace JoberMQ.Controllers
             }
 
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JoberHost.Jober.Configuration.SecurityKey));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JoberHost.Jober.Configuration.ConfigurationSecurity.SecurityKey));
             var claims = new[] { new Claim(ClaimTypes.NameIdentifier, userName), new Claim(ClaimTypes.Name, userName) };
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
             var token = new JwtSecurityToken(claims: claims, signingCredentials: credentials);

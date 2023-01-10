@@ -2,6 +2,7 @@
 using JoberMQ.Common.Dbos;
 using JoberMQ.Common.Enums.Permission;
 using JoberMQ.Common.Enums.Queue;
+using JoberMQ.Library.Database.Repository.Abstraction.Mem;
 
 namespace JoberMQ.Queue.Abstraction
 {
@@ -13,12 +14,9 @@ namespace JoberMQ.Queue.Abstraction
         public PermissionTypeEnum PermissionType { get; }
         public bool IsDurable { get; }
 
-
-        public IClientGroup ClientGroup { get; }
-        
-
-
         public bool IsSendRuning { get; set; }
-        public bool QueueAdd(MessageDbo message);
+        public bool MessageAdd(MessageDbo message);
+
+        public IMemChildGeneralRepository<string, IClient> ClientChilds { get; set; }
     }
 }

@@ -1,19 +1,17 @@
-﻿using JoberMQ.Abstraction.Configuration;
-using JoberMQ.Abstraction.Jober;
+﻿using JoberMQ.Abstraction.Jober;
 using JoberMQ.Broker.Abstraction;
 using JoberMQ.Broker.Factories;
 using JoberMQ.Client.Abstraction;
-using JoberMQ.Client.Factories;
-using JoberMQ.Common.Database.Enums;
+using JoberMQ.Client.Data;
 using JoberMQ.Common.Dbos;
-using JoberMQ.Common.Helpers;
-using JoberMQ.Common.StatusCode.Abstraction;
-using JoberMQ.Common.StatusCode.Factories;
+using JoberMQ.Configuration.Abstraction;
 using JoberMQ.Database.Abstraction.DbService;
 using JoberMQ.Database.Factories;
 using JoberMQ.Hubs;
-using JoberMQ.Timing.Abstraction;
-using JoberMQ.Timing.Factories;
+using JoberMQ.Library.Database.Repository.Abstraction.Mem;
+using JoberMQ.Library.StatusCode.Abstraction;
+using JoberMQ.Library.StatusCode.Factories;
+using JoberMQ.Queue.Factories;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -33,106 +31,126 @@ namespace JoberMQ.Implementation.Jober.Default
     {
         public DfJober(IConfiguration configuration)
         {
+            this.isJoberActive = configuration.ConfigurationJober.IsJoberActive;
             this.configuration = configuration;
-            this.statusCode = StatusCodeFactory.Create(Common.StatusCode.Enums.StatusCodeFactoryEnum.Default, configuration.StatusCodeDatas, Common.StatusCode.Enums.StatusCodeMessageLanguageEnum.tr);
-            this.databaseService = DatabaseServiceFactory.CreateDatabaseService(configuration.ConfigurationDatabase);
-            this.schedule = ScheduleFactory.CreateSchedule(configuration.ConfigurationTiming.ScheduleFactory, databaseService);
-            this.clientService = ClientFactory.CreateClientService(configuration.ConfigurationClient);
-            this.messageBroker = MessageBrokerFactory.Create<JoberHub>(
-                configuration.ConfigurationBroker, configuration.ConfigurationDistributor, configuration.ConfigurationQueue, databaseService, clientService, joberHubContext);
         }
 
+        #region Jober Active State
+        bool isJoberActive;
+        bool IJober.IsJoberActive { get => isJoberActive; set => isJoberActive = value; }
+        #endregion
+        
         #region Configuration
         IConfiguration configuration;
-        //public IConfiguration Configuration { get => configuration; set => configuration = value; }
         IConfiguration IJober.Configuration => configuration;
         #endregion
 
-        #region StatusCode
+        #region Status Code
         IStatusCode statusCode;
-        //IStatusCode IJober.StatusCode { get => statusCode; set => statusCode = value; }
         IStatusCode IJober.StatusCode => statusCode;
         #endregion
 
-        #region DatabaseService
-        IDatabaseService databaseService;
-        //IDatabaseService IJober.DatabaseService { get => databaseService; set => databaseService = value; }
-        IDatabaseService IJober.DatabaseService => databaseService;
+        #region Client Master
+        IMemRepository<string, IClient> clientMaster;
+        IMemRepository<string, IClient> IJober.ClientMaster => clientMaster;
         #endregion
 
-        #region TimingService
-        ISchedule schedule;
-        ISchedule IJober.Schedule => schedule;
+        #region Message Master
+        IMemRepository<Guid, MessageDbo> messageMaster;
+        IMemRepository<Guid, MessageDbo> IJober.MessageMaster => messageMaster;
         #endregion
 
-        #region ClientService
-        IClientService clientService;
-        IClientService IJober.ClientService => clientService;
+        #region Database
+        IDatabase database;
+        IDatabase IJober.Database => database;
         #endregion
 
-        #region ClientService
+        #region Message Broker
         IMessageBroker messageBroker;
         IMessageBroker IJober.MessageBroker => messageBroker;
         #endregion
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        #region TimingService
+        //ISchedule schedule;
+        //ISchedule IJober.Schedule => schedule;
+        #endregion
+
+
 
         #region JoberHubContext
         IHubContext<JoberHub> joberHubContext;
         IHubContext<JoberHub> IJober.JoberHubContext => joberHubContext;
         #endregion
 
-        #region ServerActive
-        bool isServerActive;
-        bool IJober.IsServerActive { get => isServerActive; set => isServerActive = value; } 
-        #endregion
+        
+        
 
         public async Task StartAsync()
         {
-            #region Text Data Folder, File created
-            var createDatabasesResult = databaseService.CreateDatabases();
-            #endregion
+            this.statusCode = StatusCodeFactory.Create(configuration.ConfigurationStatusCode.StatusCodeFactory, configuration.ConfigurationStatusCode.StatusCodeDatas, configuration.ConfigurationStatusCode.StatusCodeMessageLanguage);
+            this.clientMaster = JoberMQ.Library.Database.Factories.MemFactory.Create<string, IClient>(configuration.ConfigurationClient.ClientMasterFactory, configuration.ConfigurationClient.ClientMasterDataFactory, InMemoryClient.ClientMasterData);
+            this.messageMaster = JoberMQ.Library.Database.Factories.MemFactory.Create<Guid, MessageDbo>(configuration.ConfigurationMessage.MessageMasterFactory, configuration.ConfigurationMessage.MessageMasterDataFactory, InMemoryMessage.MessageMasterData);
+            this.database = DatabaseFactory.Create(configuration.ConfigurationDatabase);
+            this.messageBroker =  MessageBrokerFactory.Create<JoberHub>(configuration, messageMaster, clientMaster, database, ref joberHubContext, ref isJoberActive);
 
-            #region Text Data Group and Size
-            var textDataDataClearAndSizeResult = databaseService.DataGroupingAndSizes();
-            #endregion
 
-            #region Completed Data Removes Timer Start
-            var completedDataRemovesTimerStartResult = databaseService.CompletedDataRemovesTimerStart(configuration.ConfigurationDatabase.CompletedDataRemovesTimer);
-            #endregion
 
-            #region Text Data Import Memory
-            var importTextDataToSetMemDbResult = databaseService.ImportTextDataToSetMemDb();
-            #endregion
+            //this.schedule = ScheduleFactory.CreateSchedule(configuration.ConfigurationTiming.ScheduleFactory, databaseService);
 
-            #region Text Data Setup
-            var textDataSetupResult = databaseService.Setups();
-            #endregion
+
 
             #region Schedule Job Start
-            var jobScheduleTimerStartResult = schedule.Start();
-            if (!jobScheduleTimerStartResult)
-                throw new Exception(statusCode.GetStatusMessage("0.0.4"));
-            #endregion
+            //var jobScheduleTimerStartResult = schedule.Start();
+            //if (!jobScheduleTimerStartResult)
+            //    throw new Exception(statusCode.GetStatusMessage("0.0.4"));
+            //#endregion
 
-            #region Message Broker Start
-            var messageBrokerStartResult = messageBroker.Start();
-            #endregion
+            //#region Message Broker Start
+            //var messageBrokerStartResult = messageBroker.Start();
+            //#endregion
 
-            #region default user create
-            var userId = Guid.Parse("3b1fb872-c5de-40f4-8a93-342e754da53a");
-            var userCheck = databaseService.User.Get(userId);
-            if (userCheck == null)
-            {
-                databaseService.User.Add(new UserDbo
-                {
-                    Id = userId,
-                    UserName = "jobermq",
-                    Password = CryptionHashHelper.SHA256EnCryption("jobermq"),
-                    IsActive = true,
-                    IsDelete = false,
-                    DataStatusType = DataStatusTypeEnum.Insert
-                });
-            }
-
+            //#region default user create
+            //var userId = Guid.Parse("3b1fb872-c5de-40f4-8a93-342e754da53a");
+            //var userCheck = databaseService.User.Get(userId);
+            //if (userCheck == null)
+            //{
+            //    databaseService.User.Add(new UserDbo
+            //    {
+            //        Id = userId,
+            //        UserName = "jobermq",
+            //        Password = CryptionHashHelper.SHA256EnCryption("jobermq"),
+            //        IsActive = true,
+            //        IsDelete = false,
+            //        DataStatusType = DataStatusTypeEnum.Insert
+            //    });
+            //}
             #endregion
 
             #region Server Start
@@ -152,7 +170,7 @@ namespace JoberMQ.Implementation.Jober.Default
             host.RunAsync();
             #endregion
 
-            isServerActive = true;
+            isJoberActive = true;
 
             JoberHost.Jober = this;
         }
@@ -195,7 +213,7 @@ namespace JoberMQ.Implementation.Jober.Default
                             ValidateIssuer = false,
                             ValidateActor = false,
                             ValidateLifetime = false,
-                            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration.SecurityKey))
+                            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration.ConfigurationSecurity.SecurityKey))
                         };
 
 

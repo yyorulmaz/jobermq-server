@@ -1,4 +1,4 @@
-﻿using JoberMQ.Abstraction.Configuration;
+﻿using JoberMQ.Configuration.Abstraction;
 
 namespace JoberMQ.Abstraction.Host
 {

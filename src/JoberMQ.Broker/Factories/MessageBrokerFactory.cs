@@ -1,33 +1,35 @@
 ﻿using JoberMQ.Broker.Abstraction;
 using JoberMQ.Client.Abstraction;
+using JoberMQ.Common.Dbos;
 using JoberMQ.Common.Enums.Broker;
+using JoberMQ.Configuration.Abstraction;
 using JoberMQ.Database.Abstraction.DbService;
-using JoberMQ.Distributor.Abstraction;
-using JoberMQ.Queue.Abstraction;
+using JoberMQ.Library.Database.Repository.Abstraction.Mem;
 using JoberMQ.Server.Implementation.Broker.Default;
 using Microsoft.AspNetCore.SignalR;
+using System;
 
 namespace JoberMQ.Broker.Factories
 {
     internal class MessageBrokerFactory
     {
-        internal static IMessageBroker Create<THubContext>(
-            IConfigurationBroker configurationBroker,
-            IConfigurationDistributor configurationDistributor,
-            IConfigurationQueue configurationQueue,
-            IDatabaseService databaseService,
-            IClientService clientService,
-            IHubContext<THubContext> context) where THubContext : Hub
+        internal static IMessageBroker Create<THub>(
+            IConfiguration configuration,
+            IMemRepository<Guid, MessageDbo> messageMaster,
+            IMemRepository<string, IClient> clientMaster,
+            IDatabase database,
+            ref IHubContext<THub> hubContext,
+            ref bool isJoberActive) where THub : Hub
         {
             IMessageBroker messageBroker;
 
-            switch (configurationBroker.MessageBrokerFactory)
+            switch (configuration.ConfigurationBroker.MessageBrokerFactory)
             {
                 case MessageBrokerFactoryEnum.Default:
-                    messageBroker = new DfMessageBroker<THubContext>(configurationDistributor, configurationQueue, databaseService, clientService, context);
+                    messageBroker = new DfMessageBroker<THub>(configuration, messageMaster, clientMaster, database, hubContext, ref isJoberActive);
                     break;
                 default:
-                    messageBroker = new DfMessageBroker<THubContext>(configurationDistributor, configurationQueue, databaseService, clientService, context);
+                    messageBroker = new DfMessageBroker<THub>(configuration, messageMaster, clientMaster, database, hubContext, ref isJoberActive);
                     break;
             }
 

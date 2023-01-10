@@ -1,7 +1,7 @@
-﻿using JoberMQ.Common.Database.Repository.Abstraction.Mem;
-using JoberMQ.Common.Dbos;
+﻿using JoberMQ.Common.Dbos;
 using JoberMQ.Common.Enums.Distributor;
 using JoberMQ.Common.Enums.Permission;
+using JoberMQ.Library.Database.Repository.Abstraction.Mem;
 using JoberMQ.Queue.Abstraction;
 using System;
 
@@ -13,7 +13,7 @@ namespace JoberMQ.Distributor.Implementation.Default
         {
         }
 
-        public override bool QueueAdd(MessageDbo message)
+        public override bool MessageAdd(MessageDbo message)
         {
             throw new NotImplementedException();
         }

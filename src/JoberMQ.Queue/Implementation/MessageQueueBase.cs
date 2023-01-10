@@ -1,9 +1,10 @@
 ﻿using JoberMQ.Client.Abstraction;
-using JoberMQ.Common.Database.Repository.Abstraction.Mem;
 using JoberMQ.Common.Dbos;
 using JoberMQ.Common.Enums.Permission;
 using JoberMQ.Common.Enums.Queue;
-using JoberMQ.Database.Abstraction.DbOpr;
+using JoberMQ.Library.Database.Factories;
+using JoberMQ.Library.Database.Repository.Abstraction.Mem;
+using JoberMQ.Library.Database.Repository.Abstraction.Opr;
 using JoberMQ.Queue.Abstraction;
 using System;
 
@@ -11,48 +12,69 @@ namespace JoberMQ.Queue.Implementation
 {
     internal abstract class MessageQueueBase : IMessageQueue
     {
-        private readonly IConfigurationQueue configurationQueue;
-        private readonly string queueKey;
-        private readonly MatchTypeEnum matchType;
-        private readonly SendTypeEnum sendType;
-        private readonly PermissionTypeEnum permissionType;
-        private readonly bool isDurable;
-        private readonly IClientGroup clientGroup;
-        protected IMemRepository<Guid, MessageDbo> queueDataBase;
-        protected readonly IMessageDbOpr messageDbOpr;
-        private bool isSendRuning;
-        protected int endConsumerNumber = 0;
         public MessageQueueBase(
-            IConfigurationQueue configurationQueue,
             string queueKey,
             MatchTypeEnum matchType,
             SendTypeEnum sendType,
             PermissionTypeEnum permissionType,
             bool isDurable,
-            IClientGroup clientGroup,
-            IMemRepository<Guid, MessageDbo> queueDataBase, 
-            IMessageDbOpr messageDbOpr)
+            IMemRepository<string, IClient> masterClient,
+            IMemRepository<Guid, MessageDbo> masterMessages,
+            IOprRepositoryGuid<MessageDbo> messageDbOpr,
+            ref bool isJoberActive)
         {
-            this.configurationQueue = configurationQueue;
             this.queueKey = queueKey;
             this.matchType = matchType;
             this.sendType = sendType;
             this.permissionType = permissionType;
             this.isDurable = isDurable;
-            this.clientGroup = clientGroup;
-            this.queueDataBase = queueDataBase;
+            this.isSendRuning = false;
+
+            clientChilds = MemChildFactory.CreateChildGeneral<string, IClient>(Library.Database.Enums.MemChildFactoryEnum.Default, masterClient, false, true, true);
+            this.masterQueue = masterMessages;
             this.messageDbOpr = messageDbOpr;
+            this.isJoberActive = isJoberActive;
         }
 
+        readonly string queueKey;
         public string QueueKey => queueKey;
+
+
+        readonly MatchTypeEnum matchType;
         public MatchTypeEnum MatchType => matchType;
+
+
+        readonly SendTypeEnum sendType;
         public SendTypeEnum SendType => sendType;
+
+
+        readonly PermissionTypeEnum permissionType;
         public PermissionTypeEnum PermissionType => permissionType;
+
+
+        public bool isDurable;
         public bool IsDurable => isDurable;
-        public IClientGroup ClientGroup => clientGroup;
+
+
+        bool isSendRuning;
         public bool IsSendRuning { get => isSendRuning; set => isSendRuning = value; }
 
-        public abstract bool QueueAdd(MessageDbo message);
+
+        IMemChildGeneralRepository<string, IClient> clientChilds;
+        public IMemChildGeneralRepository<string, IClient> ClientChilds { get => clientChilds; set => clientChilds = value; }
+
+
+        IMemRepository<Guid, MessageDbo> masterQueue;
+
+        protected int endConsumerNumber = 0;
+
+        protected readonly IOprRepositoryGuid<MessageDbo> messageDbOpr;
+
+
+        protected bool isJoberActive;
+
+
+        public abstract bool MessageAdd(MessageDbo message);
         protected abstract void Qperation();
     }
 }

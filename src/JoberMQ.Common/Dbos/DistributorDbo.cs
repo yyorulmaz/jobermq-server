@@ -1,6 +1,6 @@
-﻿using JoberMQ.Common.Database.Base;
-using JoberMQ.Common.Enums.Distributor;
+﻿using JoberMQ.Common.Enums.Distributor;
 using JoberMQ.Common.Enums.Permission;
+using JoberMQ.Library.Database.Base;
 
 namespace JoberMQ.Common.Dbos
 {

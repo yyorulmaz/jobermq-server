@@ -9,7 +9,7 @@ namespace JoberMQ.Timing.Implementation.Default
 {
     internal class DfTimingSchedule : TimingBase
     {
-        public DfTimingSchedule(IMessageBroker messageBroker, IDatabaseService databaseService, ISchedule schedule) : base(messageBroker, databaseService, schedule)
+        public DfTimingSchedule(IMessageBroker messageBroker, IDatabase database, ISchedule schedule) : base(messageBroker, database, schedule)
         {
         }
 
@@ -20,7 +20,7 @@ namespace JoberMQ.Timing.Implementation.Default
             response.IsOnline = true;
             response.JobId = job.Id;
 
-            var addJobResult = databaseService.Job.Add(job);
+            var addJobResult = database.Job.Add(job.Id, job);
 
             if (!addJobResult)
             {

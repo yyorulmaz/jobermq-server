@@ -1,4 +1,4 @@
-﻿using JoberMQ.Common.Database.Base;
+﻿using JoberMQ.Library.Database.Base;
 using System;
 using System.Collections.Generic;
 

@@ -1,5 +1,4 @@
-﻿using JoberMQ.Database.Abstraction.DBOCreator;
-using JoberMQ.Database.Abstraction.DbService;
+﻿using JoberMQ.Database.Abstraction.DbService;
 using JoberMQ.Timing.Abstraction;
 using TimerFramework;
 
@@ -8,11 +7,11 @@ namespace JoberMQ.Timing.Implementation
     internal abstract class ScheduleBase : ISchedule
     {
         protected ITimer jobTimer;
-        protected readonly IDatabaseService databaseService;
+        protected readonly IDatabase database;
 
-        public ScheduleBase(IDatabaseService databaseService)
+        public ScheduleBase(IDatabase database)
         {
-            this.databaseService = databaseService;
+            this.database = database;
         }
 
         public ITimer JobTimer { get => jobTimer; set => jobTimer = value; }

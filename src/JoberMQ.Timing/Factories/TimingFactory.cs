@@ -8,7 +8,7 @@ namespace JoberMQ.Timing.Factories
 {
     internal class TimingFactory
     {
-        internal static ITiming CreateTiming(TimingFactoryEnum timingFactory, TimingTypeEnum timingType, IMessageBroker messageBroker, IDatabaseService databaseService, ISchedule schedule)
+        internal static ITiming CreateTiming(TimingFactoryEnum timingFactory, TimingTypeEnum timingType, IMessageBroker messageBroker, IDatabase database, ISchedule schedule)
         {
             ITiming timing;
 
@@ -18,16 +18,16 @@ namespace JoberMQ.Timing.Factories
                     switch (timingType)
                     {
                         case TimingTypeEnum.Now:
-                            timing = new DfTimingNow(messageBroker, databaseService);
+                            timing = new DfTimingNow(messageBroker, database);
                             break;
                         case TimingTypeEnum.Schedule:
-                            timing = new DfTimingSchedule(messageBroker, databaseService, schedule);
+                            timing = new DfTimingSchedule(messageBroker, database, schedule);
                             break;
                         case TimingTypeEnum.Trigger:
-                            timing = new DfTiminTrigger(databaseService);
+                            timing = new DfTiminTrigger(database);
                             break;
                         default:
-                            timing = new DfTiminTrigger(databaseService);
+                            timing = new DfTiminTrigger(database);
                             break;
                     }
                     break;
@@ -35,16 +35,16 @@ namespace JoberMQ.Timing.Factories
                     switch (timingType)
                     {
                         case TimingTypeEnum.Now:
-                            timing = new DfTimingNow(messageBroker, databaseService);
+                            timing = new DfTimingNow(messageBroker, database);
                             break;
                         case TimingTypeEnum.Schedule:
-                            timing = new DfTimingSchedule(messageBroker, databaseService, schedule);
+                            timing = new DfTimingSchedule(messageBroker, database, schedule);
                             break;
                         case TimingTypeEnum.Trigger:
-                            timing = new DfTiminTrigger(databaseService);
+                            timing = new DfTiminTrigger(database);
                             break;
                         default:
-                            timing = new DfTiminTrigger(databaseService);
+                            timing = new DfTiminTrigger(database);
                             break;
                     }
                     break;

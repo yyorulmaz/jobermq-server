@@ -5,7 +5,6 @@ namespace JoberMQ.Client.Data
 {
     internal class InMemoryClient
     {
-        internal static ConcurrentDictionary<string, IClient> ClientDatas = new ConcurrentDictionary<string, IClient>();
-        internal static ConcurrentDictionary<string, IClientGroup> ClientGroupDatas = new ConcurrentDictionary<string, IClientGroup>();
+        internal static ConcurrentDictionary<string, IClient> ClientMasterData = new ConcurrentDictionary<string, IClient>();
     }
 }

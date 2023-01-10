@@ -5,26 +5,30 @@ namespace JoberMQ.Client.Implementation.Default
 {
     internal class DfClient : IClient
     {
-        private readonly bool isActive;
-        private readonly ClientTypeEnum clientType;
-        private readonly string connectionId;
-        private readonly string clientKey;
-        private readonly string clientGroupKey;
-
-        public int rowNumber;
-        public DfClient(ClientTypeEnum clientType, string connectionId, string clientKey, string clientGroupKey)
+        public DfClient(string connectionId, string clientKey, string clientGroupKey, ClientTypeEnum clientType)
         {
-            isActive = isActive = true;
-            this.clientType = clientType;
             this.connectionId = connectionId;
             this.clientKey = clientKey;
             this.clientGroupKey = clientGroupKey;
+            this.clientType = clientType;
         }
-        public bool IsActive => isActive;
-        public ClientTypeEnum ClientType => clientType;
+
+        readonly string connectionId;
         public string ConnectionId => connectionId;
+
+        readonly string clientKey;
         public string ClientKey => clientKey;
+
+        readonly string clientGroupKey;
         public string ClientGroupKey => clientGroupKey;
-        public int RowNumber { get { return rowNumber; } set { rowNumber = value; } }
+
+        bool isActive = false;
+        public bool IsActive { get => isActive; set => isActive = value; }
+
+        ClientTypeEnum clientType;
+        public ClientTypeEnum ClientType { get => clientType; set => clientType = value; }
+
+        int number;
+        public int Number { get => number; set => number = value; }
     }
 }

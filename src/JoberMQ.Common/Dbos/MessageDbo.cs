@@ -1,4 +1,4 @@
-﻿using JoberMQ.Common.Database.Base;
+﻿using JoberMQ.Library.Database.Base;
 using JoberMQ.Common.Enums.Message;
 using JoberMQ.Common.Enums.Priority;
 using JoberMQ.Common.Enums.Routing;

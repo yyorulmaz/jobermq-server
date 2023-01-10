@@ -1,22 +1,4 @@
-﻿using System.Reflection;
-
-var dddddddddddd = Assembly.GetEntryAssembly();
-
-
-string applicationDirectory = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
-Console.WriteLine(applicationDirectory);
-Console.ReadLine();
-
-
-
-
-
-
-
-
-
-
-//using System.Threading.Channels;
+﻿//using System.Threading.Channels;
 
 //var config = JoberMQ.Server.Factory.GetServerConfig();
 //var server = JoberMQ.Server.Factory.CreateServer(config);
@@ -31,7 +13,6 @@ Console.ReadLine();
 //var endDate = DateTime.Now;
 
 //Console.WriteLine(endDate - startDate);
-
 
 
 
@@ -112,6 +93,9 @@ Console.ReadLine();
 
 
 
+
+
+
 #region senaryo 1
 ////var jober = JoberMQ.JoberHost
 ////.CreateDefaultBuilder()
@@ -122,13 +106,22 @@ Console.ReadLine();
 
 
 #region senaryo 2
-//var configuration = JoberMQ.Factories.Configuration.ConfigurationFactory.CreateConfiguration(ConfigurationFactoryEnum.Default);
+using JoberMQ;
+using JoberMQ.Common.Enums.Configuration;
+using JoberMQ.Extensions;
+using System;
 
-//var jober = JoberMQ.JoberHost
-//.CreateDefaultBuilder()
-//.Configuration(configuration)
-//.Build();
+var configuration = JoberHost.CreateConfiguration();
+
+var jober = JoberMQ.JoberHost
+.CreateDefaultBuilder()
+.Configuration(configuration)
+.Build();
 
 
-//jober.StartAsync();
+jober.StartAsync();
 #endregion
+
+Console.WriteLine("ok");
+Console.ReadLine();
+

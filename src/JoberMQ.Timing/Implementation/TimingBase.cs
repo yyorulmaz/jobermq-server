@@ -1,7 +1,6 @@
 ﻿using JoberMQ.Broker.Abstraction;
 using JoberMQ.Common.Dbos;
 using JoberMQ.Common.Models.Response;
-using JoberMQ.Database.Abstraction.DBOCreator;
 using JoberMQ.Database.Abstraction.DbService;
 using JoberMQ.Timing.Abstraction;
 
@@ -10,22 +9,22 @@ namespace JoberMQ.Timing.Implementation
     internal abstract class TimingBase : ITiming
     {
         protected readonly IMessageBroker messageBroker;
-        protected readonly IDatabaseService databaseService;
+        protected readonly IDatabase database;
         protected readonly ISchedule schedule;
-        public TimingBase(IDatabaseService databaseService)
+        public TimingBase(IDatabase database)
         {
             //this.messageBroker = messageBroker;
-            this.databaseService = databaseService;
+            this.database = database;
         }
-        public TimingBase(IMessageBroker messageBroker, IDatabaseService databaseService)
+        public TimingBase(IMessageBroker messageBroker, IDatabase database)
         {
             this.messageBroker = messageBroker;
-            this.databaseService = databaseService;
+            this.database = database;
         }
-        public TimingBase(IMessageBroker messageBroker, IDatabaseService databaseService, ISchedule schedule)
+        public TimingBase(IMessageBroker messageBroker, IDatabase database, ISchedule schedule)
         {
             this.messageBroker = messageBroker;
-            this.databaseService = databaseService;
+            this.database = database;
             this.schedule = schedule;
         }
 

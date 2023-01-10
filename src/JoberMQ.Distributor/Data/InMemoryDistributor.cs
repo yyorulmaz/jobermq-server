@@ -5,6 +5,6 @@ namespace JoberMQ.Distributor.Data
 {
     internal class InMemoryDistributor
     {
-        internal static ConcurrentDictionary<string, IMessageDistributor> DistributorDatas = new ConcurrentDictionary<string, IMessageDistributor>();
+        internal static ConcurrentDictionary<string, IMessageDistributor> MessageDistributorsData = new ConcurrentDictionary<string, IMessageDistributor>();
     }
 }
