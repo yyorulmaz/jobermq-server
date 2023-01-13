@@ -117,6 +117,7 @@ namespace JoberMQ.Database.Implementation.DbService.Default
             #region Job
             var tempFileJob = job.DbText.GetArsiveFileFullPath(0);
             File.Create(tempFileJob);
+            // todo patlıyor kontrol
             using (FileStream fs = job.DbText.FileStreamCreate(tempFileJob, 32768))
             {
                 using (StreamWriter sw = job.DbText.StreamWriterCreate(fs))

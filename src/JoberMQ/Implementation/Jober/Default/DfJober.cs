@@ -8,7 +8,9 @@ using JoberMQ.Configuration.Abstraction;
 using JoberMQ.Database.Abstraction.DbService;
 using JoberMQ.Database.Factories;
 using JoberMQ.Hubs;
+using JoberMQ.Library.Database.Enums;
 using JoberMQ.Library.Database.Repository.Abstraction.Mem;
+using JoberMQ.Library.Helpers;
 using JoberMQ.Library.StatusCode.Abstraction;
 using JoberMQ.Library.StatusCode.Factories;
 using JoberMQ.Queue.Factories;
@@ -107,23 +109,27 @@ namespace JoberMQ.Implementation.Jober.Default
 
             //#region Message Broker Start
             //var messageBrokerStartResult = messageBroker.Start();
-            //#endregion
+            #endregion
 
-            //#region default user create
-            //var userId = Guid.Parse("3b1fb872-c5de-40f4-8a93-342e754da53a");
-            //var userCheck = databaseService.User.Get(userId);
-            //if (userCheck == null)
-            //{
-            //    databaseService.User.Add(new UserDbo
-            //    {
-            //        Id = userId,
-            //        UserName = "jobermq",
-            //        Password = CryptionHashHelper.SHA256EnCryption("jobermq"),
-            //        IsActive = true,
-            //        IsDelete = false,
-            //        DataStatusType = DataStatusTypeEnum.Insert
-            //    });
-            //}
+
+
+
+
+            #region default user create
+            var userId = Guid.Parse("3b1fb872-c5de-40f4-8a93-342e754da53a");
+            var userCheck = database.User.Get(userId);
+            if (userCheck == null)
+            {
+                database.User.Add(userId, new UserDbo
+                {
+                    Id = userId,
+                    UserName = "jobermq",
+                    Password = CryptionHashHelper.SHA256EnCryption("jobermq"),
+                    IsActive = true,
+                    IsDelete = false,
+                    DataStatusType = DataStatusTypeEnum.Insert
+                });
+            }
             #endregion
 
             #region Server Start
