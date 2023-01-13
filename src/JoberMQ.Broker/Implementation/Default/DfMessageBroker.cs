@@ -61,6 +61,8 @@ namespace JoberMQ.Server.Implementation.Broker.Default
 
             CreateDefaultDistributor();
             CreateDefaultQueue();
+
+            ImportMessage();
         }
         void ImportDatabaseDistributor()
         {
@@ -112,6 +114,12 @@ namespace JoberMQ.Server.Implementation.Broker.Default
             }
         }
 
+        void ImportMessage()
+        {
+            // todo filitreyi düzenle burası yanlış olacak büyük ihtimalle
+            var messages = database.Message.GetAll(x => x.IsActive == true && x.IsDelete ==false && x.StatusTypeMessage == StatusTypeMessageEnum.None);
+            QueueAdd(messages);
+        }
 
 
 
@@ -143,17 +151,6 @@ namespace JoberMQ.Server.Implementation.Broker.Default
             return true;
         }
 
-
-
-        public bool Start()
-        {
-
-            // todo filitreyi düzenle burası yanlış olacak büyük ihtimalle
-            var messages = database.Message.GetAll(x => x.IsActive == true && x.IsDelete ==false && x.StatusTypeMessage == StatusTypeMessageEnum.None);
-            QueueAdd(messages);
-
-            return true;
-        }
 
 
         public bool QueueAdd(List<MessageDbo> messages)

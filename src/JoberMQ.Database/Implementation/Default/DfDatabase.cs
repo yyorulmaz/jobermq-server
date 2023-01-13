@@ -9,6 +9,7 @@ using JoberMQ.Library.Database.Repository.Abstraction.Opr;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using TimerFramework;
@@ -19,6 +20,7 @@ namespace JoberMQ.Database.Implementation.DbService.Default
     {
         public DfDatabase(IConfigurationDatabase configuration)
         {
+            this.configuration=configuration;
             this.user = OprFactory.Create<UserDbo>(configuration.DbOprFactory, configuration.DbMemFactory, configuration.DbMemDataFactory, UserMemData.UserDatas, configuration.DbTextFactory, configuration.DbTextFileConfigDatas.FirstOrDefault(x => x.Key == "User").Value);
             this.distributor = OprFactory.Create<DistributorDbo>(configuration.DbOprFactory, configuration.DbMemFactory, configuration.DbMemDataFactory, DistributorMemData.DistributorDatas, configuration.DbTextFactory, configuration.DbTextFileConfigDatas.FirstOrDefault(x => x.Key == "Distributor").Value);
             this.queue = OprFactory.Create<QueueDbo>(configuration.DbOprFactory, configuration.DbMemFactory, configuration.DbMemDataFactory, QueueMemData.QueueDatas, configuration.DbTextFactory, configuration.DbTextFileConfigDatas.FirstOrDefault(x => x.Key == "Queue").Value);
@@ -33,6 +35,9 @@ namespace JoberMQ.Database.Implementation.DbService.Default
 
             Setups();
         }
+
+
+        IConfigurationDatabase configuration;
 
 
         private readonly IDboCreator dboCreator;
@@ -191,6 +196,8 @@ namespace JoberMQ.Database.Implementation.DbService.Default
             JobTransaction.Setups();
             Message.Setups();
             MessageResult.Setups();
+
+            CompletedDataRemovesTimerStart(configuration.CompletedDataRemovesTimer);
 
             return true;
         }

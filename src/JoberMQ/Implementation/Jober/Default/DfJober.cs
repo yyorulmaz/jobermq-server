@@ -70,38 +70,10 @@ namespace JoberMQ.Implementation.Jober.Default
         IMessageBroker IJober.MessageBroker => messageBroker;
         #endregion
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         #region TimingService
         //ISchedule schedule;
         //ISchedule IJober.Schedule => schedule;
         #endregion
-
 
 
         #region JoberHubContext
@@ -109,8 +81,9 @@ namespace JoberMQ.Implementation.Jober.Default
         IHubContext<JoberHub> IJober.JoberHubContext => joberHubContext;
         #endregion
 
-        
-        
+
+
+
 
         public async Task StartAsync()
         {
@@ -180,6 +153,14 @@ namespace JoberMQ.Implementation.Jober.Default
             #region Newtonsoft Json Protocol
             services
                 .AddSignalR()
+                    //https://learn.microsoft.com/tr-tr/aspnet/core/signalr/messagepackhubprotocol?view=aspnetcore-7.0
+                    ////.AddMessagePackProtocol();
+                    //.AddMessagePackProtocol(options =>
+                    //{
+                    //    options.SerializerOptions = MessagePackSerializerOptions.Standard
+                    //        .WithResolver(new CustomResolver())
+                    //        .WithSecurity(MessagePackSecurity.UntrustedData);
+                    //});
                 .AddNewtonsoftJsonProtocol(options =>
                 {
                     options.PayloadSerializerSettings.NullValueHandling = NullValueHandling.Ignore;

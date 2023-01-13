@@ -14,7 +14,6 @@ namespace JoberMQ.Broker.Abstraction
         IMemRepository<string, IMessageDistributor> MessageDistributors { get; set; }
         IMemRepository<string, IMessageQueue> MessageQueues { get; set; }
 
-        public bool Start();
         public bool CreateDistributor(string distributorKey, DistributorTypeEnum distributorType, bool isDurable);
         public bool CreateQueue(string distributorName, string queueKey, MatchTypeEnum matchType, SendTypeEnum sendType, bool isDurable);
         public bool QueueAdd(List<MessageDbo> messages);
