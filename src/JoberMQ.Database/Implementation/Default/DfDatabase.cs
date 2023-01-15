@@ -116,8 +116,7 @@ namespace JoberMQ.Database.Implementation.DbService.Default
 
             #region Job
             var tempFileJob = job.DbText.GetArsiveFileFullPath(0);
-            File.Create(tempFileJob);
-            // todo patlıyor kontrol
+            File.Create(tempFileJob).Close();
             using (FileStream fs = job.DbText.FileStreamCreate(tempFileJob, 32768))
             {
                 using (StreamWriter sw = job.DbText.StreamWriterCreate(fs))
@@ -140,7 +139,7 @@ namespace JoberMQ.Database.Implementation.DbService.Default
 
             #region Job
             var tempFileJobTransaction = jobTransaction.DbText.GetArsiveFileFullPath(0);
-            File.Create(tempFileJobTransaction);
+            File.Create(tempFileJobTransaction).Close();
             using (FileStream fs = jobTransaction.DbText.FileStreamCreate(tempFileJobTransaction, 32768))
             {
                 using (StreamWriter sw = jobTransaction.DbText.StreamWriterCreate(fs))
@@ -163,7 +162,7 @@ namespace JoberMQ.Database.Implementation.DbService.Default
 
             #region Message
             var tempFileMessage = message.DbText.GetArsiveFileFullPath(0);
-            File.Create(tempFileMessage);
+            File.Create(tempFileMessage).Close();
             using (FileStream fs = message.DbText.FileStreamCreate(tempFileMessage, 32768))
             {
                 using (StreamWriter sw = message.DbText.StreamWriterCreate(fs))
