@@ -55,20 +55,20 @@ namespace JoberMQ.Hubs
 
 
 
-
-
-        internal async Task<bool> Job()
+        public async Task<bool> Job(string message)
         {
-
-            return true;
-        }
-        internal async Task<bool> Message()
-        {
+            Console.WriteLine(message); 
 
 
             return true;
         }
-        internal async Task<bool> Rpc()
+        public async Task<bool> Message()
+        {
+
+
+            return true;
+        }
+        public async Task<bool> Rpc()
         {
 
 
