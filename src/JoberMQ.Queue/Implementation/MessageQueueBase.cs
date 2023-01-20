@@ -1,7 +1,6 @@
 ﻿using JoberMQ.Client.Abstraction;
 using JoberMQ.Common.Dbos;
-using JoberMQ.Common.Enums.Permission;
-using JoberMQ.Common.Enums.Queue;
+using JoberMQ.Common.Enums;
 using JoberMQ.Library.Database.Factories;
 using JoberMQ.Library.Database.Repository.Abstraction.Mem;
 using JoberMQ.Library.Database.Repository.Abstraction.Opr;
@@ -14,7 +13,7 @@ namespace JoberMQ.Queue.Implementation
     {
         public MessageQueueBase(
             string queueKey,
-            MatchTypeEnum matchType,
+            MatchTypeEnum  matchType,
             SendTypeEnum sendType,
             PermissionTypeEnum permissionType,
             bool isDurable,

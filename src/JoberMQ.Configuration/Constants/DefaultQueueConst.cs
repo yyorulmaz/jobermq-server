@@ -1,4 +1,4 @@
-﻿using JoberMQ.Common.Enums.Permission;
+﻿using JoberMQ.Common.Enums;
 using JoberMQ.Common.Enums.Queue;
 using JoberMQ.Common.Models.Config;
 using JoberMQ.Library.Database.Enums;
@@ -12,7 +12,7 @@ namespace JoberMQ.Configuration.Constants
 
 
         internal const MemFactoryEnum QueuesMemFactory = MemFactoryEnum.Default;
-        internal const MemDataFactoryEnum QueuesMemDataFactory = MemDataFactoryEnum.Data;
+        internal const MemDataFactoryEnum QueuesMemDataFactory = MemDataFactoryEnum.None;
 
 
         internal const MemFactoryEnum QueueMemFactory = MemFactoryEnum.Default;

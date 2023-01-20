@@ -1,5 +1,5 @@
-﻿using JoberMQ.Common.Enums.Distributor;
-using JoberMQ.Common.Enums.Permission;
+﻿using JoberMQ.Common.Enums;
+using JoberMQ.Common.Enums.Distributor;
 using JoberMQ.Distributor.Abstraction;
 using JoberMQ.Distributor.Implementation.Default;
 using JoberMQ.Library.Database.Repository.Abstraction.Mem;

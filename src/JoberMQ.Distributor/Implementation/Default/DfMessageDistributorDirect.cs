@@ -1,6 +1,6 @@
 ﻿using JoberMQ.Common.Dbos;
+using JoberMQ.Common.Enums;
 using JoberMQ.Common.Enums.Distributor;
-using JoberMQ.Common.Enums.Permission;
 using JoberMQ.Library.Database.Repository.Abstraction.Mem;
 using JoberMQ.Queue.Abstraction;
 using System;
@@ -14,10 +14,6 @@ namespace JoberMQ.Distributor.Implementation.Default
         }
 
         public override bool MessageAdd(MessageDbo message)
-        {
-            var queue = queues.Get(message.RoutingKey);
-            queue.MessageAdd(message);
-            throw new NotImplementedException();
-        }
+            => queues.Get(message.Message.Routing.QueueKey).MessageAdd(message);
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace JoberMQ.Common.Enums.Message
+﻿namespace JoberMQ.Common.Enums
 {
     public enum MessageTypeEnum
     {

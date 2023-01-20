@@ -1,6 +1,6 @@
 ﻿using JoberMQ.Client.Abstraction;
 using JoberMQ.Common.Dbos;
-using JoberMQ.Common.Enums.Permission;
+using JoberMQ.Common.Enums;
 using JoberMQ.Common.Enums.Queue;
 using JoberMQ.Configuration.Abstraction;
 using JoberMQ.Library.Database.Repository.Abstraction.Mem;

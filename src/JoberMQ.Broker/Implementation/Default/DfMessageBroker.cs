@@ -1,10 +1,8 @@
 ﻿using JoberMQ.Broker.Abstraction;
 using JoberMQ.Client.Abstraction;
 using JoberMQ.Common.Dbos;
+using JoberMQ.Common.Enums;
 using JoberMQ.Common.Enums.Distributor;
-using JoberMQ.Common.Enums.Permission;
-using JoberMQ.Common.Enums.Queue;
-using JoberMQ.Common.Enums.Status;
 using JoberMQ.Configuration.Abstraction;
 using JoberMQ.Database.Abstraction.DbService;
 using JoberMQ.Distributor.Abstraction;
@@ -12,7 +10,6 @@ using JoberMQ.Distributor.Factories;
 using JoberMQ.Library.Database.Factories;
 using JoberMQ.Library.Database.Repository.Abstraction.Mem;
 using JoberMQ.Queue.Abstraction;
-using JoberMQ.Queue.Data;
 using JoberMQ.Queue.Factories;
 using Microsoft.AspNetCore.SignalR;
 using System;
@@ -89,12 +86,17 @@ namespace JoberMQ.Server.Implementation.Broker.Default
             {
                 if (messageDistributors != null && messageDistributors.MasterData != null)
                 {
-                    var checkDistributor = messageDistributors.Get(item.Key);
-                    if (checkDistributor == null)
-                    {
-                        var dis = DistributorFactory.CreateDistributor(configuration.ConfigurationDistributor.DistributorFactory, item.Value.DistributorKey, item.Value.DistributorType, item.Value.PermissionType, item.Value.IsDurable, messageQueues);
-                        messageDistributors.Add(item.Value.DistributorKey, dis);
-                    }
+                        var checkDistributor = messageDistributors.Get(item.Key);
+                        if (checkDistributor == null)
+                        {
+                            var dis = DistributorFactory.CreateDistributor(configuration.ConfigurationDistributor.DistributorFactory, item.Value.DistributorKey, item.Value.DistributorType, item.Value.PermissionType, item.Value.IsDurable, messageQueues);
+                            messageDistributors.Add(item.Value.DistributorKey, dis);
+                        }
+                }
+                else
+                {
+                    var dis = DistributorFactory.CreateDistributor(configuration.ConfigurationDistributor.DistributorFactory, item.Value.DistributorKey, item.Value.DistributorType, item.Value.PermissionType, item.Value.IsDurable, messageQueues);
+                    messageDistributors.Add(item.Value.DistributorKey, dis);
                 }
             }
         }
@@ -117,21 +119,20 @@ namespace JoberMQ.Server.Implementation.Broker.Default
         void ImportMessage()
         {
             // todo filitreyi düzenle burası yanlış olacak büyük ihtimalle
-            var messages = database.Message.GetAll(x => x.IsActive == true && x.IsDelete ==false && x.StatusTypeMessage == StatusTypeMessageEnum.None);
+            var messages = database.Message.GetAll(x => x.IsActive == true && x.IsDelete ==false && x.Status.StatusTypeMessage == StatusTypeMessageEnum.None);
             QueueAdd(messages);
         }
 
 
 
-
-        public bool CreateDistributor(string distributorKey, DistributorTypeEnum distributorType, bool isDurable)
+        public bool DistributorCreate(string distributorKey, DistributorTypeEnum distributorType, bool isDurable)
         {
             // todo kuşullar sağlandımı kontrol
             var distributor = DistributorFactory.CreateDistributor(configuration.ConfigurationDistributor.DistributorFactory, distributorKey, distributorType, PermissionTypeEnum.All, isDurable, messageQueues);
             messageDistributors.Add(distributorKey, distributor);
             return true;
         }
-        public bool CreateQueue(string distributorName, string queueKey, MatchTypeEnum matchType, SendTypeEnum sendType, bool isDurable)
+        public bool QueueCreate(string distributorName, string queueKey, MatchTypeEnum matchType, SendTypeEnum sendType, bool isDurable)
         {
             // todo kuşullar sağlandımı kontrol (permission kontrol, bu kuyruk var mı vb.)
 
@@ -152,6 +153,8 @@ namespace JoberMQ.Server.Implementation.Broker.Default
         }
 
 
+        public bool MessageAdd(MessageDbo message)
+            => messageDistributors.Get(message.Message.Routing.DistributorKey).MessageAdd(message);
 
         public bool QueueAdd(List<MessageDbo> messages)
         {
@@ -166,7 +169,7 @@ namespace JoberMQ.Server.Implementation.Broker.Default
             bool isError = false;
             foreach (var msg in messages)
             {
-                var distributor = messageDistributors.Get(msg.DistributorKey);
+                var distributor = messageDistributors.Get(msg.Message.Routing.DistributorKey);
                 var addResult = distributor.MessageAdd(msg);
 
                 if (!addResult)

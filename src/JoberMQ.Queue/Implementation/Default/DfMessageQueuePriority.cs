@@ -1,8 +1,6 @@
 ﻿using JoberMQ.Client.Abstraction;
 using JoberMQ.Common.Dbos;
-using JoberMQ.Common.Enums.Permission;
-using JoberMQ.Common.Enums.Queue;
-using JoberMQ.Common.Enums.Status;
+using JoberMQ.Common.Enums;
 using JoberMQ.Library.Database.Factories;
 using JoberMQ.Library.Database.Repository.Abstraction.Mem;
 using JoberMQ.Library.Database.Repository.Abstraction.Opr;
@@ -46,12 +44,12 @@ namespace JoberMQ.Queue.Implementation.Default
 
         protected override void Qperation()
         {
-            foreach (var message in MessageChilds.ChildData.OrderByDescending(x => x.Value.PriorityType))
+            foreach (var message in MessageChilds.ChildData.OrderByDescending(x => x.Value.Message.PriorityType))
             {
                 IClient client;
 
                 if (MatchType == MatchTypeEnum.Special)
-                    client = ClientChilds.Get(x => x.ClientKey == message.Value.ConsumerKey);
+                    client = ClientChilds.Get(x => x.ClientKey == message.Value.Consuming.ClientKey);
                 else
                     client = ClientChilds.Get(x => x.Number > endConsumerNumber);
 
@@ -59,7 +57,7 @@ namespace JoberMQ.Queue.Implementation.Default
                 {
                     //Factory.Server.JoberHubContext.Clients.Client(client.ConnectionId).SendCoreAsync("ReceiveData", new[] { JsonConvert.SerializeObject(message.Value) }).ConfigureAwait(false);
                     hubContext.Clients.Client(client.ConnectionId).SendCoreAsync("ReceiveData", new[] { JsonConvert.SerializeObject(message.Value) }).ConfigureAwait(false);
-                    message.Value.StatusTypeMessage = StatusTypeMessageEnum.SendClient;
+                    message.Value.Status.StatusTypeMessage = StatusTypeMessageEnum.SendClient;
                     messageDbOpr.Update(message.Key, message.Value);
 
                     MessageChilds.Remove(message.Value.Id);

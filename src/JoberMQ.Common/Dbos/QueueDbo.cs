@@ -1,10 +1,9 @@
-﻿using JoberMQ.Library.Database.Base;
-using JoberMQ.Common.Enums.Permission;
-using JoberMQ.Common.Enums.Queue;
+﻿using JoberMQ.Common.Enums;
+using JoberMQ.Library.Database.Base;
 
 namespace JoberMQ.Common.Dbos
 {
-    internal class QueueDbo : DboPropertyGuidBase, IDboBase
+    public class QueueDbo : DboPropertyGuidBase, IDboBase
     {
         public string QueueKey { get; set; }
         public MatchTypeEnum MatchType { get; set; }

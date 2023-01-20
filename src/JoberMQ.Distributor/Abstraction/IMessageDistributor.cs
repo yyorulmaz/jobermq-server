@@ -1,6 +1,6 @@
 ﻿using JoberMQ.Common.Dbos;
+using JoberMQ.Common.Enums;
 using JoberMQ.Common.Enums.Distributor;
-using JoberMQ.Common.Enums.Permission;
 
 namespace JoberMQ.Distributor.Abstraction
 {

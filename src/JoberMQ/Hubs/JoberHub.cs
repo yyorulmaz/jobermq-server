@@ -1,6 +1,8 @@
-﻿using JoberMQ.Common.Enums.Client;
+﻿using JoberMQ.Common.Dbos;
+using JoberMQ.Common.Enums.Client;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SignalR;
+using Newtonsoft.Json;
 using System;
 using System.Threading.Tasks;
 
@@ -62,13 +64,11 @@ namespace JoberMQ.Hubs
 
             return true;
         }
-        public async Task<bool> Message()
+        public async Task<bool> Message(string message)
         {
-
-
-            return true;
+            return JoberHost.Jober.MessageBroker.MessageAdd(JsonConvert.DeserializeObject<MessageDbo>(message));
         }
-        public async Task<bool> Rpc()
+        public async Task<bool> Rpc(string message)
         {
 
 

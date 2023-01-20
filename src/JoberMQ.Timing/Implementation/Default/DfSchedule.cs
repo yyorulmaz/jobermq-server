@@ -21,8 +21,8 @@ namespace JoberMQ.Timing.Implementation.Default
                 jobTimer = new TimerFactory().CreateTimer();
                 jobTimer.Receive += Action;
 
-                var jobSchedules = database.Job.GetAll(x => x.IsActive == true && x.IsDelete == false && x.CronTime != null && x.IsCompleted == false
-                && (x.ExecuteCountMax == 0 && x.CreatedCount == 0 || x.ExecuteCountMax != x.CreatedCount));
+                var jobSchedules = database.Job.GetAll(x => x.IsActive == true && x.IsDelete == false && x.Timing.CronTime != null && x.Status.IsCompleted == false
+                && (x.Timing.ExecuteCountMax == 0 && x.Timing.CreatedCount == 0 || x.Timing.ExecuteCountMax != x.Timing.CreatedCount));
                 var timerData = new List<JobDbo>();
                 foreach (var item in jobSchedules)
                 {
@@ -34,7 +34,7 @@ namespace JoberMQ.Timing.Implementation.Default
                 {
                     var timer = new TimerModel();
                     timer.Id = item.Id;
-                    timer.CronTime = item.CronTime;
+                    timer.CronTime = item.Timing.CronTime;
                     timer.TimerGroup = "jobSchedule";
                     timer.Data = JsonConvert.SerializeObject(item);
 
@@ -63,10 +63,10 @@ namespace JoberMQ.Timing.Implementation.Default
             var jobDbo = database.Job.Get(timer.Id);
 
             #region SCHEDULE JOB TIMER COMPLETED CHECK
-            jobDbo.CreatedCount = jobDbo.CreatedCount + 1;
-            if (jobDbo.ExecuteCountMax != null && jobDbo.ExecuteCountMax != 0 && jobDbo.ExecuteCountMax == jobDbo.CreatedCount)
+            jobDbo.Timing.CreatedCount = jobDbo.Timing.CreatedCount + 1;
+            if (jobDbo.Timing.ExecuteCountMax != null && jobDbo.Timing.ExecuteCountMax != 0 && jobDbo.Timing.ExecuteCountMax == jobDbo.Timing.CreatedCount)
             {
-                jobDbo.IsCountMax = true;
+                jobDbo.Timing.IsCountMax = true;
                 jobTimer.Remove(jobDbo.Id);
             }
             #endregion
@@ -77,9 +77,9 @@ namespace JoberMQ.Timing.Implementation.Default
             {
                 database.JobTransaction.Add(clone.Id, clone);
 
-                foreach (var item in clone.Details)
+                foreach (var item in clone.JobTransactioDetails)
                 {
-                    var creatorJobDetail = jobDbo.Details.FirstOrDefault(x => x.Id == item.CreatedJobDetailId);
+                    var creatorJobDetail = jobDbo.JobDetails.FirstOrDefault(x => x.Id == item.CreatedJobDetailId);
                     var eventGroupId = Guid.NewGuid();
 
                     //todo düzelt

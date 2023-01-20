@@ -1,15 +1,12 @@
 ﻿using JoberMQ.Client.Abstraction;
 using JoberMQ.Common.Dbos;
-using JoberMQ.Common.Enums.Permission;
-using JoberMQ.Common.Enums.Queue;
-using JoberMQ.Common.Enums.Status;
+using JoberMQ.Common.Enums;
 using JoberMQ.Library.Database.Factories;
 using JoberMQ.Library.Database.Repository.Abstraction.Mem;
 using JoberMQ.Library.Database.Repository.Abstraction.Opr;
 using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json;
 using System;
-using System.Linq;
 
 namespace JoberMQ.Queue.Implementation.Default
 {
@@ -52,7 +49,7 @@ namespace JoberMQ.Queue.Implementation.Default
                 IClient client;
 
                 if (MatchType == MatchTypeEnum.Special)
-                    client = ClientChilds.Get(x => x.ClientKey == message.ConsumerKey);
+                    client = ClientChilds.Get(x => x.ClientKey == message.Message.Routing.ClientKey);
                 else
                     client = ClientChilds.Get(x => x.Number > endConsumerNumber);
 
@@ -60,7 +57,7 @@ namespace JoberMQ.Queue.Implementation.Default
                 {
                     //Factory.Server.JoberHubContext.Clients.Client(client.ConnectionId).SendCoreAsync("ReceiveData", new[] { JsonConvert.SerializeObject(message) }).ConfigureAwait(false);
                     hubContext.Clients.Client(client.ConnectionId).SendCoreAsync("ReceiveData", new[] { JsonConvert.SerializeObject(message) }).ConfigureAwait(false);
-                    message.StatusTypeMessage = StatusTypeMessageEnum.SendClient;
+                    message.Status.StatusTypeMessage = StatusTypeMessageEnum.SendClient;
                     messageDbOpr.Update(message.Id, message);
 
                     MessageChilds.Remove(message.Id);

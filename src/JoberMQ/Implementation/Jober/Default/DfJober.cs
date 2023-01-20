@@ -13,7 +13,6 @@ using JoberMQ.Library.Database.Repository.Abstraction.Mem;
 using JoberMQ.Library.Helpers;
 using JoberMQ.Library.StatusCode.Abstraction;
 using JoberMQ.Library.StatusCode.Factories;
-using JoberMQ.Queue.Factories;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<OutputType>Exe</OutputType>
@@ -10,7 +10,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="JoberMQ.Library" Version="0.1.4" />
+		<PackageReference Include="JoberMQ.Library" Version="0.2.1" />
 		<PackageReference Include="TimerFramework" Version="0.0.2" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.1" />
 		<PackageReference Include="Microsoft.AspNetCore.Owin" Version="7.0.1" />

@@ -1,8 +1,4 @@
-﻿using JoberMQ.Common.Enums.Permission;
-using JoberMQ.Common.Enums.Queue;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using JoberMQ.Common.Enums;
 
 namespace JoberMQ.Common.Models.Config
 {

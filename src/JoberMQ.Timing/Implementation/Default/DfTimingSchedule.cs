@@ -31,7 +31,7 @@ namespace JoberMQ.Timing.Implementation.Default
 
             var timer = new TimerModel();
             timer.Id = job.Id;
-            timer.CronTime = job.CronTime;
+            timer.CronTime = job.Timing.CronTime;
             timer.TimerGroup = "jobScheduleData";
             //timer.Data = JsonConvert.SerializeObject(jobScheduleDbo);
 
