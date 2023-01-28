@@ -16,6 +16,6 @@ namespace JoberMQ.Queue.Abstraction
         public bool IsSendRuning { get; set; }
         public bool MessageAdd(MessageDbo message);
 
-        public IMemChildGeneralRepository<string, IClient> ClientChilds { get; set; }
+        public IMemChildToolsRepository<string, IClient> ClientChilds { get; set; }
     }
 }

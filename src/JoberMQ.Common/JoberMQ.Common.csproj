@@ -5,7 +5,11 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="JoberMQ.Library" Version="0.2.1" />
+		<ProjectReference Include="..\..\..\jobermq-library\src\JoberMQ.Library\JoberMQ.Library.csproj" />
 	</ItemGroup>
+	
+	<!--<ItemGroup>
+		<PackageReference Include="JoberMQ.Library" Version="0.2.3" />
+	</ItemGroup>-->
 
 </Project>

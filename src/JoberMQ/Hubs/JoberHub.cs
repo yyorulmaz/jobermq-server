@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json;
 using System;
 using System.Threading.Tasks;
+using JoberMQ.Common.Models.DeclareConsume;
+using System.Collections.Concurrent;
 
 namespace JoberMQ.Hubs
 {
@@ -16,7 +18,7 @@ namespace JoberMQ.Hubs
         public override Task OnConnectedAsync()
         {
             var clientType = (ClientTypeEnum)Enum.Parse(typeof(ClientTypeEnum), Context.GetHttpContext()?.Request.Headers["ClientType"].ToString());
-            var clientKey = Context.GetHttpContext()?.Request.Headers["ClientId"].ToString();
+            var clientKey = Context.GetHttpContext()?.Request.Headers["ClientKey"].ToString();
             var clientGroupKey = Context.GetHttpContext()?.Request.Headers["ClientGroupKey"].ToString();
             var isOfflineClient = Convert.ToBoolean(Context.GetHttpContext()?.Request.Headers["IsOfflineClient"]);
 
@@ -72,6 +74,19 @@ namespace JoberMQ.Hubs
         {
 
 
+            return true;
+        }
+
+
+
+        public async Task<bool> DeclareConsume(string declareConsumeBuilder)
+        {
+            //todo buradayım
+            var data = JsonConvert.DeserializeObject<ConcurrentDictionary<string, DeclareConsumeModel>>(declareConsumeBuilder);
+            var client = JoberHost.Jober.ClientMaster.Get(Context.ConnectionId);
+            client.DeclareConsuming = data;
+
+            JoberHost.Jober.ClientMaster.Update(Context.ConnectionId, client);
             return true;
         }
     }

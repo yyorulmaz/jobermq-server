@@ -6,11 +6,13 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		
+		
 		<ProjectReference Include="..\..\src\JoberMQ\JoberMQ.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="JoberMQ.Library" Version="0.2.1" />
+		<!--<PackageReference Include="JoberMQ.Library" Version="0.2.3" />-->
 		<PackageReference Include="TimerFramework" Version="0.0.2" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.1" />
 		<PackageReference Include="Microsoft.AspNetCore.Owin" Version="7.0.1" />

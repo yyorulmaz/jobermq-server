@@ -1,6 +1,7 @@
 ﻿using JoberMQ.Client.Abstraction;
 using JoberMQ.Common.Dbos;
 using JoberMQ.Common.Enums;
+using JoberMQ.Library.Database.Enums;
 using JoberMQ.Library.Database.Factories;
 using JoberMQ.Library.Database.Repository.Abstraction.Mem;
 using JoberMQ.Library.Database.Repository.Abstraction.Opr;
@@ -29,7 +30,6 @@ namespace JoberMQ.Queue.Implementation
             this.isDurable = isDurable;
             this.isSendRuning = false;
 
-            clientChilds = MemChildFactory.CreateChildGeneral<string, IClient>(Library.Database.Enums.MemChildFactoryEnum.Default, masterClient, false, true, true);
             this.masterQueue = masterMessages;
             this.messageDbOpr = messageDbOpr;
             this.isJoberActive = isJoberActive;
@@ -59,8 +59,9 @@ namespace JoberMQ.Queue.Implementation
         public bool IsSendRuning { get => isSendRuning; set => isSendRuning = value; }
 
 
-        IMemChildGeneralRepository<string, IClient> clientChilds;
-        public IMemChildGeneralRepository<string, IClient> ClientChilds { get => clientChilds; set => clientChilds = value; }
+        //IMemChildGeneralRepository<string, IClient> clientChilds;
+        //public IMemChildGeneralRepository<string, IClient> ClientChilds { get => clientChilds; set => clientChilds = value; }
+        public abstract IMemChildToolsRepository<string, IClient> ClientChilds { get; set; }
 
 
         IMemRepository<Guid, MessageDbo> masterQueue;

@@ -75,7 +75,6 @@ namespace JoberMQ.Server.Implementation.Broker.Default
             var dbQueues = database.Queue.GetAll(x => x.IsActive == true);
             foreach (var item in dbQueues)
             {
-                var clientChild = MemChildFactory.CreateChildGeneral<string, IClient>(Library.Database.Enums.MemChildFactoryEnum.Default, clientMaster, false, true, true);
                 var que = QueueFactory.Create<THub>(configuration.ConfigurationQueue, item.QueueKey, item.MatchType, item.SendType, item.PermissionType, item.IsDurable, clientMaster, messageMaster, database.Message, ref isJoberActive, hubContext);
                 messageQueues.Add(item.QueueKey, que);
             }
