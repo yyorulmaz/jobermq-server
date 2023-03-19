@@ -3,6 +3,27 @@ using JoberMQ.Library.StatusCode.Models;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 
+/*
+     0             .0            .0
+ Application / Project Layer / Number
+ 
+Application
+1 - Server (JoberMQ)
+2 - Client (JoberMQ.Client.Net)
+
+Project Layer
+1 - JoberMQ.Common
+2 - JoberMQ.Configuration
+3 - JoberMQ.Database
+4 - JoberMQ.Client
+5 - JoberMQ.Queue
+6 - JoberMQ.Distributor
+7 - JoberMQ.Broker
+8 - JoberMQ.Timing
+9 - JoberMQ.Publisher
+ */
+
+
 namespace JoberMQ.Configuration.Constants
 {
     internal class DefaultStatusCodeConst
@@ -261,6 +282,150 @@ namespace JoberMQ.Configuration.Constants
                 }
             });
 
+            datas.TryAdd("1.7.1", new StatusCodeModel
+            {
+                StatusCodeType = StatusCodeTypeEnum.Error,
+                StatusCode = "1.7.1",
+                StatusCodeMessages = new List<StatusCodeMessageModel>
+                {
+                    new StatusCodeMessageModel
+                    {
+                        Language = StatusCodeMessageLanguageEnum.tr,
+                        Message = "Bu isimde mevcut bir distributor var."
+                    },
+                    new StatusCodeMessageModel
+                    {
+                        Language = StatusCodeMessageLanguageEnum.en,
+                        Message = ""
+                    }
+                }
+            });
+            datas.TryAdd("1.7.2", new StatusCodeModel
+            {
+                StatusCodeType = StatusCodeTypeEnum.Information,
+                StatusCode = "1.7.2",
+                StatusCodeMessages = new List<StatusCodeMessageModel>
+                {
+                    new StatusCodeMessageModel
+                    {
+                        Language = StatusCodeMessageLanguageEnum.tr,
+                        Message = "Distributor eklendi."
+                    },
+                    new StatusCodeMessageModel
+                    {
+                        Language = StatusCodeMessageLanguageEnum.en,
+                        Message = ""
+                    }
+                }
+            });
+            datas.TryAdd("1.7.3", new StatusCodeModel
+            {
+                StatusCodeType = StatusCodeTypeEnum.Error,
+                StatusCode = "1.7.3",
+                StatusCodeMessages = new List<StatusCodeMessageModel>
+                {
+                    new StatusCodeMessageModel
+                    {
+                        Language = StatusCodeMessageLanguageEnum.tr,
+                        Message = "Distributor eklenirken hata oluştu."
+                    },
+                    new StatusCodeMessageModel
+                    {
+                        Language = StatusCodeMessageLanguageEnum.en,
+                        Message = ""
+                    }
+                }
+            });
+            datas.TryAdd("1.7.4", new StatusCodeModel
+            {
+                StatusCodeType = StatusCodeTypeEnum.Error,
+                StatusCode = "1.7.4",
+                StatusCodeMessages = new List<StatusCodeMessageModel>
+                {
+                    new StatusCodeMessageModel
+                    {
+                        Language = StatusCodeMessageLanguageEnum.tr,
+                        Message = "Bu isimde bir distributor yok."
+                    },
+                    new StatusCodeMessageModel
+                    {
+                        Language = StatusCodeMessageLanguageEnum.en,
+                        Message = ""
+                    }
+                }
+            });
+            datas.TryAdd("1.7.5", new StatusCodeModel
+            {
+                StatusCodeType = StatusCodeTypeEnum.Information,
+                StatusCode = "1.7.5",
+                StatusCodeMessages = new List<StatusCodeMessageModel>
+                {
+                    new StatusCodeMessageModel
+                    {
+                        Language = StatusCodeMessageLanguageEnum.tr,
+                        Message = "Distributor güncellendi."
+                    },
+                    new StatusCodeMessageModel
+                    {
+                        Language = StatusCodeMessageLanguageEnum.en,
+                        Message = ""
+                    }
+                }
+            });
+            datas.TryAdd("1.7.6", new StatusCodeModel
+            {
+                StatusCodeType = StatusCodeTypeEnum.Error,
+                StatusCode = "1.7.6",
+                StatusCodeMessages = new List<StatusCodeMessageModel>
+                {
+                    new StatusCodeMessageModel
+                    {
+                        Language = StatusCodeMessageLanguageEnum.tr,
+                        Message = "Distributor güncellenirken hata oluştu."
+                    },
+                    new StatusCodeMessageModel
+                    {
+                        Language = StatusCodeMessageLanguageEnum.en,
+                        Message = ""
+                    }
+                }
+            });
+            datas.TryAdd("1.7.7", new StatusCodeModel
+            {
+                StatusCodeType = StatusCodeTypeEnum.Information,
+                StatusCode = "1.7.7",
+                StatusCodeMessages = new List<StatusCodeMessageModel>
+                {
+                    new StatusCodeMessageModel
+                    {
+                        Language = StatusCodeMessageLanguageEnum.tr,
+                        Message = "Distributor silindi."
+                    },
+                    new StatusCodeMessageModel
+                    {
+                        Language = StatusCodeMessageLanguageEnum.en,
+                        Message = ""
+                    }
+                }
+            });
+            datas.TryAdd("1.7.8", new StatusCodeModel
+            {
+                StatusCodeType = StatusCodeTypeEnum.Error,
+                StatusCode = "1.7.8",
+                StatusCodeMessages = new List<StatusCodeMessageModel>
+                {
+                    new StatusCodeMessageModel
+                    {
+                        Language = StatusCodeMessageLanguageEnum.tr,
+                        Message = "Distributor silinirken hata oluştu."
+                    },
+                    new StatusCodeMessageModel
+                    {
+                        Language = StatusCodeMessageLanguageEnum.en,
+                        Message = ""
+                    }
+                }
+            });
             return datas;
         }
     }

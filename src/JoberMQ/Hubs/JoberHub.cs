@@ -1,12 +1,16 @@
 ﻿using JoberMQ.Common.Dbos;
 using JoberMQ.Common.Enums.Client;
-using Microsoft.AspNetCore.Hosting;
+using JoberMQ.Common.Enums.Distributor;
+using JoberMQ.Common.Models.Base;
+using JoberMQ.Common.Models.DeclareConsume;
+using JoberMQ.Common.Models.Distributor;
+using JoberMQ.Common.Models.Queue;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json;
 using System;
-using System.Threading.Tasks;
-using JoberMQ.Common.Models.DeclareConsume;
 using System.Collections.Concurrent;
+using System.Threading.Tasks;
 
 namespace JoberMQ.Hubs
 {
@@ -61,7 +65,7 @@ namespace JoberMQ.Hubs
 
         public async Task<bool> Job(string message)
         {
-            Console.WriteLine(message); 
+            Console.WriteLine(message);
 
 
             return true;
@@ -79,15 +83,63 @@ namespace JoberMQ.Hubs
 
 
 
-        public async Task<bool> DeclareConsume(string declareConsumeBuilder)
+        public async Task<bool> Consume(string consumeData)
         {
             //todo buradayım
-            var data = JsonConvert.DeserializeObject<ConcurrentDictionary<string, DeclareConsumeModel>>(declareConsumeBuilder);
+            var data = JsonConvert.DeserializeObject<ConcurrentDictionary<string, DeclareConsumeModel>>(consumeData);
             var client = JoberHost.Jober.ClientMaster.Get(Context.ConnectionId);
             client.DeclareConsuming = data;
 
             JoberHost.Jober.ClientMaster.Update(Context.ConnectionId, client);
             return true;
+        }
+
+        //[Authorize("ssssss")]
+        [Authorize(Roles = "administrators")]
+        public async Task<ResponseBaseModel> Distributor(string distributorData)
+        {
+            var result = new ResponseBaseModel();
+            var data = JsonConvert.DeserializeObject<DeclareDistributorModel>(distributorData);
+
+            switch (data.DeclareDistributorOperationType)
+            {
+                case DeclareDistributorOperationTypeEnum.Create:
+                    result = JoberHost.Jober.MessageBroker.DistributorCreate(data.DistributorKey, data.DistributorType, data.PermissionType, data.IsDurable);
+                    break;
+                case DeclareDistributorOperationTypeEnum.Update:
+                    result = JoberHost.Jober.MessageBroker.DistributorUpdate(data.DistributorKey, data.IsDurable);
+                    break;
+                case DeclareDistributorOperationTypeEnum.Remove:
+                    result = JoberHost.Jober.MessageBroker.DistributorRemove(data.DistributorKey);
+                    break;
+            }
+
+            return result;
+        }
+        public async Task<ResponseBaseModel> Queue(string queueData)
+        {
+            var result = new ResponseBaseModel();
+            var data = JsonConvert.DeserializeObject<DeclareQueueModel>(queueData);
+            
+
+
+            switch (data.DeclareQueueOperationType)
+            {
+                case Common.Enums.Queue.DeclareQueueOperationTypeEnum.Create:
+                    result = JoberHost.Jober.MessageBroker.QueueCreate(data.DistributorKey, data.QueueKey, data.MatchType, data.SendType, data.PermissionType, data.IsDurable);
+                    break;
+                case Common.Enums.Queue.DeclareQueueOperationTypeEnum.Update:
+                    result = JoberHost.Jober.MessageBroker.QueueUpdate(data.QueueKey, data.MatchType, data.SendType, data.PermissionType, data.IsDurable);
+                    break;
+                case Common.Enums.Queue.DeclareQueueOperationTypeEnum.Remove:
+                    result = JoberHost.Jober.MessageBroker.QueueRemove(data.QueueKey);
+                    break;
+                case Common.Enums.Queue.DeclareQueueOperationTypeEnum.DistributorBind:
+                    result = JoberHost.Jober.MessageBroker.QueueBind(data.DistributorKey, data.QueueKey);
+                    break;
+            }
+
+            return result;
         }
     }
 }

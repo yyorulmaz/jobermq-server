@@ -71,7 +71,7 @@ namespace JoberMQ.Controllers
 
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JoberHost.Jober.Configuration.ConfigurationSecurity.SecurityKey));
-            var claims = new[] { new Claim(ClaimTypes.NameIdentifier, userName), new Claim(ClaimTypes.Name, userName) };
+            var claims = new[] { new Claim(ClaimTypes.NameIdentifier, userCheck.UserName), new Claim(ClaimTypes.Name, userCheck.UserName), new Claim(ClaimTypes.Role, userCheck.Authority) };
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
             var token = new JwtSecurityToken(claims: claims, signingCredentials: credentials);
 

@@ -13,6 +13,7 @@ namespace JoberMQ.Queue.Implementation
     internal abstract class MessageQueueBase : IMessageQueue
     {
         public MessageQueueBase(
+            string distriburorKey,
             string queueKey,
             MatchTypeEnum  matchType,
             SendTypeEnum sendType,
@@ -23,6 +24,7 @@ namespace JoberMQ.Queue.Implementation
             IOprRepositoryGuid<MessageDbo> messageDbOpr,
             ref bool isJoberActive)
         {
+            this.distriburorKey = distriburorKey;
             this.queueKey = queueKey;
             this.matchType = matchType;
             this.sendType = sendType;
@@ -34,6 +36,9 @@ namespace JoberMQ.Queue.Implementation
             this.messageDbOpr = messageDbOpr;
             this.isJoberActive = isJoberActive;
         }
+
+        readonly string distriburorKey;
+        public string DistributorKey => distriburorKey;
 
         readonly string queueKey;
         public string QueueKey => queueKey;

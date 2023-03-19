@@ -16,6 +16,7 @@ namespace JoberMQ.Queue.Factories
     {
         internal static IMessageQueue Create<THub>(
             IConfigurationQueue configurationQueue,
+            string distributorKey,
             string queueKey,
             MatchTypeEnum matchType,
             SendTypeEnum sendType,
@@ -35,16 +36,16 @@ namespace JoberMQ.Queue.Factories
                     switch (sendType)
                     {
                         case SendTypeEnum.Priority:
-                            queue = new DfMessageQueuePriority<THub>(queueKey, matchType, sendType, permissionType, isDurable, masterClient, masterMessages, messageDbOpr, ref isJoberActive, context);
+                            queue = new DfMessageQueuePriority<THub>(distributorKey, queueKey, matchType, sendType, permissionType, isDurable, masterClient, masterMessages, messageDbOpr, ref isJoberActive, context);
                             break;
                         case SendTypeEnum.FIFO:
-                            queue = new DfMessageQueueFIFO<THub>(queueKey, matchType, sendType, permissionType, isDurable, masterClient, masterMessages, messageDbOpr, ref isJoberActive, context);
+                            queue = new DfMessageQueueFIFO<THub>(distributorKey, queueKey, matchType, sendType, permissionType, isDurable, masterClient, masterMessages, messageDbOpr, ref isJoberActive, context);
                             break;
                         case SendTypeEnum.LIFO:
-                            queue = new DfMessageQueueLIFO<THub>(queueKey, matchType, sendType, permissionType, isDurable, masterClient, masterMessages, messageDbOpr, ref isJoberActive, context);
+                            queue = new DfMessageQueueLIFO<THub>(distributorKey, queueKey, matchType, sendType, permissionType, isDurable, masterClient, masterMessages, messageDbOpr, ref isJoberActive, context);
                             break;
                         default:
-                            queue = new DfMessageQueueFIFO<THub>(queueKey, matchType, sendType, permissionType, isDurable, masterClient, masterMessages, messageDbOpr, ref isJoberActive, context);
+                            queue = new DfMessageQueueFIFO<THub>(distributorKey, queueKey, matchType, sendType, permissionType, isDurable, masterClient, masterMessages, messageDbOpr, ref isJoberActive, context);
                             break;
                     }
                     break;
@@ -52,16 +53,16 @@ namespace JoberMQ.Queue.Factories
                     switch (sendType)
                     {
                         case SendTypeEnum.Priority:
-                            queue = new DfMessageQueuePriority<THub>(queueKey, matchType, sendType, permissionType, isDurable, masterClient, masterMessages, messageDbOpr, ref isJoberActive, context);
+                            queue = new DfMessageQueuePriority<THub>(distributorKey, queueKey, matchType, sendType, permissionType, isDurable, masterClient, masterMessages, messageDbOpr, ref isJoberActive, context);
                             break;
                         case SendTypeEnum.FIFO:
-                            queue = new DfMessageQueueFIFO<THub>(queueKey, matchType, sendType, permissionType, isDurable, masterClient, masterMessages, messageDbOpr, ref isJoberActive, context);
+                            queue = new DfMessageQueueFIFO<THub>(distributorKey, queueKey, matchType, sendType, permissionType, isDurable, masterClient, masterMessages, messageDbOpr, ref isJoberActive, context);
                             break;
                         case SendTypeEnum.LIFO:
-                            queue = new DfMessageQueueLIFO<THub>(queueKey, matchType, sendType, permissionType, isDurable, masterClient, masterMessages, messageDbOpr, ref isJoberActive, context);
+                            queue = new DfMessageQueueLIFO<THub>(distributorKey, queueKey, matchType, sendType, permissionType, isDurable, masterClient, masterMessages, messageDbOpr, ref isJoberActive, context);
                             break;
                         default:
-                            queue = new DfMessageQueueFIFO<THub>(queueKey, matchType, sendType, permissionType, isDurable, masterClient, masterMessages, messageDbOpr, ref isJoberActive, context);
+                            queue = new DfMessageQueueFIFO<THub>(distributorKey, queueKey, matchType, sendType, permissionType, isDurable, masterClient, masterMessages, messageDbOpr, ref isJoberActive, context);
                             break;
                     }
                     break;

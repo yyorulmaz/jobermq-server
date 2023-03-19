@@ -4,6 +4,7 @@ namespace JoberMQ.Common.Models.Config
 {
     public class DefaultQueueConfigModel
     {
+        public string DistributorKey { get; set; }
         public string QueueKey { get; set; }
         public MatchTypeEnum MatchType { get; set; }
         public SendTypeEnum SendType { get; set; }

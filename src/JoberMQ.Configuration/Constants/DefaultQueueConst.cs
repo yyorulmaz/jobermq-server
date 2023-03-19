@@ -31,6 +31,7 @@ namespace JoberMQ.Configuration.Constants
 
             clientDatas.TryAdd("queue.default.special", new DefaultQueueConfigModel
             {
+                DistributorKey = null,
                 QueueKey = "queue.default.special",
                 MatchType = MatchTypeEnum.Special,
                 SendType = SendTypeEnum.FIFO,

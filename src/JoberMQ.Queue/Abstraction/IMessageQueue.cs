@@ -7,6 +7,7 @@ namespace JoberMQ.Queue.Abstraction
 {
     internal interface IMessageQueue
     {
+        public string DistributorKey { get; }
         public string QueueKey { get; }
         public MatchTypeEnum MatchType { get; }
         public SendTypeEnum SendType { get; }

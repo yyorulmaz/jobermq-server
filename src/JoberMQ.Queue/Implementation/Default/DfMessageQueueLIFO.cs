@@ -19,7 +19,7 @@ namespace JoberMQ.Queue.Implementation.Default
         IHubContext<THub> hubContext;
         IMemChildToolsRepository<string, IClient> clientChilds;
         public override IMemChildToolsRepository<string, IClient> ClientChilds { get => clientChilds; set => clientChilds = value; }
-        public DfMessageQueueLIFO(string queueKey, MatchTypeEnum matchType, SendTypeEnum sendType, PermissionTypeEnum permissionType, bool isDurable, IMemRepository<string, IClient> masterClient, IMemRepository<Guid, MessageDbo> masterQueue, IOprRepositoryGuid<MessageDbo> messageDbOpr, ref bool isJoberActive, IHubContext<THub> hubContext) : base(queueKey, matchType, sendType, permissionType, isDurable, masterClient, masterQueue, messageDbOpr, ref isJoberActive)
+        public DfMessageQueueLIFO(string distriburorKey, string queueKey, MatchTypeEnum matchType, SendTypeEnum sendType, PermissionTypeEnum permissionType, bool isDurable, IMemRepository<string, IClient> masterClient, IMemRepository<Guid, MessageDbo> masterQueue, IOprRepositoryGuid<MessageDbo> messageDbOpr, ref bool isJoberActive, IHubContext<THub> hubContext) : base(distriburorKey, queueKey, matchType, sendType, permissionType, isDurable, masterClient, masterQueue, messageDbOpr, ref isJoberActive)
         {
             MessageChilds = MemChildFactory.CreateChildLIFO<Guid, MessageDbo>(Library.Database.Enums.MemChildFactoryEnum.Default, masterQueue);
             this.hubContext = hubContext;

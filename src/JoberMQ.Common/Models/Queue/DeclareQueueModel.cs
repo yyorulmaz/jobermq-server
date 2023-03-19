@@ -1,10 +1,11 @@
 ﻿using JoberMQ.Common.Enums;
-using JoberMQ.Library.Database.Base;
+using JoberMQ.Common.Enums.Queue;
 
-namespace JoberMQ.Common.Dbos
+namespace JoberMQ.Common.Models.Queue
 {
-    public class QueueDbo : DboPropertyGuidBase, IDboBase
+    public class DeclareQueueModel
     {
+        public DeclareQueueOperationTypeEnum DeclareQueueOperationType { get; internal set; }
         public string DistributorKey { get; set; }
         public string QueueKey { get; set; }
         public MatchTypeEnum MatchType { get; set; }

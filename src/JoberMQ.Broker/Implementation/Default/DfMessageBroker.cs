@@ -3,17 +3,20 @@ using JoberMQ.Client.Abstraction;
 using JoberMQ.Common.Dbos;
 using JoberMQ.Common.Enums;
 using JoberMQ.Common.Enums.Distributor;
+using JoberMQ.Common.Models.Base;
 using JoberMQ.Configuration.Abstraction;
 using JoberMQ.Database.Abstraction.DbService;
 using JoberMQ.Distributor.Abstraction;
 using JoberMQ.Distributor.Factories;
 using JoberMQ.Library.Database.Factories;
 using JoberMQ.Library.Database.Repository.Abstraction.Mem;
+using JoberMQ.Library.StatusCode.Abstraction;
 using JoberMQ.Queue.Abstraction;
 using JoberMQ.Queue.Factories;
 using Microsoft.AspNetCore.SignalR;
 using System;
 using System.Collections.Generic;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace JoberMQ.Server.Implementation.Broker.Default
 {
@@ -30,12 +33,14 @@ namespace JoberMQ.Server.Implementation.Broker.Default
 
 
         IConfiguration configuration;
+        IStatusCode statusCode;
         IDatabase database;
         IHubContext<THub> hubContext;
         bool isJoberActive;
 
         public DfMessageBroker(
             IConfiguration configuration,
+            IStatusCode statusCode,
             IMemRepository<Guid, MessageDbo> messageMaster,
             IMemRepository<string, IClient> clientMaster,
             IDatabase database,
@@ -43,6 +48,7 @@ namespace JoberMQ.Server.Implementation.Broker.Default
             ref bool isJoberActive)
         {
             this.configuration = configuration;
+            this.statusCode = statusCode;
             this.database = database;
             this.hubContext = hubContext;
             this.isJoberActive = isJoberActive;
@@ -75,7 +81,7 @@ namespace JoberMQ.Server.Implementation.Broker.Default
             var dbQueues = database.Queue.GetAll(x => x.IsActive == true);
             foreach (var item in dbQueues)
             {
-                var que = QueueFactory.Create<THub>(configuration.ConfigurationQueue, item.QueueKey, item.MatchType, item.SendType, item.PermissionType, item.IsDurable, clientMaster, messageMaster, database.Message, ref isJoberActive, hubContext);
+                var que = QueueFactory.Create<THub>(configuration.ConfigurationQueue, item.DistributorKey, item.QueueKey, item.MatchType, item.SendType, item.PermissionType, item.IsDurable, clientMaster, messageMaster, database.Message, ref isJoberActive, hubContext);
                 messageQueues.Add(item.QueueKey, que);
             }
         }
@@ -108,7 +114,7 @@ namespace JoberMQ.Server.Implementation.Broker.Default
                     var checkQueue = messageQueues.Get(item.Key);
                     if (checkQueue == null)
                     {
-                        var que = QueueFactory.Create<THub>(configuration.ConfigurationQueue, item.Value.QueueKey, item.Value.MatchType, item.Value.SendType, item.Value.PermissionType, item.Value.IsDurable, clientMaster, messageMaster, database.Message, ref isJoberActive, hubContext);
+                        var que = QueueFactory.Create<THub>(configuration.ConfigurationQueue, item.Value.DistributorKey, item.Value.QueueKey, item.Value.MatchType, item.Value.SendType, item.Value.PermissionType, item.Value.IsDurable, clientMaster, messageMaster, database.Message, ref isJoberActive, hubContext);
                         messageQueues.Add(item.Value.QueueKey, que);
                     }
                 }
@@ -124,23 +130,116 @@ namespace JoberMQ.Server.Implementation.Broker.Default
 
 
 
-        public bool DistributorCreate(string distributorKey, DistributorTypeEnum distributorType, bool isDurable)
+        public ResponseBaseModel DistributorCreate(string distributorKey, DistributorTypeEnum distributorType, PermissionTypeEnum permissionType, bool isDurable)
         {
-            // todo kuşullar sağlandımı kontrol
-            var distributor = DistributorFactory.CreateDistributor(configuration.ConfigurationDistributor.DistributorFactory, distributorKey, distributorType, PermissionTypeEnum.All, isDurable, messageQueues);
-            messageDistributors.Add(distributorKey, distributor);
-            return true;
+            var result = new ResponseBaseModel();
+            result.IsOnline = true;
+            var distributor = messageDistributors.Get(distributorKey);
+            if (distributor != null)
+            {
+                result.IsSuccess = false;
+                result.Message = statusCode.GetStatusMessage("1.7.1");
+            }
+            else
+            {
+                var newDistributor = DistributorFactory.CreateDistributor(configuration.ConfigurationDistributor.DistributorFactory, distributorKey, distributorType, PermissionTypeEnum.All, isDurable, messageQueues);
+                var resultDistributorAdd = messageDistributors.Add(distributorKey, newDistributor);
+
+                if (resultDistributorAdd == true)
+                {
+                    result.IsSuccess = true;
+                    result.Message = statusCode.GetStatusMessage("1.7.2");
+                }
+                else
+                {
+                    result.IsSuccess = false;
+                    result.Message = statusCode.GetStatusMessage("1.7.3");
+                }
+            }
+            
+            return result;
         }
-        public bool QueueCreate(string distributorName, string queueKey, MatchTypeEnum matchType, SendTypeEnum sendType, bool isDurable)
+        public ResponseBaseModel DistributorUpdate(string distributorKey, bool isDurable)
         {
+            var result = new ResponseBaseModel();
+            result.IsOnline = true;
+            var distributor = messageDistributors.Get(distributorKey);
+            if (distributor == null)
+            {
+                result.IsSuccess = false;
+                result.Message = statusCode.GetStatusMessage("1.7.4");
+            }
+            else
+            {
+                distributor.IsDurable = isDurable;
+                var resultDistributorUpdate = messageDistributors.Update(distributorKey, distributor);
+
+                if (resultDistributorUpdate == true)
+                {
+                    result.IsSuccess = true;
+                    result.Message = statusCode.GetStatusMessage("1.7.5");
+                }
+                else
+                {
+                    result.IsSuccess = false;
+                    result.Message = statusCode.GetStatusMessage("1.7.6");
+                }
+            }
+
+            return result;
+        }
+        public ResponseBaseModel DistributorRemove(string distributorKey)
+        {
+            var result = new ResponseBaseModel();
+            result.IsOnline = true;
+            var distributor = messageDistributors.Get(distributorKey);
+            if (distributor == null)
+            {
+                result.IsSuccess = false;
+                result.Message = statusCode.GetStatusMessage("1.7.4");
+            }
+            else
+            {
+                var resultDistributorRemove = messageDistributors.Remove(distributorKey);
+                if (resultDistributorRemove != null)
+                {
+                    result.IsSuccess = true;
+                    result.Message = statusCode.GetStatusMessage("1.7.7");
+                }
+                else
+                {
+                    result.IsSuccess = false;
+                    result.Message = statusCode.GetStatusMessage("1.7.8");
+                }
+            }
+
+            return result;
+        }
+
+
+
+        public ResponseBaseModel QueueCreate(string distributorKey, string queueKey, MatchTypeEnum matchType, SendTypeEnum sendType, PermissionTypeEnum permissionType, bool isDurable)
+        {
+            var result = new ResponseBaseModel();
+            result.IsOnline = true;
+            var queue = messageDistributors.Get(distributorKey);
+            if (queue != null)
+            {
+                result.IsSuccess = false;
+                result.Message = statusCode.GetStatusMessage("1.7.1");
+            }
+
+
+
             // todo kuşullar sağlandımı kontrol (permission kontrol, bu kuyruk var mı vb.)
 
-            var queue = QueueFactory.Create<THub>(
+            var resultQueueCreate = QueueFactory.Create<THub>(
                 configuration.ConfigurationQueue,
+                distributorKey,
                 queueKey,
                 matchType,
                 sendType,
-                PermissionTypeEnum.All,
+                permissionType,
                 isDurable,
                 clientMaster,
                 messageMaster,
@@ -148,9 +247,38 @@ namespace JoberMQ.Server.Implementation.Broker.Default
                 ref isJoberActive,
                 hubContext);
 
-            return true;
+            return result;
         }
+        public ResponseBaseModel QueueUpdate(string queueKey, MatchTypeEnum matchType, SendTypeEnum sendType, PermissionTypeEnum permissionType, bool isDurable)
+        {
+            var result = new ResponseBaseModel();
+            // todo kuşullar sağlandımı kontrol (permission kontrol, bu kuyruk var mı vb.)
 
+
+
+
+            return result;
+        }
+        public ResponseBaseModel QueueRemove(string queueKey)
+        {
+            var result = new ResponseBaseModel();
+            // todo kuşullar sağlandımı kontrol (permission kontrol, bu kuyruk var mı vb.)
+
+
+
+
+            return result;
+        }
+        public ResponseBaseModel QueueBind(string distributorKey, string queueKey)
+        {
+            var result = new ResponseBaseModel();
+            // todo kuşullar sağlandımı kontrol (permission kontrol, bu kuyruk var mı vb.)
+
+
+
+
+            return result;
+        }
 
         public bool MessageAdd(MessageDbo message)
             => messageDistributors.Get(message.Message.Routing.DistributorKey).MessageAdd(message);

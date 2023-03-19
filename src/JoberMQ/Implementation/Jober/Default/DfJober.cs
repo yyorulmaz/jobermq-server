@@ -92,7 +92,7 @@ namespace JoberMQ.Implementation.Jober.Default
             this.clientMaster = JoberMQ.Library.Database.Factories.MemFactory.Create<string, IClient>(configuration.ConfigurationClient.ClientMasterFactory, configuration.ConfigurationClient.ClientMasterDataFactory, InMemoryClient.ClientMasterData);
             this.messageMaster = JoberMQ.Library.Database.Factories.MemFactory.Create<Guid, MessageDbo>(configuration.ConfigurationMessage.MessageMasterFactory, configuration.ConfigurationMessage.MessageMasterDataFactory, InMemoryMessage.MessageMasterData);
             this.database = DatabaseFactory.Create(configuration.ConfigurationDatabase);
-            this.messageBroker =  MessageBrokerFactory.Create<JoberHub>(configuration, messageMaster, clientMaster, database, ref joberHubContext, ref isJoberActive);
+            this.messageBroker = MessageBrokerFactory.Create<JoberHub>(configuration, statusCode, messageMaster, clientMaster, database, ref joberHubContext, ref isJoberActive);
 
 
 
@@ -123,6 +123,7 @@ namespace JoberMQ.Implementation.Jober.Default
                 {
                     Id = userId,
                     UserName = "jobermq",
+                    Authority = "administrators",
                     Password = CryptionHashHelper.SHA256EnCryption("jobermq"),
                     IsActive = true,
                     IsDelete = false,
@@ -186,6 +187,7 @@ namespace JoberMQ.Implementation.Jober.Default
                         policy.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme);
                         policy.RequireClaim(ClaimTypes.NameIdentifier);
                     });
+
                 });
 
             services
