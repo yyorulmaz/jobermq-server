@@ -3,9 +3,9 @@ using JoberMQ.Common.Enums.Queue;
 
 namespace JoberMQ.Common.Models.Queue
 {
-    public class DeclareQueueModel
+    public class QueueModel
     {
-        public DeclareQueueOperationTypeEnum DeclareQueueOperationType { get; internal set; }
+        public QueueOperationTypeEnum QueueOperationType { get; set; }
         public string DistributorKey { get; set; }
         public string QueueKey { get; set; }
         public MatchTypeEnum MatchType { get; set; }

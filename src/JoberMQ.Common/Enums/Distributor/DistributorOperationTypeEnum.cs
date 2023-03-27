@@ -1,6 +1,6 @@
 ﻿namespace JoberMQ.Common.Enums.Distributor
 {
-    public enum DeclareDistributorOperationTypeEnum
+    public enum DistributorOperationTypeEnum
     {
         Create = 1,
         Update = 2,

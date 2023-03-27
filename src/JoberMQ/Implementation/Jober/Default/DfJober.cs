@@ -36,11 +36,6 @@ namespace JoberMQ.Implementation.Jober.Default
             this.configuration = configuration;
         }
 
-        #region Jober Active State
-        bool isJoberActive;
-        bool IJober.IsJoberActive { get => isJoberActive; set => isJoberActive = value; }
-        #endregion
-        
         #region Configuration
         IConfiguration configuration;
         IConfiguration IJober.Configuration => configuration;
@@ -75,15 +70,6 @@ namespace JoberMQ.Implementation.Jober.Default
         //ISchedule schedule;
         //ISchedule IJober.Schedule => schedule;
         #endregion
-
-
-        #region JoberHubContext
-        IHubContext<JoberHub> joberHubContext;
-        IHubContext<JoberHub> IJober.JoberHubContext => joberHubContext;
-        #endregion
-
-
-
 
 
         public async Task StartAsync()
@@ -153,6 +139,26 @@ namespace JoberMQ.Implementation.Jober.Default
 
             JoberHost.Jober = this;
         }
+
+
+
+
+
+
+
+
+
+
+
+        #region Jober Active State
+        bool isJoberActive;
+        bool IJober.IsJoberActive { get => isJoberActive; set => isJoberActive = value; }
+        #endregion
+
+        #region JoberHubContext
+        IHubContext<JoberHub> joberHubContext;
+        IHubContext<JoberHub> IJober.JoberHubContext => joberHubContext;
+        #endregion
 
         private void ConfigureServices(IServiceCollection services)
         {

@@ -1,6 +1,6 @@
 ﻿namespace JoberMQ.Common.Enums.Queue
 {
-    public enum DeclareQueueOperationTypeEnum
+    public enum QueueOperationTypeEnum
     {
         Create = 1,
         Update = 2,

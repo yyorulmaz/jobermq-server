@@ -222,18 +222,15 @@ namespace JoberMQ.Server.Implementation.Broker.Default
         {
             var result = new ResponseBaseModel();
             result.IsOnline = true;
-            var queue = messageDistributors.Get(distributorKey);
+            var queue = messageQueues.Get(queueKey);
             if (queue != null)
             {
                 result.IsSuccess = false;
                 result.Message = statusCode.GetStatusMessage("1.7.1");
             }
-
-
-
-            // todo kuşullar sağlandımı kontrol (permission kontrol, bu kuyruk var mı vb.)
-
-            var resultQueueCreate = QueueFactory.Create<THub>(
+            else
+            {
+                var newtQueue = QueueFactory.Create<THub>(
                 configuration.ConfigurationQueue,
                 distributorKey,
                 queueKey,
@@ -246,6 +243,24 @@ namespace JoberMQ.Server.Implementation.Broker.Default
                 database.Message,
                 ref isJoberActive,
                 hubContext);
+                var resultQueueAdd = messageQueues.Add(queueKey, newtQueue);
+
+                if (resultQueueAdd == true)
+                {
+                    result.IsSuccess = true;
+                    result.Message = statusCode.GetStatusMessage("1.7.2");
+                }
+                else
+                {
+                    result.IsSuccess = false;
+                    result.Message = statusCode.GetStatusMessage("1.7.3");
+                }
+            }
+
+
+            // todo kuşullar sağlandımı kontrol (permission kontrol, bu kuyruk var mı vb.)
+
+            
 
             return result;
         }
