@@ -1,4 +1,4 @@
-﻿namespace JoberMQ.Common.Enums.Queue
+﻿namespace JoberMQ.Common.Enums
 {
     public enum MatchTypeEnum
     {

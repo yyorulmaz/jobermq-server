@@ -16,17 +16,17 @@ namespace JoberMQ.Timing.Implementation.Default
             response.IsOnline = true;
             response.JobId = job.Id;
 
-            var triggeredJob = database.Job.Get(job.TriggerJobId.Value);
-            var beforeTriggerGroupsId = triggeredJob.TriggerGroupsId;
-            var beforeIsTriggerMain = triggeredJob.IsTriggerMain;
-            var beforeIsTrigger = triggeredJob.IsTrigger;
+            var triggeredJob = database.Job.Get(job.Timing.TriggerJobId.Value);
+            var beforeTriggerGroupsId = triggeredJob.Timing.TriggerGroupsId;
+            var beforeIsTriggerMain = triggeredJob.Timing.IsTriggerMain;
+            var beforeIsTrigger = triggeredJob.Timing.IsTrigger;
 
-            if (triggeredJob.TriggerJobId == null)
+            if (triggeredJob.Timing.TriggerJobId == null)
             {
-                triggeredJob.TriggerGroupsId = triggeredJob.Id;
-                triggeredJob.IsTriggerMain = true;
+                triggeredJob.Timing.TriggerGroupsId = triggeredJob.Id;
+                triggeredJob.Timing.IsTriggerMain = true;
             }
-            triggeredJob.IsTrigger = true;
+            triggeredJob.Timing.IsTrigger = true;
 
             var triggeredJobResult = database.Job.Update(triggeredJob.Id, triggeredJob);
             if (!triggeredJobResult)
@@ -36,15 +36,15 @@ namespace JoberMQ.Timing.Implementation.Default
                 return response;
             }
 
-            job.TriggerGroupsId = triggeredJob.TriggerGroupsId;
+            job.Timing.TriggerGroupsId = triggeredJob.Timing.TriggerGroupsId;
             // job.TriggerJobId client tarafından dolu geliyor 
             var addJobResult = database.Job.Add(job.Id, job);
 
             if (!addJobResult)
             {
-                triggeredJob.TriggerGroupsId = beforeTriggerGroupsId;
-                triggeredJob.IsTriggerMain = beforeIsTriggerMain;
-                triggeredJob.IsTrigger = beforeIsTrigger;
+                triggeredJob.Timing.TriggerGroupsId = beforeTriggerGroupsId;
+                triggeredJob.Timing.IsTriggerMain = beforeIsTriggerMain;
+                triggeredJob.Timing.IsTrigger = beforeIsTrigger;
 
                 var triggeredJobRollbackResult = database.Job.Update(triggeredJob.Id, triggeredJob);
                 if (!triggeredJobRollbackResult)

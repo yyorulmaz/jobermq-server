@@ -9,7 +9,6 @@ using JoberMQ.Library.Database.Repository.Abstraction.Opr;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.IO;
 using System.Linq;
 using TimerFramework;
@@ -24,7 +23,7 @@ namespace JoberMQ.Database.Implementation.DbService.Default
             this.user = OprFactory.Create<UserDbo>(configuration.DbOprFactory, configuration.DbMemFactory, configuration.DbMemDataFactory, UserMemData.UserDatas, configuration.DbTextFactory, configuration.DbTextFileConfigDatas.FirstOrDefault(x => x.Key == "User").Value);
             this.distributor = OprFactory.Create<DistributorDbo>(configuration.DbOprFactory, configuration.DbMemFactory, configuration.DbMemDataFactory, DistributorMemData.DistributorDatas, configuration.DbTextFactory, configuration.DbTextFileConfigDatas.FirstOrDefault(x => x.Key == "Distributor").Value);
             this.queue = OprFactory.Create<QueueDbo>(configuration.DbOprFactory, configuration.DbMemFactory, configuration.DbMemDataFactory, QueueMemData.QueueDatas, configuration.DbTextFactory, configuration.DbTextFileConfigDatas.FirstOrDefault(x => x.Key == "Queue").Value);
-            this.eventSub = OprFactory.Create<EventSubDbo>(configuration.DbOprFactory, configuration.DbMemFactory, configuration.DbMemDataFactory, EventSubMemData.EventSubDatas, configuration.DbTextFactory, configuration.DbTextFileConfigDatas.FirstOrDefault(x => x.Key == "EventSub").Value);
+            this.eventSub = OprFactory.Create< EventSubDbo>(configuration.DbOprFactory, configuration.DbMemFactory, configuration.DbMemDataFactory, EventSubMemData.EventSubDatas, configuration.DbTextFactory, configuration.DbTextFileConfigDatas.FirstOrDefault(x => x.Key == "EventSub").Value);
             this.job = OprFactory.Create<JobDbo>(configuration.DbOprFactory, configuration.DbMemFactory, configuration.DbMemDataFactory, JobMemData.JobDatas, configuration.DbTextFactory, configuration.DbTextFileConfigDatas.FirstOrDefault(x => x.Key == "Job").Value);
             this.jobTransaction = OprFactory.Create<JobTransactionDbo>(configuration.DbOprFactory, configuration.DbMemFactory, configuration.DbMemDataFactory, JobTransactionMemData.JobTransactionDatas, configuration.DbTextFactory, configuration.DbTextFileConfigDatas.FirstOrDefault(x => x.Key == "JobTransaction").Value);
             this.message = OprFactory.Create<MessageDbo>(configuration.DbOprFactory, configuration.DbMemFactory, configuration.DbMemDataFactory, MessageMemData.MessageDatas, configuration.DbTextFactory, configuration.DbTextFileConfigDatas.FirstOrDefault(x => x.Key == "Message").Value);
@@ -108,15 +107,15 @@ namespace JoberMQ.Database.Implementation.DbService.Default
             var jobTransactionsAndPaths = jobTransaction.DbText.ReadAllDataGrouping2(false);
             var messagesAndPaths = message.DbText.ReadAllDataGrouping2(false);
 
-            var completedJobIdList = jobsAndPaths.datas.Where(x => x.IsCompleted == true).Select(s => s.Id).ToList();
+            var completedJobIdList = jobsAndPaths.datas.Where(x => x.Status.IsCompleted == true).Select(s => s.Id).ToList();
 
-            newJobs = jobsAndPaths.datas.Where(x => x.IsCompleted == false).ToList();
+            newJobs = jobsAndPaths.datas.Where(x => x.Status.IsCompleted == false).ToList();
             newJobTransactions = jobTransactionsAndPaths.datas.Where(x => !completedJobIdList.Contains(x.CreatedJobId)).ToList();
             newMessages = messagesAndPaths.datas.Where(x => !completedJobIdList.Contains(x.CreatedJobId.Value)).ToList();
 
             #region Job
             var tempFileJob = job.DbText.GetArsiveFileFullPath(0);
-            File.Create(tempFileJob);
+            File.Create(tempFileJob).Close();
             using (FileStream fs = job.DbText.FileStreamCreate(tempFileJob, 32768))
             {
                 using (StreamWriter sw = job.DbText.StreamWriterCreate(fs))
@@ -137,9 +136,9 @@ namespace JoberMQ.Database.Implementation.DbService.Default
             File.Move(tempFileJob, arsiveFileJob);
             #endregion
 
-            #region Job
+            #region JobTransaction
             var tempFileJobTransaction = jobTransaction.DbText.GetArsiveFileFullPath(0);
-            File.Create(tempFileJobTransaction);
+            File.Create(tempFileJobTransaction).Close();
             using (FileStream fs = jobTransaction.DbText.FileStreamCreate(tempFileJobTransaction, 32768))
             {
                 using (StreamWriter sw = jobTransaction.DbText.StreamWriterCreate(fs))
@@ -157,12 +156,12 @@ namespace JoberMQ.Database.Implementation.DbService.Default
             if (jobTransaction.DbText.ArsiveFileCounter == 1)
                 jobTransaction.DbText.ArsiveFileCounter = 2;
 
-            File.Move(tempFileJobTransaction, arsiveFileJob);
+            File.Move(tempFileJobTransaction, arsiveFileJobTransaction);
             #endregion
 
             #region Message
             var tempFileMessage = message.DbText.GetArsiveFileFullPath(0);
-            File.Create(tempFileMessage);
+            File.Create(tempFileMessage).Close();
             using (FileStream fs = message.DbText.FileStreamCreate(tempFileMessage, 32768))
             {
                 using (StreamWriter sw = message.DbText.StreamWriterCreate(fs))

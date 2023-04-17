@@ -1,4 +1,4 @@
-﻿namespace JoberMQ.Common.Enums.Permission
+﻿namespace JoberMQ.Common.Enums
 {
     public enum PermissionTypeEnum
     {

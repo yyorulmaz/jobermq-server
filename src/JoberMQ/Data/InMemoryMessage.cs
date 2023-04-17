@@ -1,5 +1,4 @@
-﻿using JoberMQ.Client.Abstraction;
-using JoberMQ.Common.Dbos;
+﻿using JoberMQ.Common.Dbos;
 using System;
 using System.Collections.Concurrent;
 

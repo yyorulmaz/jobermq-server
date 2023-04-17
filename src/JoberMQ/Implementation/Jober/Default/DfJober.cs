@@ -8,10 +8,11 @@ using JoberMQ.Configuration.Abstraction;
 using JoberMQ.Database.Abstraction.DbService;
 using JoberMQ.Database.Factories;
 using JoberMQ.Hubs;
+using JoberMQ.Library.Database.Enums;
 using JoberMQ.Library.Database.Repository.Abstraction.Mem;
+using JoberMQ.Library.Helpers;
 using JoberMQ.Library.StatusCode.Abstraction;
 using JoberMQ.Library.StatusCode.Factories;
-using JoberMQ.Queue.Factories;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -35,11 +36,6 @@ namespace JoberMQ.Implementation.Jober.Default
             this.configuration = configuration;
         }
 
-        #region Jober Active State
-        bool isJoberActive;
-        bool IJober.IsJoberActive { get => isJoberActive; set => isJoberActive = value; }
-        #endregion
-        
         #region Configuration
         IConfiguration configuration;
         IConfiguration IJober.Configuration => configuration;
@@ -76,22 +72,13 @@ namespace JoberMQ.Implementation.Jober.Default
         #endregion
 
 
-        #region JoberHubContext
-        IHubContext<JoberHub> joberHubContext;
-        IHubContext<JoberHub> IJober.JoberHubContext => joberHubContext;
-        #endregion
-
-
-
-
-
         public async Task StartAsync()
         {
             this.statusCode = StatusCodeFactory.Create(configuration.ConfigurationStatusCode.StatusCodeFactory, configuration.ConfigurationStatusCode.StatusCodeDatas, configuration.ConfigurationStatusCode.StatusCodeMessageLanguage);
             this.clientMaster = JoberMQ.Library.Database.Factories.MemFactory.Create<string, IClient>(configuration.ConfigurationClient.ClientMasterFactory, configuration.ConfigurationClient.ClientMasterDataFactory, InMemoryClient.ClientMasterData);
             this.messageMaster = JoberMQ.Library.Database.Factories.MemFactory.Create<Guid, MessageDbo>(configuration.ConfigurationMessage.MessageMasterFactory, configuration.ConfigurationMessage.MessageMasterDataFactory, InMemoryMessage.MessageMasterData);
             this.database = DatabaseFactory.Create(configuration.ConfigurationDatabase);
-            this.messageBroker =  MessageBrokerFactory.Create<JoberHub>(configuration, messageMaster, clientMaster, database, ref joberHubContext, ref isJoberActive);
+            this.messageBroker = MessageBrokerFactory.Create<JoberHub>(configuration, statusCode, messageMaster, clientMaster, database, ref joberHubContext, ref isJoberActive);
 
 
 
@@ -107,23 +94,28 @@ namespace JoberMQ.Implementation.Jober.Default
 
             //#region Message Broker Start
             //var messageBrokerStartResult = messageBroker.Start();
-            //#endregion
+            #endregion
 
-            //#region default user create
-            //var userId = Guid.Parse("3b1fb872-c5de-40f4-8a93-342e754da53a");
-            //var userCheck = databaseService.User.Get(userId);
-            //if (userCheck == null)
-            //{
-            //    databaseService.User.Add(new UserDbo
-            //    {
-            //        Id = userId,
-            //        UserName = "jobermq",
-            //        Password = CryptionHashHelper.SHA256EnCryption("jobermq"),
-            //        IsActive = true,
-            //        IsDelete = false,
-            //        DataStatusType = DataStatusTypeEnum.Insert
-            //    });
-            //}
+
+
+
+
+            #region default user create
+            var userId = Guid.Parse("3b1fb872-c5de-40f4-8a93-342e754da53a");
+            var userCheck = database.User.Get(userId);
+            if (userCheck == null)
+            {
+                database.User.Add(userId, new UserDbo
+                {
+                    Id = userId,
+                    UserName = "jobermq",
+                    Authority = "administrators",
+                    Password = CryptionHashHelper.SHA256EnCryption("jobermq"),
+                    IsActive = true,
+                    IsDelete = false,
+                    DataStatusType = DataStatusTypeEnum.Insert
+                });
+            }
             #endregion
 
             #region Server Start
@@ -147,6 +139,26 @@ namespace JoberMQ.Implementation.Jober.Default
 
             JoberHost.Jober = this;
         }
+
+
+
+
+
+
+
+
+
+
+
+        #region Jober Active State
+        bool isJoberActive;
+        bool IJober.IsJoberActive { get => isJoberActive; set => isJoberActive = value; }
+        #endregion
+
+        #region JoberHubContext
+        IHubContext<JoberHub> joberHubContext;
+        IHubContext<JoberHub> IJober.JoberHubContext => joberHubContext;
+        #endregion
 
         private void ConfigureServices(IServiceCollection services)
         {
@@ -181,6 +193,7 @@ namespace JoberMQ.Implementation.Jober.Default
                         policy.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme);
                         policy.RequireClaim(ClaimTypes.NameIdentifier);
                     });
+
                 });
 
             services

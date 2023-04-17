@@ -1,13 +1,10 @@
-﻿using JoberMQ.Common.Enums.Permission;
-using JoberMQ.Common.Enums.Queue;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using JoberMQ.Common.Enums;
 
 namespace JoberMQ.Common.Models.Config
 {
     public class DefaultQueueConfigModel
     {
+        public string DistributorKey { get; set; }
         public string QueueKey { get; set; }
         public MatchTypeEnum MatchType { get; set; }
         public SendTypeEnum SendType { get; set; }

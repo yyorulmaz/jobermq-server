@@ -1,9 +1,9 @@
-﻿using JoberMQ.Library.Database.Base;
-using JoberMQ.Common.Enums.Queue;
+﻿using JoberMQ.Common.Enums;
+using JoberMQ.Library.Database.Base;
 
 namespace JoberMQ.Common.Dbos
 {
-    internal class EventSubDbo : DboPropertyGuidBase, IDboBase
+    public class EventSubDbo : DboPropertyGuidBase, IDboBase
     {
         public string EventKey { get; set; }
         public MatchTypeEnum MatchType { get; set; }

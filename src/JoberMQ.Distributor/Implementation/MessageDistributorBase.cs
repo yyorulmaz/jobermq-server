@@ -1,6 +1,6 @@
 ﻿using JoberMQ.Common.Dbos;
+using JoberMQ.Common.Enums;
 using JoberMQ.Common.Enums.Distributor;
-using JoberMQ.Common.Enums.Permission;
 using JoberMQ.Distributor.Abstraction;
 using JoberMQ.Library.Database.Repository.Abstraction.Mem;
 using JoberMQ.Queue.Abstraction;
@@ -10,9 +10,6 @@ namespace JoberMQ.Distributor.Implementation
     internal abstract class MessageDistributorBase : IMessageDistributor
     {
         private readonly string distributorKey;
-        private readonly DistributorTypeEnum distributorType;
-        private readonly PermissionTypeEnum permissionType;
-        private readonly bool isDurable;
         protected readonly IMemRepository<string, IMessageQueue> queues;
 
 
@@ -26,9 +23,13 @@ namespace JoberMQ.Distributor.Implementation
         }
 
         public string DistributorKey => distributorKey;
-        public DistributorTypeEnum DistributorType => distributorType;
-        public PermissionTypeEnum PermissionType => permissionType;
-        public bool IsDurable => isDurable;
+
+        private DistributorTypeEnum distributorType;
+        public DistributorTypeEnum DistributorType { get => distributorType; set => distributorType = value; }
+        private PermissionTypeEnum permissionType;
+        public PermissionTypeEnum PermissionType { get => permissionType; set => permissionType = value; }
+        private bool isDurable;
+        public bool IsDurable { get => isDurable; set => isDurable = value; }
 
 
         public abstract bool MessageAdd(MessageDbo message);

@@ -1,8 +1,5 @@
-﻿using JoberMQ.Common.Enums.Distributor;
-using JoberMQ.Common.Enums.Permission;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using JoberMQ.Common.Enums;
+using JoberMQ.Common.Enums.Distributor;
 
 namespace JoberMQ.Common.Models.Config
 {

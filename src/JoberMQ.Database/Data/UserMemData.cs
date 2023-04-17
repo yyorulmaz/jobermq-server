@@ -1,6 +1,6 @@
 ﻿using JoberMQ.Common.Dbos;
-using System.Collections.Concurrent;
 using System;
+using System.Collections.Concurrent;
 
 namespace JoberMQ.Database.Data
 {

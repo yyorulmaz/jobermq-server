@@ -1,4 +1,4 @@
-﻿namespace JoberMQ.Common.Enums.Priority
+﻿namespace JoberMQ.Common.Enums
 {
     public enum PriorityTypeEnum
     {
