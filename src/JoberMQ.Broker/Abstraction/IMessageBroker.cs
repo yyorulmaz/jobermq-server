@@ -6,6 +6,7 @@ using JoberMQ.Distributor.Abstraction;
 using JoberMQ.Library.Database.Repository.Abstraction.Mem;
 using JoberMQ.Queue.Abstraction;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace JoberMQ.Broker.Abstraction
 {
@@ -14,16 +15,16 @@ namespace JoberMQ.Broker.Abstraction
         IMemRepository<string, IMessageDistributor> MessageDistributors { get; set; }
         IMemRepository<string, IMessageQueue> MessageQueues { get; set; }
 
-        public ResponseBaseModel DistributorCreate(string distributorKey, DistributorTypeEnum distributorType, PermissionTypeEnum permissionType, bool isDurable);
+        public Task<ResponseBaseModel> DistributorCreate(string distributorKey, DistributorTypeEnum distributorType, PermissionTypeEnum permissionType, bool isDurable);
         //public ResponseBaseModel DistributorUpdate(string distributorKey, DistributorTypeEnum distributorType, PermissionTypeEnum permissionType, bool isDurable);
-        public ResponseBaseModel DistributorUpdate(string distributorKey, bool isDurable);
-        public ResponseBaseModel DistributorRemove(string distributorKey);
+        public Task<ResponseBaseModel> DistributorUpdate(string distributorKey, bool isDurable);
+        public Task<ResponseBaseModel> DistributorRemove(string distributorKey);
 
 
-        public ResponseBaseModel QueueCreate(string distributorKey, string queueKey, MatchTypeEnum matchType, SendTypeEnum sendType, PermissionTypeEnum permissionType, bool isDurable);
-        public ResponseBaseModel QueueUpdate(string queueKey, MatchTypeEnum matchType, SendTypeEnum sendType, PermissionTypeEnum permissionType, bool isDurable);
-        public ResponseBaseModel QueueRemove(string queueKey);
-        public ResponseBaseModel QueueBind(string distributorKey, string queueKey);
+        public Task<ResponseBaseModel> QueueCreate(string distributorKey, string queueKey, MatchTypeEnum matchType, SendTypeEnum sendType, PermissionTypeEnum permissionType, bool isDurable);
+        public Task<ResponseBaseModel> QueueUpdate(string queueKey, MatchTypeEnum matchType, SendTypeEnum sendType, PermissionTypeEnum permissionType, bool isDurable);
+        public Task<ResponseBaseModel> QueueRemove(string queueKey);
+        public Task<ResponseBaseModel> QueueBind(string distributorKey, string queueKey);
 
 
 

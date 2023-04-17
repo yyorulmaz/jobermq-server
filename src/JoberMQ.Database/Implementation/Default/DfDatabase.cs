@@ -136,7 +136,7 @@ namespace JoberMQ.Database.Implementation.DbService.Default
             File.Move(tempFileJob, arsiveFileJob);
             #endregion
 
-            #region Job
+            #region JobTransaction
             var tempFileJobTransaction = jobTransaction.DbText.GetArsiveFileFullPath(0);
             File.Create(tempFileJobTransaction).Close();
             using (FileStream fs = jobTransaction.DbText.FileStreamCreate(tempFileJobTransaction, 32768))
@@ -156,7 +156,7 @@ namespace JoberMQ.Database.Implementation.DbService.Default
             if (jobTransaction.DbText.ArsiveFileCounter == 1)
                 jobTransaction.DbText.ArsiveFileCounter = 2;
 
-            File.Move(tempFileJobTransaction, arsiveFileJob);
+            File.Move(tempFileJobTransaction, arsiveFileJobTransaction);
             #endregion
 
             #region Message

@@ -44,20 +44,20 @@ namespace JoberMQ.Queue.Implementation
         public string QueueKey => queueKey;
 
 
-        readonly MatchTypeEnum matchType;
-        public MatchTypeEnum MatchType => matchType;
+        MatchTypeEnum matchType;
+        public MatchTypeEnum MatchType { get => matchType; set => matchType = value; }
 
 
-        readonly SendTypeEnum sendType;
-        public SendTypeEnum SendType => sendType;
+        SendTypeEnum sendType;
+        public SendTypeEnum SendType { get => sendType; set => sendType = value; }
 
 
-        readonly PermissionTypeEnum permissionType;
-        public PermissionTypeEnum PermissionType => permissionType;
+        PermissionTypeEnum permissionType;
+        public PermissionTypeEnum PermissionType { get => permissionType; set => permissionType = value; }
 
 
         public bool isDurable;
-        public bool IsDurable => isDurable;
+        public bool IsDurable { get => isDurable; set => isDurable = value; }
 
 
         bool isSendRuning;

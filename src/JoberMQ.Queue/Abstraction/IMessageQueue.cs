@@ -7,12 +7,12 @@ namespace JoberMQ.Queue.Abstraction
 {
     internal interface IMessageQueue
     {
-        public string DistributorKey { get; }
-        public string QueueKey { get; }
-        public MatchTypeEnum MatchType { get; }
-        public SendTypeEnum SendType { get; }
-        public PermissionTypeEnum PermissionType { get; }
-        public bool IsDurable { get; }
+        public string DistributorKey { get;  }
+        public string QueueKey { get;  }
+        public MatchTypeEnum MatchType { get; set; }
+        public SendTypeEnum SendType { get; set; }
+        public PermissionTypeEnum PermissionType { get; set; }
+        public bool IsDurable { get; set; }
 
         public bool IsSendRuning { get; set; }
         public bool MessageAdd(MessageDbo message);
