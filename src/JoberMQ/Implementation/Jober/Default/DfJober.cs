@@ -3,104 +3,124 @@ using JoberMQ.Broker.Abstraction;
 using JoberMQ.Broker.Factories;
 using JoberMQ.Client.Abstraction;
 using JoberMQ.Client.Data;
-using JoberMQ.Common.Dbos;
+using JoberMQ.Client.Factories;
+using JoberMQ.Client.Implementation.Default;
 using JoberMQ.Configuration.Abstraction;
-using JoberMQ.Database.Abstraction.DbService;
+using JoberMQ.Configuration.Constants;
+using JoberMQ.Data;
+using JoberMQ.Database.Abstraction;
 using JoberMQ.Database.Factories;
 using JoberMQ.Hubs;
 using JoberMQ.Library.Database.Enums;
+using JoberMQ.Library.Database.Factories;
 using JoberMQ.Library.Database.Repository.Abstraction.Mem;
+using JoberMQ.Library.Dbos;
+using JoberMQ.Library.Enums.Distributor;
+using JoberMQ.Library.Enums.Jober;
+using JoberMQ.Library.Enums.Queue;
+using JoberMQ.Library.Enums.Status;
 using JoberMQ.Library.Helpers;
+using JoberMQ.Library.Models.Client;
+using JoberMQ.Library.Models.Consume;
+using JoberMQ.Library.Models.Distributor;
+using JoberMQ.Library.Models.Message;
+using JoberMQ.Library.Models.Queue;
+using JoberMQ.Library.Models.Response;
+using JoberMQ.Library.Models.Rpc;
 using JoberMQ.Library.StatusCode.Abstraction;
 using JoberMQ.Library.StatusCode.Factories;
+using JoberMQ.Publisher.Factories;
+using JoberMQ.State.Abstraction;
+using JoberMQ.State.Factories;
+using JoberMQ.Timing.Abstraction;
+using JoberMQ.Timing.Factories;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.AspNetCore.SignalR.Protocol;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Concurrent;
+using System.Diagnostics.Metrics;
 using System.Security.Claims;
 using System.Text;
+using System.Threading.Channels;
 using System.Threading.Tasks;
+using static Quartz.Logging.OperationName;
 
 namespace JoberMQ.Implementation.Jober.Default
 {
     public class DfJober : IJober
     {
+        #region constructor
         public DfJober(IConfiguration configuration)
-        {
-            this.isJoberActive = configuration.ConfigurationJober.IsJoberActive;
-            this.configuration = configuration;
-        }
-
-        #region Configuration
-        IConfiguration configuration;
-        IConfiguration IJober.Configuration => configuration;
+           => this.configuration = configuration;
         #endregion
 
-        #region Status Code
+        #region property helper
+        bool isJoberActive { get; set; }
+        public bool IsJoberActive { get => isJoberActive; set => isJoberActive = value; }
+
+        readonly IConfiguration configuration;
+        IConfiguration IJober.Configuration => configuration;
+
+
+        IJoberState joberState;
+        public IJoberState JoberState { get => joberState; set => joberState = value; }
+
+
         IStatusCode statusCode;
         IStatusCode IJober.StatusCode => statusCode;
-        #endregion
 
-        #region Client Master
-        IMemRepository<string, IClient> clientMaster;
-        IMemRepository<string, IClient> IJober.ClientMaster => clientMaster;
-        #endregion
 
-        #region Message Master
-        IMemRepository<Guid, MessageDbo> messageMaster;
-        IMemRepository<Guid, MessageDbo> IJober.MessageMaster => messageMaster;
-        #endregion
-
-        #region Database
         IDatabase database;
         IDatabase IJober.Database => database;
-        #endregion
 
-        #region Message Broker
+
+        IClientMasterData clientMasterData;
+        IClientMasterData IJober.ClientMasterData => clientMasterData;
+
+
+        IMemRepository<Guid, MessageDbo> messageMasterData;
+        IMemRepository<Guid, MessageDbo> IJober.MessageMasterData => messageMasterData;
+
+
         IMessageBroker messageBroker;
         IMessageBroker IJober.MessageBroker => messageBroker;
-        #endregion
 
-        #region TimingService
-        //ISchedule schedule;
-        //ISchedule IJober.Schedule => schedule;
-        #endregion
 
+        ISchedule schedule;
+        ISchedule IJober.Schedule => schedule;
+
+
+        IHubContext<JoberHub> joberHubContext;
+        IHubContext<JoberHub> IJober.JoberHubContext => joberHubContext;
+
+
+        ConcurrentDictionary<Guid, Channel<RpcResponseModel>> channels;
+        ConcurrentDictionary<Guid, Channel<RpcResponseModel>> IJober.Channels { get => channels; set => channels = value; }
+        #endregion
 
         public async Task StartAsync()
         {
+            this.channels = new ConcurrentDictionary<Guid, Channel<RpcResponseModel>>();
+            this.joberState = JoberStateFactory.Create(JoberStateFactoryEnum.Default);
             this.statusCode = StatusCodeFactory.Create(configuration.ConfigurationStatusCode.StatusCodeFactory, configuration.ConfigurationStatusCode.StatusCodeDatas, configuration.ConfigurationStatusCode.StatusCodeMessageLanguage);
-            this.clientMaster = JoberMQ.Library.Database.Factories.MemFactory.Create<string, IClient>(configuration.ConfigurationClient.ClientMasterFactory, configuration.ConfigurationClient.ClientMasterDataFactory, InMemoryClient.ClientMasterData);
-            this.messageMaster = JoberMQ.Library.Database.Factories.MemFactory.Create<Guid, MessageDbo>(configuration.ConfigurationMessage.MessageMasterFactory, configuration.ConfigurationMessage.MessageMasterDataFactory, InMemoryMessage.MessageMasterData);
             this.database = DatabaseFactory.Create(configuration.ConfigurationDatabase);
-            this.messageBroker = MessageBrokerFactory.Create<JoberHub>(configuration, statusCode, messageMaster, clientMaster, database, ref joberHubContext, ref isJoberActive);
+            this.clientMasterData = ClientMasterDataFactory.Create(configuration.ConfigurationClient.ClientMasterDataFactory, InMemoryClient.ClientMasterDataDatabase);
+            this.messageMasterData = MemFactory.Create<Guid, MessageDbo>(configuration.ConfigurationMessage.MessageMasterFactory, configuration.ConfigurationMessage.MessageMasterDataFactory, InMemoryMessage.MessageMasterData);
 
 
-
-            //this.schedule = ScheduleFactory.CreateSchedule(configuration.ConfigurationTiming.ScheduleFactory, databaseService);
-
-
-
-            #region Schedule Job Start
-            //var jobScheduleTimerStartResult = schedule.Start();
-            //if (!jobScheduleTimerStartResult)
-            //    throw new Exception(statusCode.GetStatusMessage("0.0.4"));
-            //#endregion
-
-            //#region Message Broker Start
-            //var messageBrokerStartResult = messageBroker.Start();
-            #endregion
+            this.schedule = ScheduleFactory.CreateSchedule(configuration.ConfigurationTiming.ScheduleFactory, database);
+            var jobScheduleTimerStartResult = schedule.Start();
+            if (!jobScheduleTimerStartResult)
+                throw new Exception(statusCode.GetStatusMessage("0.0.4"));
 
 
-
-
-
-            #region default user create
             var userId = Guid.Parse("3b1fb872-c5de-40f4-8a93-342e754da53a");
             var userCheck = database.User.Get(userId);
             if (userCheck == null)
@@ -116,9 +136,9 @@ namespace JoberMQ.Implementation.Jober.Default
                     DataStatusType = DataStatusTypeEnum.Insert
                 });
             }
-            #endregion
 
-            #region Server Start
+
+            #region Jober Host
             // todo url yapısını düzelt
             Uri urlHttp = new Uri($"http://{configuration.ConfigurationHost.HostName}:{configuration.ConfigurationHost.Port}");
             Uri urlHttps = new Uri($"https://{configuration.ConfigurationHost.HostName}:{configuration.ConfigurationHost.PortSsl}");
@@ -135,44 +155,35 @@ namespace JoberMQ.Implementation.Jober.Default
             host.RunAsync();
             #endregion
 
+            #region Message Broker
+            this.messageBroker = MessageBrokerFactory.Create<JoberHub>(configuration, statusCode, messageMasterData, clientMasterData, database, ref joberHubContext, ref joberState);
+            var br1 = await messageBroker.ImportDatabaseDistributors();
+            var br2 = await messageBroker.ImportDatabaseQueues();
+            var br3 = await messageBroker.CreateDefaultDistributors();
+            var br4 = await messageBroker.CreateDefaultQueues();
+            var br5 = await messageBroker.QueueSetMessages();
+            #endregion
+
+
+
             isJoberActive = true;
+            joberState.JoberActive(true);
 
             JoberHost.Jober = this;
         }
-
-
-
-
-
-
-
-
-
-
-
-        #region Jober Active State
-        bool isJoberActive;
-        bool IJober.IsJoberActive { get => isJoberActive; set => isJoberActive = value; }
-        #endregion
-
-        #region JoberHubContext
-        IHubContext<JoberHub> joberHubContext;
-        IHubContext<JoberHub> IJober.JoberHubContext => joberHubContext;
-        #endregion
-
         private void ConfigureServices(IServiceCollection services)
         {
             #region Newtonsoft Json Protocol
             services
                 .AddSignalR()
-                    //https://learn.microsoft.com/tr-tr/aspnet/core/signalr/messagepackhubprotocol?view=aspnetcore-7.0
-                    ////.AddMessagePackProtocol();
-                    //.AddMessagePackProtocol(options =>
-                    //{
-                    //    options.SerializerOptions = MessagePackSerializerOptions.Standard
-                    //        .WithResolver(new CustomResolver())
-                    //        .WithSecurity(MessagePackSecurity.UntrustedData);
-                    //});
+                //https://learn.microsoft.com/tr-tr/aspnet/core/signalr/messagepackhubprotocol?view=aspnetcore-7.0
+                ////.AddMessagePackProtocol();
+                //.AddMessagePackProtocol(options =>
+                //{
+                //    options.SerializerOptions = MessagePackSerializerOptions.Standard
+                //        .WithResolver(new CustomResolver())
+                //        .WithSecurity(MessagePackSecurity.UntrustedData);
+                //});
                 .AddNewtonsoftJsonProtocol(options =>
                 {
                     options.PayloadSerializerSettings.NullValueHandling = NullValueHandling.Ignore;
@@ -244,5 +255,226 @@ namespace JoberMQ.Implementation.Jober.Default
                 endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
             });
         }
+
+
+
+        async Task<bool> IJober.ConnectedOperation(HubCallerContext context)
+        {
+            bool result = false;
+
+            var clientInfoData = JsonConvert.DeserializeObject<ClientInfoDataModel>(context.GetHttpContext()?.Request.Headers["ClientInfoData"].ToString());
+
+            await Task.Run(() =>
+            {
+                var client = ClientFactory.CreateClient(
+                    JoberHost.Jober.Configuration.ConfigurationClient.ClientFactory,
+                    context.ConnectionId,
+                    clientInfoData.ClientKey,
+                    clientInfoData.ClientGroupKey,
+                    clientInfoData.ClientType);
+
+                result = clientMasterData.Add(context.ConnectionId, client);
+            });
+
+
+            QueueModel queue = DefaultQueueConst.NewClientGroupData;
+            queue.QueueKey = clientInfoData.ClientGroupKey;
+            await QueueOperation(queue);
+
+
+
+            ////todo cluster
+            //var highAvailabilities = Startup.ClientService.ClientData.GetAll(x => x.ClientType == ClientTypeEnum.HighAvailability || x.ClientType == ClientTypeEnum.LoadBalancingANDHighAvailability);
+            //if (highAvailabilities == null || highAvailabilities.Count == 0)
+            //    Startup.ServerService.IsHighAvailability = false;
+            //else
+            //    Startup.ServerService.IsHighAvailability = true;
+
+            if (result)
+                await joberHubContext.Clients.Client(context.ConnectionId).SendCoreAsync("ReceiveServerActive", new object[] { isJoberActive });
+
+            return result;
+        }
+        async Task<bool> IJober.DisConnectedOperation(HubCallerContext context)
+        {
+            bool result = false;
+
+            await Task.Run(() =>
+            {
+                result = clientMasterData.Remove(context.ConnectionId) == null ? false : true;
+            });
+
+            return result;
+        }
+
+
+
+        async Task<ResponseModel> IJober.DistributorOperation(string distributorData)
+        {
+            var result = new ResponseModel();
+            var data = JsonConvert.DeserializeObject<DistributorModel>(distributorData);
+
+            switch (data.DistributorOperationType)
+            {
+                case DistributorOperationTypeEnum.Create:
+                    result = await JoberHost.Jober.MessageBroker.DistributorCreate(data.DistributorKey, data.DistributorType, data.PermissionType, data.IsDurable);
+                    break;
+                case DistributorOperationTypeEnum.Update:
+                    result = await JoberHost.Jober.MessageBroker.DistributorUpdate(data.DistributorKey, data.IsDurable);
+                    break;
+                case DistributorOperationTypeEnum.Remove:
+                    result = await JoberHost.Jober.MessageBroker.DistributorRemove(data.DistributorKey);
+                    break;
+            }
+
+            return result;
+        }
+        async Task<ResponseModel> IJober.QueueOperation(string queueData)
+        {
+            var result = new ResponseModel();
+            var data = JsonConvert.DeserializeObject<QueueModel>(queueData);
+            return await QueueOperation(data);
+        }
+        async Task<ResponseModel> QueueOperation(QueueModel data)
+        {
+            var result = new ResponseModel();
+
+            switch (data.QueueOperationType)
+            {
+                case QueueOperationTypeEnum.Create:
+                    result = await JoberHost.Jober.MessageBroker.QueueCreate(data.QueueKey, data.MatchType, data.SendType, data.PermissionType, data.IsDurable);
+                    break;
+                case QueueOperationTypeEnum.Update:
+                    result = await JoberHost.Jober.MessageBroker.QueueUpdate(data.QueueKey, data.MatchType, data.SendType, data.PermissionType, data.IsDurable);
+                    break;
+                case QueueOperationTypeEnum.Remove:
+                    result = await JoberHost.Jober.MessageBroker.QueueRemove(data.QueueKey);
+                    break;
+                case QueueOperationTypeEnum.DistributorMerge:
+                    result = await JoberHost.Jober.MessageBroker.QueueMerge(data.DistributorKey, data.QueueKey);
+                    break;
+            }
+
+            return result;
+        }
+        async Task<ResponseModel> IJober.ConsumeOperation(string connectionId, string consumeData)
+        {
+            var result = new ResponseModel();
+            result.IsOnline = true;
+
+            await Task.Run(() =>
+            {
+                var data = JsonConvert.DeserializeObject<ConcurrentDictionary<string, ConsumeModel>>(consumeData);
+                var client = JoberHost.Jober.ClientMasterData.Get(connectionId);
+                client.Consuming = data;
+
+                result.IsSucces = JoberHost.Jober.ClientMasterData.Update(connectionId, client);
+            });
+
+            return result;
+        }
+
+
+
+
+        async Task<ResponseModel> IJober.JobOperation(string job)
+        {
+            var jobDeserialize = JsonConvert.DeserializeObject<JobDbo>(job);
+            var publisher = PublisherFactory.Create(configuration.ConfigurationPublisher.PublisherFactory, jobDeserialize.Publisher.PublisherType, configuration, database, schedule, messageBroker, statusCode);
+            var result = await publisher.Publish(jobDeserialize);
+
+            return result;
+        }
+        async Task<ResponseModel> IJober.MessageOperation(string message)
+            => await messageBroker.MessageAdd(JsonConvert.DeserializeObject<MessageDbo>(message));
+
+        async Task<RpcResponseModel> IJober.RpcOperation(string rpc)
+        {
+            var message = JsonConvert.DeserializeObject<RpcRequestModel>(rpc);
+            var response = new RpcResponseModel();
+
+
+
+            await Task.Run(async () =>
+            {
+                IClient client = clientMasterData.Get(x => x.ClientKey == message.ConsumerId);
+                if (client == null)
+                {
+                    //todo return client yok
+                }
+
+                var channel = Channel.CreateUnbounded<RpcResponseModel>();
+                joberHubContext.Clients.Client(client.ConnectionId).SendCoreAsync("ReceiveRpc", new[] { JsonConvert.SerializeObject(message) }).ConfigureAwait(false);
+                
+                channels.TryAdd(message.Id, channel);
+
+                int ssss = 0;
+                while (await channel.Reader.WaitToReadAsync())
+                {
+                    while (channel.Reader.TryRead(out RpcResponseModel coordinates))
+                    {
+                        response = coordinates;
+
+                        ssss = 1;
+                        break;
+                    }
+                    if (ssss == 1)
+                    {
+                        break;
+                    }
+                }
+
+            });
+
+
+            channels.TryRemove(response.Id, out var dddd);
+            return response;
+        }
+        async Task IJober.RpcResponseOperation(string rpc)
+        {
+            var message = JsonConvert.DeserializeObject<RpcResponseModel>(rpc);
+
+            var chnl = channels.TryGetValue(message.Id, out var channel);
+            channel.Writer.WriteAsync(message);
+        }
+
+
+        async Task<ResponseModel> IJober.MessageStartedOperation(string data)
+        {
+            var messageStartedData = JsonConvert.DeserializeObject<MessageStartedModel>(data);
+            var result = new ResponseModel();
+            result.IsOnline = true;
+
+            result.Id= messageStartedData.MessageId;
+
+            await Task.Run(() =>
+            {
+                try
+                {
+                    var message = database.Message.Get(messageStartedData.MessageId);
+
+                    if (message.Status.StatusTypeMessage == StatusTypeMessageEnum.None || message.Status.StatusTypeMessage == StatusTypeMessageEnum.SendClient)
+                    {
+                        message.Status.StatusTypeMessage = StatusTypeMessageEnum.Started;
+                        database.Message.Update(message.Id, message);
+                    }
+
+                    result.IsSucces = true;
+                }
+                catch (Exception)
+                {
+                    result.IsSucces = false;
+                }
+            });
+            return result;
+        }
+        async Task<ResponseModel> IJober.MessageCompletedOperation(string data)
+        {
+            var messageCompletedData = JsonConvert.DeserializeObject<MessageCompletedModel>(data);
+            var result = new ResponseModel();
+
+            return result;
+        }
+
     }
 }

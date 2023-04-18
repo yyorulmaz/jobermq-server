@@ -1,11 +1,12 @@
-﻿using JoberMQ.Common.Models.Login;
-using JoberMQ.Library.Helpers;
+﻿using JoberMQ.Library.Helpers;
+using JoberMQ.Library.Models.Account;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
@@ -49,7 +50,7 @@ namespace JoberMQ.Controllers
             var password = split[1];
             var clientKey = HttpContext.Request.Headers["clientKey"].ToString();
 
-            var clientCheck = JoberHost.Jober.ClientMaster.Get(x=>x.ClientKey == clientKey);
+            var clientCheck = JoberHost.Jober.ClientMasterData.Get(x => x.ClientKey == clientKey);
             //var clientCheck = Startup.ClientService.ClientData.Get(x => x.ClientKey == clientKey);
 
             if (clientCheck != null)

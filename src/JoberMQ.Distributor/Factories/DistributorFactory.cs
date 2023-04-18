@@ -1,21 +1,33 @@
-﻿using JoberMQ.Common.Enums;
-using JoberMQ.Common.Enums.Distributor;
+﻿using JoberMQ.Configuration.Abstraction;
+using JoberMQ.Configuration.Implementation.Default;
+using JoberMQ.Database.Abstraction;
 using JoberMQ.Distributor.Abstraction;
 using JoberMQ.Distributor.Implementation.Default;
 using JoberMQ.Library.Database.Repository.Abstraction.Mem;
+using JoberMQ.Library.Enums.Distributor;
+using JoberMQ.Library.Enums.Permission;
+using JoberMQ.Library.StatusCode.Abstraction;
 using JoberMQ.Queue.Abstraction;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace JoberMQ.Distributor.Factories
 {
     internal class DistributorFactory
     {
-        internal static IMessageDistributor CreateDistributor(
-            DistributorFactoryEnum distributorFactory, 
-            string distributorKey, 
-            DistributorTypeEnum distributorType, 
-            PermissionTypeEnum permissionType, 
-            bool isDurable, 
-            IMemRepository<string, IMessageQueue> messageQueues)
+        internal static IMessageDistributor Create(
+            IConfiguration configuration,
+            IStatusCode statusCode,
+            DistributorFactoryEnum distributorFactory,
+            string distributorKey,
+            DistributorTypeEnum distributorType,
+            PermissionTypeEnum permissionType,
+            bool isDurable,
+            IMemRepository<string, IMessageQueue> messageQueues,
+            IDatabase database)
         {
             IMessageDistributor distributor;
 
@@ -25,16 +37,16 @@ namespace JoberMQ.Distributor.Factories
                     switch (distributorType)
                     {
                         case DistributorTypeEnum.Direct:
-                            distributor = new DfMessageDistributorDirect(distributorKey, distributorType, permissionType, isDurable, messageQueues);
+                            distributor = new DfMessageDistributorDirect(configuration,statusCode, distributorKey, distributorType, permissionType, isDurable, messageQueues, database);
                             break;
                         case DistributorTypeEnum.Filter:
-                            distributor = new DfMessageDistributorFilter(distributorKey, distributorType, permissionType, isDurable, messageQueues);
+                            distributor = new DfMessageDistributorFilter(configuration,statusCode, distributorKey, distributorType, permissionType, isDurable, messageQueues, database);
                             break;
                         case DistributorTypeEnum.Event:
-                            distributor = new DfMessageDistributorEvent(distributorKey, distributorType, permissionType, isDurable, messageQueues);
+                            distributor = new DfMessageDistributorEvent(configuration,statusCode, distributorKey, distributorType, permissionType, isDurable, messageQueues, database);
                             break;
                         default:
-                            distributor = new DfMessageDistributorDirect(distributorKey, distributorType, permissionType, isDurable, messageQueues);
+                            distributor = new DfMessageDistributorDirect(configuration,statusCode, distributorKey, distributorType, permissionType, isDurable, messageQueues, database);
                             break;
                     }
                     break;
@@ -42,16 +54,16 @@ namespace JoberMQ.Distributor.Factories
                     switch (distributorType)
                     {
                         case DistributorTypeEnum.Direct:
-                            distributor = new DfMessageDistributorDirect(distributorKey, distributorType, permissionType, isDurable, messageQueues);
+                            distributor = new DfMessageDistributorDirect(configuration,statusCode, distributorKey, distributorType, permissionType, isDurable, messageQueues, database);
                             break;
                         case DistributorTypeEnum.Filter:
-                            distributor = new DfMessageDistributorFilter(distributorKey, distributorType, permissionType, isDurable, messageQueues);
+                            distributor = new DfMessageDistributorFilter(configuration,statusCode, distributorKey, distributorType, permissionType, isDurable, messageQueues, database);
                             break;
                         case DistributorTypeEnum.Event:
-                            distributor = new DfMessageDistributorEvent(distributorKey, distributorType, permissionType, isDurable, messageQueues);
+                            distributor = new DfMessageDistributorEvent(configuration,statusCode, distributorKey, distributorType, permissionType, isDurable, messageQueues, database);
                             break;
                         default:
-                            distributor = new DfMessageDistributorDirect(distributorKey, distributorType, permissionType, isDurable, messageQueues);
+                            distributor = new DfMessageDistributorDirect(configuration,statusCode, distributorKey, distributorType, permissionType, isDurable, messageQueues, database);
                             break;
                     }
                     break;

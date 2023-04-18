@@ -1,22 +1,28 @@
 ﻿using JoberMQ.Client.Abstraction;
-using JoberMQ.Common.Dbos;
-using JoberMQ.Common.Enums;
 using JoberMQ.Library.Database.Repository.Abstraction.Mem;
+using JoberMQ.Library.Dbos;
+using JoberMQ.Library.Enums.Permission;
+using JoberMQ.Library.Enums.Queue;
+using JoberMQ.Library.Models.Response;
+using System;
+using System.Threading.Tasks;
 
 namespace JoberMQ.Queue.Abstraction
 {
     internal interface IMessageQueue
     {
-        public string DistributorKey { get;  }
-        public string QueueKey { get;  }
+        public string DistributorKey { get; set; }
+        public string QueueKey { get; set; }
         public MatchTypeEnum MatchType { get; set; }
         public SendTypeEnum SendType { get; set; }
         public PermissionTypeEnum PermissionType { get; set; }
         public bool IsDurable { get; set; }
+        public bool IsActive { get; set; }
 
         public bool IsSendRuning { get; set; }
-        public bool MessageAdd(MessageDbo message);
+        public Task<ResponseModel> Queueing(MessageDbo message);
 
-        public IMemChildToolsRepository<string, IClient> ClientChilds { get; set; }
+        public IClientChildData ClientChildData { get; set; }
+        public int ChildMessageCount { get; }
     }
 }

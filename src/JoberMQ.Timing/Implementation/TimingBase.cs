@@ -1,8 +1,10 @@
 ﻿using JoberMQ.Broker.Abstraction;
-using JoberMQ.Common.Dbos;
-using JoberMQ.Common.Models.Response;
-using JoberMQ.Database.Abstraction.DbService;
+using JoberMQ.Database.Abstraction;
+using JoberMQ.Library.Dbos;
+using JoberMQ.Library.Models.Response;
+using JoberMQ.Library.StatusCode.Abstraction;
 using JoberMQ.Timing.Abstraction;
+using System.Threading.Tasks;
 
 namespace JoberMQ.Timing.Implementation
 {
@@ -11,24 +13,28 @@ namespace JoberMQ.Timing.Implementation
         protected readonly IMessageBroker messageBroker;
         protected readonly IDatabase database;
         protected readonly ISchedule schedule;
-        public TimingBase(IDatabase database)
+        protected readonly IStatusCode statusCode;
+        public TimingBase(IDatabase database, IStatusCode statusCode)
         {
             //this.messageBroker = messageBroker;
             this.database = database;
+            this.statusCode = statusCode;
         }
-        public TimingBase(IMessageBroker messageBroker, IDatabase database)
+        public TimingBase(IMessageBroker messageBroker, IDatabase database, IStatusCode statusCode)
         {
             this.messageBroker = messageBroker;
             this.database = database;
+            this.statusCode = statusCode;
         }
-        public TimingBase(IMessageBroker messageBroker, IDatabase database, ISchedule schedule)
+        public TimingBase(IMessageBroker messageBroker, IDatabase database, ISchedule schedule, IStatusCode statusCode)
         {
             this.messageBroker = messageBroker;
             this.database = database;
             this.schedule = schedule;
+            this.statusCode = statusCode;
         }
 
 
-        public abstract JobAddResponseModel Timing(JobDbo job);
+        public abstract Task<ResponseModel> Timing(JobDbo job);
     }
 }

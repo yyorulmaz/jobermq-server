@@ -1,24 +1,12 @@
-﻿using JoberMQ.Common.Enums.Broker;
-using JoberMQ.Configuration.Abstraction;
+﻿using JoberMQ.Configuration.Abstraction;
 using JoberMQ.Configuration.Constants;
 using JoberMQ.Library.Database.Enums;
+using JoberMQ.Library.Enums.Broker;
 
 namespace JoberMQ.Configuration.Implementation.Default
 {
     internal class DfConfigurationBroker : IConfigurationBroker
     {
-
-
-
-
-
-
-
-
-
-
-
-
         MessageBrokerFactoryEnum brokerFactory = DefaultBrokerConst.BrokerFactory;
         public MessageBrokerFactoryEnum MessageBrokerFactory { get => brokerFactory; set => brokerFactory = value; }
 

@@ -1,146 +1,145 @@
-﻿using JoberMQ.Common.Dbos;
-using JoberMQ.Common.Enums.Client;
-using JoberMQ.Common.Enums.Distributor;
-using JoberMQ.Common.Enums.Queue;
-using JoberMQ.Common.Models.Base;
-using JoberMQ.Common.Models.DeclareConsume;
-using JoberMQ.Common.Models.Distributor;
-using JoberMQ.Common.Models.Queue;
+﻿using JoberMQ.Abstraction.Jober;
+using JoberMQ.Implementation.Jober.Default;
+using JoberMQ.Library.Models.Response;
+using JoberMQ.Library.Models.Rpc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Threading.Channels;
 using System.Threading.Tasks;
 
 namespace JoberMQ.Hubs
 {
     internal class JoberHub : Hub
     {
-        //todo CLIENT CONNECT OLDUĞUNDA CLIENTGROUPKEY İNE GÖRE KUYRUK OLUŞTURMA DURUMU
-
-        #region CONNECT - DISCONNECT
         public override Task OnConnectedAsync()
         {
-            var clientType = (ClientTypeEnum)Enum.Parse(typeof(ClientTypeEnum), Context.GetHttpContext()?.Request.Headers["ClientType"].ToString());
-            var clientKey = Context.GetHttpContext()?.Request.Headers["ClientKey"].ToString();
-            var clientGroupKey = Context.GetHttpContext()?.Request.Headers["ClientGroupKey"].ToString();
-            var isOfflineClient = Convert.ToBoolean(Context.GetHttpContext()?.Request.Headers["IsOfflineClient"]);
-
-
-            var client = JoberMQ.Client.Factories.ClientFactory.CreateClient(
-                JoberHost.Jober.Configuration.ConfigurationClient.ClientFactory,
-                Context.ConnectionId,
-                clientKey,
-                clientGroupKey,
-                clientType);
-
-            JoberHost.Jober.ClientMaster.Add(Context.ConnectionId, client);
-
-            ////todo cluster
-            //var highAvailabilities = Startup.ClientService.ClientData.GetAll(x => x.ClientType == ClientTypeEnum.HighAvailability || x.ClientType == ClientTypeEnum.LoadBalancingANDHighAvailability);
-            //if (highAvailabilities == null || highAvailabilities.Count == 0)
-            //    Startup.ServerService.IsHighAvailability = false;
-            //else
-            //    Startup.ServerService.IsHighAvailability = true;
-
-
-            Clients.Client(Context.ConnectionId).SendCoreAsync("ReceiveServerActive", new object[] { JoberHost.Jober.IsJoberActive });
-
-            return base.OnConnectedAsync();
+            var result = JoberHost.Jober.ConnectedOperation(Context).Result;
+            if (result == false)
+            {
+                var errorMessage = JoberHost.Jober.StatusCode.GetStatusMessage("0.0.14");
+                return base.OnDisconnectedAsync(new System.Exception(errorMessage));
+            }
+            else
+            {
+                return base.OnConnectedAsync();
+            }
         }
-        public override Task OnDisconnectedAsync(Exception? exception)
+        public override Task OnDisconnectedAsync(Exception exception)
         {
-            JoberHost.Jober.ClientMaster.Remove(Context.ConnectionId);
-
+            var result = JoberHost.Jober.DisConnectedOperation(Context).Result;
             return base.OnDisconnectedAsync(exception);
         }
-        #endregion
-
-
-        [Authorize(Roles = "administrators")]
-        public async Task<ResponseBaseModel> Distributor(string distributorData)
-        {
-            var result = new ResponseBaseModel();
-            var data = JsonConvert.DeserializeObject<DistributorModel>(distributorData);
-
-            switch (data.DistributorOperationType)
-            {
-                case DistributorOperationTypeEnum.Create:
-                    result = JoberHost.Jober.MessageBroker.DistributorCreate(data.DistributorKey, data.DistributorType, data.PermissionType, data.IsDurable);
-                    break;
-                case DistributorOperationTypeEnum.Update:
-                    result = JoberHost.Jober.MessageBroker.DistributorUpdate(data.DistributorKey, data.IsDurable);
-                    break;
-                case DistributorOperationTypeEnum.Remove:
-                    result = JoberHost.Jober.MessageBroker.DistributorRemove(data.DistributorKey);
-                    break;
-            }
-
-            return result;
-        }
-
-
-        [Authorize(Roles = "administrators")]
-        public async Task<ResponseBaseModel> Queue(string queueData)
-        {
-            var result = new ResponseBaseModel();
-            var data = JsonConvert.DeserializeObject<QueueModel>(queueData);
-
-            switch (data.QueueOperationType)
-            {
-                case QueueOperationTypeEnum.Create:
-                    result = JoberHost.Jober.MessageBroker.QueueCreate(data.DistributorKey, data.QueueKey, data.MatchType, data.SendType, data.PermissionType, data.IsDurable);
-                    break;
-                case QueueOperationTypeEnum.Update:
-                    result = JoberHost.Jober.MessageBroker.QueueUpdate(data.QueueKey, data.MatchType, data.SendType, data.PermissionType, data.IsDurable);
-                    break;
-                case QueueOperationTypeEnum.Remove:
-                    result = JoberHost.Jober.MessageBroker.QueueRemove(data.QueueKey);
-                    break;
-                case QueueOperationTypeEnum.DistributorBind:
-                    result = JoberHost.Jober.MessageBroker.QueueBind(data.DistributorKey, data.QueueKey);
-                    break;
-            }
-
-            return result;
-        }
-
-
-
-        public async Task<bool> Job(string message)
-        {
-            Console.WriteLine(message);
-
-
-            return true;
-        }
-        public async Task<bool> Message(string message)
-        {
-            return JoberHost.Jober.MessageBroker.MessageAdd(JsonConvert.DeserializeObject<MessageDbo>(message));
-        }
-        public async Task<bool> Rpc(string message)
-        {
-
-
-            return true;
-        }
 
 
 
         [Authorize(Roles = "administrators")]
-        public async Task<bool> Consume(string consumeData)
-        {
-            //todo buradayım
-            var data = JsonConvert.DeserializeObject<ConcurrentDictionary<string, DeclareConsumeModel>>(consumeData);
-            var client = JoberHost.Jober.ClientMaster.Get(Context.ConnectionId);
-            client.DeclareConsuming = data;
+        public async Task<ResponseModel> Distributor(string distributorData)
+            => await JoberHost.Jober.DistributorOperation(distributorData);
 
-            JoberHost.Jober.ClientMaster.Update(Context.ConnectionId, client);
-            return true;
-        }
+        [Authorize(Roles = "administrators")]
+        public async Task<ResponseModel> Queue(string queueData)
+            => await JoberHost.Jober.QueueOperation(queueData);
+
+        [Authorize(Roles = "administrators")]
+        public async Task<ResponseModel> Consume(string consumeData)
+            => await JoberHost.Jober.ConsumeOperation(Context.ConnectionId, consumeData);
 
 
+
+
+        public async Task<ResponseModel> Job(string job)
+            => await JoberHost.Jober.JobOperation(job);
+
+        public async Task<ResponseModel> Message(string message)
+            => await JoberHost.Jober.MessageOperation(message);
+
+        public async Task<RpcResponseModel> Rpc(string rpc)
+            => await JoberHost.Jober.RpcOperation(rpc);
+        public async Task RpcResponse(string rpc)
+            => await JoberHost.Jober.RpcResponseOperation(rpc);
+
+
+        public async Task<ResponseModel> MessageStarted(string data)
+            => await JoberHost.Jober.MessageStartedOperation(data);
+
+        public async Task<ResponseModel> MessageCompleted(string data)
+           => await JoberHost.Jober.MessageCompletedOperation(data);
 
     }
+
+
+    public interface IChannel<T> : IDisposable
+    {
+
+    }
+    public class DfChannel<T> : IChannel<T>
+    {
+        Channel<T> channel;
+        string id;
+        public DfChannel(string id)
+        {
+            this.id = id;
+            channel = Channel.CreateUnbounded<T>();
+        }
+
+        #region Dispose
+        private bool disposedValue;
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    // TODO: dispose managed state (managed objects)
+                }
+
+                // TODO: free unmanaged resources (unmanaged objects) and override finalizer
+                // TODO: set large fields to null
+                disposedValue=true;
+            }
+        }
+
+        // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
+        // ~DfChannel()
+        // {
+        //     // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+        //     Dispose(disposing: false);
+        // }
+
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        #endregion
+    }
+    public enum ChannelFactoryEnum
+    {
+        Default = 1
+    }
+    internal class ChannelFactory
+    {
+        public static IChannel<T> Create<T>(ChannelFactoryEnum channelFactory, string id)
+        {
+            IChannel<T> result;
+
+            switch (channelFactory)
+            {
+                case ChannelFactoryEnum.Default:
+                    result = new DfChannel<T>(id);
+                    break;
+                default:
+                    result = new DfChannel<T>(id);
+                    break;
+            }
+
+            return result;
+        }
+    }
+
 }

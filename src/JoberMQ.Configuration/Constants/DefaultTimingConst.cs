@@ -1,4 +1,4 @@
-﻿using JoberMQ.Common.Enums.Timing;
+﻿using JoberMQ.Library.Enums.Timing;
 
 namespace JoberMQ.Configuration.Constants
 {

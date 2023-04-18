@@ -1,11 +1,7 @@
-﻿using JoberMQ.Common.Enums.Configuration;
-using JoberMQ.Configuration.Abstraction;
-using JoberMQ.Configuration.Constants;
+﻿using JoberMQ.Configuration.Abstraction;
 using JoberMQ.Configuration.Factories;
-using JoberMQ.Library.StatusCode.Enums;
-using JoberMQ.Library.StatusCode.Models;
+using JoberMQ.Library.Enums.Configuration;
 using System;
-using System.Collections.Concurrent;
 using System.IO;
 using System.Reflection;
 
@@ -57,6 +53,9 @@ namespace JoberMQ.Configuration.Implementation.Default
         public IConfigurationTiming ConfigurationTiming { get => configurationTiming; set => configurationTiming = value; }
 
 
+        IConfigurationPublisher configurationPublisher;
+        public IConfigurationPublisher ConfigurationPublisher { get => configurationPublisher; set => configurationPublisher = value; }
+
 
         public DfConfiguration(
             ConfigurationJoberFactoryEnum configurationJoberFactory,
@@ -69,7 +68,9 @@ namespace JoberMQ.Configuration.Implementation.Default
             ConfigurationBrokerFactoryEnum configurationBrokerFactory,
             ConfigurationSecurityFactoryEnum configurationSecurityFactory,
             ConfigurationHostFactoryEnum configurationHostFactory,
-            ConfigurationTimingFactoryEnum configurationTimingFactory)
+            ConfigurationTimingFactoryEnum configurationTimingFactory,
+            ConfigurationPublisherFactoryEnum configurationPublisherFactory
+            )
         {
             configurationJober = ConfigurationJoberFactory.Create(configurationJoberFactory);
             configurationStatusCode = ConfigurationStatusCodeFactory.Create(configurationStatusCodeFactory);
@@ -94,6 +95,7 @@ namespace JoberMQ.Configuration.Implementation.Default
             configurationSecurity = ConfigurationSecurityFactory.Create(configurationSecurityFactory);
             configurationHost = ConfigurationHostFactory.Create(configurationHostFactory);
             configurationTiming = ConfigurationTimingFactory.Create(configurationTimingFactory);
+            configurationPublisher = ConfigurationPublisherFactory.Create(configurationPublisherFactory);
         }
     }
 }

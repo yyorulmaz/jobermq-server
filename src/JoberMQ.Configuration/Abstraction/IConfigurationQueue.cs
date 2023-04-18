@@ -1,23 +1,13 @@
-﻿using JoberMQ.Common.Enums.Queue;
-using JoberMQ.Common.Models.Config;
-using JoberMQ.Library.Database.Enums;
+﻿using JoberMQ.Library.Database.Enums;
+using JoberMQ.Library.Enums.Queue;
+using JoberMQ.Library.Models.Configuration;
+using JoberMQ.Library.Models.Queue;
 using System.Collections.Concurrent;
 
 namespace JoberMQ.Configuration.Abstraction
 {
     public interface IConfigurationQueue
     {
-
-
-
-
-
-
-
-
-
-
-
         public QueueFactoryEnum QueueFactory { get; set; }
 
         public MemFactoryEnum QueuesMemFactory { get; set; }
@@ -30,6 +20,8 @@ namespace JoberMQ.Configuration.Abstraction
         public QueueChildPriorityFactoryEnum QueueChildPriorityFactory { get; set; }
         public QueueChildFIFOFactoryEnum QueueChildFIFOFactory { get; set; }
         public QueueChildLIFOFactoryEnum QueueChildLIFOFactory { get; set; }
-        public ConcurrentDictionary<string, DefaultQueueConfigModel> DefaultQueueConfigDatas { get; set; }
+        public ConcurrentDictionary<string, QueueModel> DefaultQueueConfigDatas { get; set; }
+
+        public bool IsGroupQueueCreate { get; set; }
     }
 }

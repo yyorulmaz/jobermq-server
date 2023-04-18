@@ -1,97 +1,125 @@
 ﻿using JoberMQ.Client.Abstraction;
-using JoberMQ.Common.Dbos;
-using JoberMQ.Common.Enums;
-using JoberMQ.Library.Database.Enums;
+using JoberMQ.Client.Factories;
+using JoberMQ.Configuration.Abstraction;
+using JoberMQ.Database.Abstraction;
 using JoberMQ.Library.Database.Factories;
 using JoberMQ.Library.Database.Repository.Abstraction.Mem;
 using JoberMQ.Library.Database.Repository.Abstraction.Opr;
+using JoberMQ.Library.Dbos;
+using JoberMQ.Library.Enums.Client;
+using JoberMQ.Library.Enums.Permission;
+using JoberMQ.Library.Enums.Queue;
+using JoberMQ.Library.Enums.Status;
+using JoberMQ.Library.Models.Response;
+using JoberMQ.State.Abstraction;
 using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json;
 using System;
-using System.Linq;
+using System.Threading.Tasks;
 
 namespace JoberMQ.Queue.Implementation.Default
 {
     internal class DfMessageQueueFIFO<THub> : MessageQueueBase
      where THub : Hub
     {
-        IMemChildFIFORepository<Guid, MessageDbo> MessageChilds { get; set; }
         IHubContext<THub> hubContext;
-        IMemChildToolsRepository<string, IClient> clientChilds;
-        public override IMemChildToolsRepository<string, IClient> ClientChilds { get => clientChilds; set => clientChilds = value; }
-        public DfMessageQueueFIFO(string distributorKey, string queueKey, MatchTypeEnum matchType, SendTypeEnum sendType, PermissionTypeEnum permissionType, bool isDurable, IMemRepository<string, IClient> masterClient, IMemRepository<Guid, MessageDbo> masterQueue, IOprRepositoryGuid<MessageDbo> messageDbOpr, ref bool isJoberActive, IHubContext<THub> hubContext) : base(distributorKey, queueKey, matchType, sendType, permissionType, isDurable, masterClient, masterQueue, messageDbOpr, ref isJoberActive)
+        IMemChildFIFORepository<Guid, MessageDbo> messageChilds { get; set; }
+
+        public override int ChildMessageCount => messageChilds.Count;
+
+        public DfMessageQueueFIFO(IConfiguration configuration, IDatabase database, string queueKey, MatchTypeEnum matchType, SendTypeEnum sendType, PermissionTypeEnum permissionType, bool isDurable, IClientMasterData clientMasterData, IMemRepository<Guid, MessageDbo> masterMessages, IOprRepositoryGuid<MessageDbo> messageDbOpr, ref IJoberState joberState, ref IHubContext<THub> hubContext) : base(configuration, database, queueKey, matchType, sendType, permissionType, isDurable, clientMasterData, masterMessages, messageDbOpr, ref joberState)
         {
-            MessageChilds = MemChildFactory.CreateChildFIFO<Guid, MessageDbo>(Library.Database.Enums.MemChildFactoryEnum.Default, masterQueue);
+            joberState.IsJoberActiveEvent += JoberState_IsJoberActiveEvent;
+
+            messageChilds = MemChildFactory.CreateChildFIFO<Guid, MessageDbo>(Library.Database.Enums.MemChildFactoryEnum.Default, masterMessages);
             this.hubContext = hubContext;
-
-            // todo  DfMessageQueuePriority deki gibi yapı kur
-            this.clientChilds = MemChildFactory.CreateChildTools<string, IClient>(
-                        MemChildFactoryEnum.Default,
-                        masterClient,
-                        true,
-                        x => x.DeclareConsuming.Where(w => w.Value.DeclareConsumeType == Common.Enums.DeclareConsume.DeclareConsumeTypeEnum.Special) != null,
-                        true,
-                        x => x.DeclareConsuming.Where(w => w.Value.DeclareConsumeType == Common.Enums.DeclareConsume.DeclareConsumeTypeEnum.Special) != null,
-                        true,
-                        x => x.DeclareConsuming.Where(w => w.Value.DeclareConsumeType == Common.Enums.DeclareConsume.DeclareConsumeTypeEnum.Special) != null,
-                        false,
-                        null,
-                        false,
-                        null,
-                        false,
-                        null);
-
-
-            this.ClientChilds.ChangedAdded += ClientChilds_ChangedAdded;
-            this.ClientChilds.ChangedUpdated += ClientChilds_ChangedUpdated;
-            MessageChilds.ChangedAdded += MessageChilds_ChangedAdded;
+            
+            this.clientChildData.ChangedAdded += ClientChilds_ChangedAdded;
+            this.clientChildData.ChangedUpdated += ClientChilds_ChangedUpdated;
+            messageChilds.ChangedAdded += MessageChilds_ChangedAdded;
         }
+        private void JoberState_IsJoberActiveEvent(bool obj)
+        {
+            isJoberActive = obj;
+        }
+
 
         private void ClientChilds_ChangedAdded(string arg1, IClient arg2) => SendOperation();
         private void ClientChilds_ChangedUpdated(string arg1, IClient arg2) => SendOperation();
         private void MessageChilds_ChangedAdded(Guid arg1, MessageDbo arg2) => SendOperation();
         private void SendOperation()
         {
-            if (IsSendRuning == false && MessageChilds.Count > 0 && isJoberActive == true)
+            if (IsSendRuning == false && messageChilds.Count > 0 && isJoberActive == true)
             {
                 IsSendRuning = true;
-                Qperation();
+
+                Task.Run(() => { 
+                    Qperation();
+                });
             }
         }
 
-        public override bool MessageAdd(MessageDbo message)
-            => MessageChilds.Add(message.Id, message);
+        public override async Task<ResponseModel> Queueing(MessageDbo message)
+        {
+            var result = new ResponseModel();
+            result.IsOnline = true;
+
+            var msgAdd = database.Message.Add(message.Id, message);
+            if (msgAdd)
+            {
+                var msgChildAdd = messageChilds.Add(message.Id, message);
+                if (msgChildAdd)
+                    result.IsSucces = true;
+                else
+                {
+                    database.Message.Delete(message.Id, message);
+                    result.IsSucces = false;
+                }
+            }
+            else
+            {
+                result.IsSucces = false;
+            }
+
+            return result;
+        }
 
         protected override void Qperation()
         {
-            while (MessageChilds.ChildData != null)
+            Task.Run(() =>
             {
-                var message = MessageChilds.Get();
-                IClient client;
-
-                if (MatchType == MatchTypeEnum.Special)
-                    client = ClientChilds.Get(x => x.ClientKey == message.Consuming.ClientKey);
-                else
-                    client = ClientChilds.Get(x => x.Number > endConsumerNumber);
-
-                if (client != null)
+                while (messageChilds.ChildData != null && messageChilds.ChildData.Count > 0)
                 {
-                    //Factory.Server.JoberHubContext.Clients.Client(client.ConnectionId).SendCoreAsync("ReceiveData", new[] { JsonConvert.SerializeObject(message) }).ConfigureAwait(false);
-                    hubContext.Clients.Client(client.ConnectionId).SendCoreAsync("ReceiveData", new[] { JsonConvert.SerializeObject(message) }).ConfigureAwait(false);
-                    message.Status.StatusTypeMessage = StatusTypeMessageEnum.SendClient;
-                    messageDbOpr.Update(message.Id, message);
+                    var message = messageChilds.Get();
+                    IClient client;
 
-                    MessageChilds.Remove(message.Id);
 
-                    endConsumerNumber = client.Number;
+                    //todo burada group olma durumunda ne olacak düşün
+                    if (MatchType == MatchTypeEnum.Special)
+                        client = ClientChildData.Get(x => x.ClientKey == message.Message.Routing.ClientKey);
+                    else
+                        client = ClientChildData.Get(x => x.Number > endConsumerNumber);
+
+
+                    if (client != null)
+                    {
+                        hubContext.Clients.Client(client.ConnectionId).SendCoreAsync("ReceiveData", new[] { JsonConvert.SerializeObject(message) }).ConfigureAwait(false);
+                        message.Status.StatusTypeMessage = StatusTypeMessageEnum.SendClient;
+                        messageDbOpr.Update(message.Id, message);
+
+                        messageChilds.Remove(message.Id);
+
+                        endConsumerNumber = client.Number;
+                    }
+                    else
+                    {
+                        // todo mesajın denenme durumlarına göre operasyonlar
+                    }
                 }
-                else
-                {
-                    // todo mesajın denenme durumlarına göre operasyonlar
-                }
-            }
 
-            IsSendRuning = false;
+                IsSendRuning = false;
+
+            });
         }
     }
 }

@@ -1,13 +1,13 @@
-﻿using JoberMQ.Common.Enums.Client;
-using JoberMQ.Library.Database.Enums;
+﻿using JoberMQ.Library.Database.Enums;
+using JoberMQ.Library.Enums.Client;
 
 namespace JoberMQ.Configuration.Constants
 {
     internal class DefaultClientConst
     {
-        internal const MemFactoryEnum ClientMasterFactory = MemFactoryEnum.Default;
-        internal const MemDataFactoryEnum ClientMasterDataFactory = MemDataFactoryEnum.Data;
-        
+        internal const ClientMasterDataFactoryEnum ClientMasterDataFactory = ClientMasterDataFactoryEnum.Default;
+        internal const ClientChildDataFactoryEnum ClientChildDataFactory = ClientChildDataFactoryEnum.Default;
+
         internal const ClientFactoryEnum ClientFactory = ClientFactoryEnum.Default;
     }
 }

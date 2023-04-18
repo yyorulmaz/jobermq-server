@@ -1,4 +1,10 @@
-﻿namespace JoberMQ.Configuration.Abstraction
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace JoberMQ.Configuration.Abstraction
 {
     public interface IConfiguration
     {
@@ -13,6 +19,6 @@
         public IConfigurationSecurity ConfigurationSecurity { get; set; }
         public IConfigurationHost ConfigurationHost { get; set; }
         public IConfigurationTiming ConfigurationTiming { get; set; }
+        public IConfigurationPublisher ConfigurationPublisher { get; set; }
     }
 }
-

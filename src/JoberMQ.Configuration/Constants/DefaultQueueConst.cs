@@ -1,7 +1,8 @@
-﻿using JoberMQ.Common.Enums;
-using JoberMQ.Common.Enums.Queue;
-using JoberMQ.Common.Models.Config;
-using JoberMQ.Library.Database.Enums;
+﻿using JoberMQ.Library.Database.Enums;
+using JoberMQ.Library.Enums.Permission;
+using JoberMQ.Library.Enums.Queue;
+using JoberMQ.Library.Models.Configuration;
+using JoberMQ.Library.Models.Queue;
 using System.Collections.Concurrent;
 
 namespace JoberMQ.Configuration.Constants
@@ -23,23 +24,33 @@ namespace JoberMQ.Configuration.Constants
         internal const QueueChildFIFOFactoryEnum QueueChildFIFOFactory = QueueChildFIFOFactoryEnum.Default;
         internal const QueueChildLIFOFactoryEnum QueueChildLIFOFactory = QueueChildLIFOFactoryEnum.Default;
 
-        internal const string DefaultQueueSpecialKey = "queue.default.special";
-        internal static ConcurrentDictionary<string, DefaultQueueConfigModel> DefaultQueueConfigDatas = DefaultQueueConfigData();
-        private static ConcurrentDictionary<string, DefaultQueueConfigModel> DefaultQueueConfigData()
+        //internal const string DefaultQueueSpecialKey = "queue.default.special";
+        internal static ConcurrentDictionary<string, QueueModel> DefaultQueueConfigDatas = DefaultQueueConfigData();
+        private static ConcurrentDictionary<string, QueueModel> DefaultQueueConfigData()
         {
-            var clientDatas = new ConcurrentDictionary<string, DefaultQueueConfigModel>();
+            var clientDatas = new ConcurrentDictionary<string, QueueModel>();
 
-            clientDatas.TryAdd("queue.default.special", new DefaultQueueConfigModel
+            clientDatas.TryAdd("queue.default.special", new QueueModel
             {
-                DistributorKey = null,
                 QueueKey = "queue.default.special",
                 MatchType = MatchTypeEnum.Special,
                 SendType = SendTypeEnum.FIFO,
                 PermissionType = PermissionTypeEnum.All,
                 IsDurable = true
             });
-
+            
             return clientDatas;
         }
+
+
+        internal const bool IsGroupQueueCreate = true;
+        internal static QueueModel NewClientGroupData = new QueueModel {
+            QueueKey = null,
+            MatchType = MatchTypeEnum.Group,
+            SendType = SendTypeEnum.FIFO,
+            PermissionType = PermissionTypeEnum.All,
+            IsDurable = true
+        };
+
     }
 }

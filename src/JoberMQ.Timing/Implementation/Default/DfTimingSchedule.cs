@@ -1,30 +1,32 @@
 ﻿using JoberMQ.Broker.Abstraction;
-using JoberMQ.Common.Dbos;
-using JoberMQ.Common.Models.Response;
-using JoberMQ.Database.Abstraction.DbService;
+using JoberMQ.Database.Abstraction;
+using JoberMQ.Library.Dbos;
+using JoberMQ.Library.Models.Response;
+using JoberMQ.Library.StatusCode.Abstraction;
 using JoberMQ.Timing.Abstraction;
+using System.Threading.Tasks;
 using TimerFramework;
 
 namespace JoberMQ.Timing.Implementation.Default
 {
     internal class DfTimingSchedule : TimingBase
     {
-        public DfTimingSchedule(IMessageBroker messageBroker, IDatabase database, ISchedule schedule) : base(messageBroker, database, schedule)
+        public DfTimingSchedule(IMessageBroker messageBroker, IDatabase database, ISchedule schedule, IStatusCode statusCode) : base(messageBroker, database, schedule, statusCode)
         {
         }
 
-        public override JobAddResponseModel Timing(JobDbo job)
+        public override async Task<ResponseModel> Timing(JobDbo job)
         {
             // todo kontrol et, delayed ve recurrent için ayrım yapmadım. ikisinide cron time üzerinden bastım
-            var response = new JobAddResponseModel();
+            var response = new ResponseModel();
             response.IsOnline = true;
-            response.JobId = job.Id;
+            response.Id = job.Id;
 
             var addJobResult = database.Job.Add(job.Id, job);
 
             if (!addJobResult)
             {
-                response.IsSuccess = false;
+                response.IsSucces = false;
                 response.Message = "Job eklenemedi, işlemler geri alındı."; // todo statuscode
                 return response;
             }
@@ -39,12 +41,12 @@ namespace JoberMQ.Timing.Implementation.Default
 
             if (!timerResult)
             {
-                response.IsSuccess = false;
+                response.IsSucces = false;
                 response.Message = "Timer eklenemedi, işlemler geri alındı."; // todo statuscode
                 return response;
             }
 
-            response.IsSuccess = true;
+            response.IsSucces = true;
             return response;
         }
     }

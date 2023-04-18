@@ -1,8 +1,9 @@
-﻿using JoberMQ.Common.Enums.Queue;
-using JoberMQ.Common.Models.Config;
-using JoberMQ.Configuration.Abstraction;
+﻿using JoberMQ.Configuration.Abstraction;
 using JoberMQ.Configuration.Constants;
 using JoberMQ.Library.Database.Enums;
+using JoberMQ.Library.Enums.Queue;
+using JoberMQ.Library.Models.Configuration;
+using JoberMQ.Library.Models.Queue;
 using System.Collections.Concurrent;
 
 namespace JoberMQ.Configuration.Implementation.Default
@@ -54,7 +55,11 @@ namespace JoberMQ.Configuration.Implementation.Default
         public QueueChildLIFOFactoryEnum QueueChildLIFOFactory { get => queueChildLIFOFactory; set => queueChildLIFOFactory = value; }
 
 
-        public ConcurrentDictionary<string, DefaultQueueConfigModel> defaultQueueConfigDatas = DefaultQueueConst.DefaultQueueConfigDatas;
-        public ConcurrentDictionary<string, DefaultQueueConfigModel> DefaultQueueConfigDatas { get => defaultQueueConfigDatas; set => defaultQueueConfigDatas = value; }
+        public ConcurrentDictionary<string, QueueModel> defaultQueueConfigDatas = DefaultQueueConst.DefaultQueueConfigDatas;
+        public ConcurrentDictionary<string, QueueModel> DefaultQueueConfigDatas { get => defaultQueueConfigDatas; set => defaultQueueConfigDatas = value; }
+
+
+        bool isGroupQueueCreate = DefaultQueueConst.IsGroupQueueCreate;
+        public bool IsGroupQueueCreate { get => isGroupQueueCreate; set => isGroupQueueCreate = value; }
     }
 }

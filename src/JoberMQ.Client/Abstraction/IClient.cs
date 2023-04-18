@@ -1,5 +1,5 @@
-﻿using JoberMQ.Common.Enums.Client;
-using JoberMQ.Common.Models.DeclareConsume;
+﻿using JoberMQ.Library.Enums.Client;
+using JoberMQ.Library.Models.Consume;
 using System.Collections.Concurrent;
 
 namespace JoberMQ.Client.Abstraction
@@ -13,6 +13,6 @@ namespace JoberMQ.Client.Abstraction
         public bool IsActive { get; set; }
         public ClientTypeEnum ClientType { get; set; }
         public int Number { get; set; }
-        ConcurrentDictionary<string, DeclareConsumeModel> DeclareConsuming { get; set; }
+        ConcurrentDictionary<string, ConsumeModel> Consuming { get; set; }
     }
 }

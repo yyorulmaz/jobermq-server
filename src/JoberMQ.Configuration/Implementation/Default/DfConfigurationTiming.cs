@@ -1,6 +1,6 @@
-﻿using JoberMQ.Common.Enums.Timing;
-using JoberMQ.Configuration.Abstraction;
+﻿using JoberMQ.Configuration.Abstraction;
 using JoberMQ.Configuration.Constants;
+using JoberMQ.Library.Enums.Timing;
 
 namespace JoberMQ.Configuration.Implementation.Default
 {

@@ -1,5 +1,5 @@
-﻿using JoberMQ.Common.Enums.Timing;
-using JoberMQ.Database.Abstraction.DbService;
+﻿using JoberMQ.Database.Abstraction;
+using JoberMQ.Library.Enums.Timing;
 using JoberMQ.Timing.Abstraction;
 using JoberMQ.Timing.Implementation.Default;
 

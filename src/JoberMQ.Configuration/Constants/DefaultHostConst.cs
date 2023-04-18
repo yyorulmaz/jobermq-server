@@ -1,4 +1,4 @@
-﻿using JoberMQ.Common.Enums.Host;
+﻿using JoberMQ.Library.Enums.Host;
 
 namespace JoberMQ.Configuration.Constants
 {

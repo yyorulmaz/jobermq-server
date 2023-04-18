@@ -1,8 +1,7 @@
-﻿using JoberMQ.Common.Dbos;
-using JoberMQ.Database.Abstraction.DboCreator;
-using JoberMQ.Library.Database.Repository.Abstraction.Opr;
+﻿using JoberMQ.Library.Database.Repository.Abstraction.Opr;
+using JoberMQ.Library.Dbos;
 
-namespace JoberMQ.Database.Abstraction.DbService
+namespace JoberMQ.Database.Abstraction
 {
     internal interface IDatabase
     {
@@ -17,13 +16,7 @@ namespace JoberMQ.Database.Abstraction.DbService
         public IOprRepositoryGuid<MessageDbo> Message { get; }
         public IOprRepositoryGuid<MessageResultDbo> MessageResult { get; }
 
-
-        //todo aşağıdakilerden setups hariç diğerleri burada olmalımı
-
-        //public bool ImportTextDataToSetMemDb();
-        //public bool CreateDatabases();
         public bool Setups();
-        //public bool DataGroupingAndSizes();
 
         bool CompletedDataRemovesTimerStart(string completedDataRemovesTimer);
         bool IsRuningCompletedDataRemove { get; }

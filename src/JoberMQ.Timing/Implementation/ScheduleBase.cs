@@ -1,4 +1,4 @@
-﻿using JoberMQ.Database.Abstraction.DbService;
+﻿using JoberMQ.Database.Abstraction;
 using JoberMQ.Timing.Abstraction;
 using TimerFramework;
 

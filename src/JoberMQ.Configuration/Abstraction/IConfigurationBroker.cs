@@ -1,5 +1,5 @@
-﻿using JoberMQ.Common.Enums.Broker;
-using JoberMQ.Library.Database.Enums;
+﻿using JoberMQ.Library.Database.Enums;
+using JoberMQ.Library.Enums.Broker;
 
 namespace JoberMQ.Configuration.Abstraction
 {

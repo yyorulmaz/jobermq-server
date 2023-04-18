@@ -1,6 +1,8 @@
-﻿using JoberMQ.Common.Dbos;
-using JoberMQ.Common.Enums;
-using JoberMQ.Common.Enums.Distributor;
+﻿using JoberMQ.Library.Dbos;
+using JoberMQ.Library.Enums.Distributor;
+using JoberMQ.Library.Enums.Permission;
+using JoberMQ.Library.Models.Response;
+using System.Threading.Tasks;
 
 namespace JoberMQ.Distributor.Abstraction
 {
@@ -11,6 +13,6 @@ namespace JoberMQ.Distributor.Abstraction
         public PermissionTypeEnum PermissionType { get; set; }
         public bool IsDurable { get; set; }
 
-        public bool MessageAdd(MessageDbo message); 
+        public Task<ResponseModel> Distributoring(MessageDbo message);
     }
 }

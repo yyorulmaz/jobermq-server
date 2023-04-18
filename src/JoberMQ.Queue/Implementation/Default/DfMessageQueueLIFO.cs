@@ -1,51 +1,48 @@
 ﻿using JoberMQ.Client.Abstraction;
-using JoberMQ.Common.Dbos;
-using JoberMQ.Common.Enums;
-using JoberMQ.Library.Database.Enums;
+using JoberMQ.Client.Factories;
+using JoberMQ.Configuration.Abstraction;
+using JoberMQ.Database.Abstraction;
 using JoberMQ.Library.Database.Factories;
 using JoberMQ.Library.Database.Repository.Abstraction.Mem;
 using JoberMQ.Library.Database.Repository.Abstraction.Opr;
+using JoberMQ.Library.Dbos;
+using JoberMQ.Library.Enums.Client;
+using JoberMQ.Library.Enums.Consume;
+using JoberMQ.Library.Enums.Permission;
+using JoberMQ.Library.Enums.Queue;
+using JoberMQ.Library.Enums.Status;
+using JoberMQ.Library.Models.Response;
+using JoberMQ.State.Abstraction;
 using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json;
 using System;
-using System.Linq;
+using System.Threading.Tasks;
 
 namespace JoberMQ.Queue.Implementation.Default
 {
     internal class DfMessageQueueLIFO<THub> : MessageQueueBase
          where THub : Hub
     {
-        IMemChildLIFORepository<Guid, MessageDbo> MessageChilds { get; set; }
+        IMemChildLIFORepository<Guid, MessageDbo> messageChilds { get; set; }
         IHubContext<THub> hubContext;
-        IMemChildToolsRepository<string, IClient> clientChilds;
-        public override IMemChildToolsRepository<string, IClient> ClientChilds { get => clientChilds; set => clientChilds = value; }
-        public DfMessageQueueLIFO(string distriburorKey, string queueKey, MatchTypeEnum matchType, SendTypeEnum sendType, PermissionTypeEnum permissionType, bool isDurable, IMemRepository<string, IClient> masterClient, IMemRepository<Guid, MessageDbo> masterQueue, IOprRepositoryGuid<MessageDbo> messageDbOpr, ref bool isJoberActive, IHubContext<THub> hubContext) : base(distriburorKey, queueKey, matchType, sendType, permissionType, isDurable, masterClient, masterQueue, messageDbOpr, ref isJoberActive)
+
+
+        public override int ChildMessageCount => messageChilds.Count;
+
+        public DfMessageQueueLIFO(IConfiguration configuration, IDatabase database, string queueKey, MatchTypeEnum matchType, SendTypeEnum sendType, PermissionTypeEnum permissionType, bool isDurable, IClientMasterData clientMasterData, IMemRepository<Guid, MessageDbo> masterMessages, IOprRepositoryGuid<MessageDbo> messageDbOpr, ref IJoberState joberState, ref IHubContext<THub> hubContext) : base(configuration, database, queueKey, matchType, sendType, permissionType, isDurable, clientMasterData, masterMessages, messageDbOpr, ref joberState)
         {
-            MessageChilds = MemChildFactory.CreateChildLIFO<Guid, MessageDbo>(Library.Database.Enums.MemChildFactoryEnum.Default, masterQueue);
+            joberState.IsJoberActiveEvent +=JoberState_IsJoberActiveEvent;
+
+            messageChilds = MemChildFactory.CreateChildLIFO<Guid, MessageDbo>(Library.Database.Enums.MemChildFactoryEnum.Default, masterMessages);
             this.hubContext = hubContext;
 
-            // todo  DfMessageQueuePriority deki gibi yapı kur
-            this.clientChilds = MemChildFactory.CreateChildTools<string, IClient>(
-                        MemChildFactoryEnum.Default,
-                        masterClient,
-                        true,
-                        x => x.DeclareConsuming.Where(w => w.Value.DeclareConsumeType == Common.Enums.DeclareConsume.DeclareConsumeTypeEnum.Special) != null,
-                        true,
-                        x => x.DeclareConsuming.Where(w => w.Value.DeclareConsumeType == Common.Enums.DeclareConsume.DeclareConsumeTypeEnum.Special) != null,
-                        true,
-                        x => x.DeclareConsuming.Where(w => w.Value.DeclareConsumeType == Common.Enums.DeclareConsume.DeclareConsumeTypeEnum.Special) != null,
-                        false,
-                        null,
-                        false,
-                        null,
-                        false,
-                        null);
-
-
-
-            this.ClientChilds.ChangedAdded += ClientChilds_ChangedAdded;
-            this.ClientChilds.ChangedUpdated += ClientChilds_ChangedUpdated;
-            MessageChilds.ChangedAdded += MessageChilds_ChangedAdded;
+            this.ClientChildData.ChangedAdded += ClientChilds_ChangedAdded;
+            this.ClientChildData.ChangedUpdated += ClientChilds_ChangedUpdated;
+            messageChilds.ChangedAdded += MessageChilds_ChangedAdded;
+        }
+        private void JoberState_IsJoberActiveEvent(bool obj)
+        {
+            isJoberActive = obj;
         }
 
         private void ClientChilds_ChangedAdded(string arg1, IClient arg2) => SendOperation();
@@ -53,27 +50,55 @@ namespace JoberMQ.Queue.Implementation.Default
         private void MessageChilds_ChangedAdded(Guid arg1, MessageDbo arg2) => SendOperation();
         private void SendOperation()
         {
-            if (IsSendRuning == false && MessageChilds.Count > 0 && isJoberActive == true)
+            if (IsSendRuning == false && messageChilds.Count > 0 && isJoberActive == true)
             {
                 IsSendRuning = true;
-                Qperation();
+                Task.Run(() => {
+                    Qperation();
+                });
             }
         }
 
-        public override bool MessageAdd(MessageDbo message)
-            => MessageChilds.Add(message.Id, message);
+        public override async Task<ResponseModel> Queueing(MessageDbo message)
+        {
+            var result = new ResponseModel();
+            result.IsOnline = true;
+
+            var msgAdd = database.Message.Add(message.Id, message);
+            if (msgAdd)
+            {
+                var msgChildAdd = messageChilds.Add(message.Id, message);
+                if (msgChildAdd)
+                    result.IsSucces = true;
+                else
+                {
+                    database.Message.Delete(message.Id, message);
+                    result.IsSucces = false;
+                }
+            }
+            else
+            {
+                result.IsSucces = false;
+            }
+
+            return result;
+        }
+
+
 
         protected override void Qperation()
         {
-            while (MessageChilds.ChildData != null)
+            while (messageChilds.ChildData != null)
             {
-                var message = MessageChilds.Get();
+                var message = messageChilds.Get();
                 IClient client;
 
+
                 if (MatchType == MatchTypeEnum.Special)
-                    client = ClientChilds.Get(x => x.ClientKey == message.Message.Routing.ClientKey);
+                    client = ClientChildData.Get(x => x.ClientKey == message.Message.Routing.ClientKey);
                 else
-                    client = ClientChilds.Get(x => x.Number > endConsumerNumber);
+                    client = ClientChildData.Get(x => x.Number > endConsumerNumber);
+
 
                 if (client != null)
                 {
@@ -82,7 +107,7 @@ namespace JoberMQ.Queue.Implementation.Default
                     message.Status.StatusTypeMessage = StatusTypeMessageEnum.SendClient;
                     messageDbOpr.Update(message.Id, message);
 
-                    MessageChilds.Remove(message.Id);
+                    messageChilds.Remove(message.Id);
 
                     endConsumerNumber = client.Number;
                 }

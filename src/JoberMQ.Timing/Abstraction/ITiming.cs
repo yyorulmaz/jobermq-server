@@ -1,10 +1,12 @@
-﻿using JoberMQ.Common.Dbos;
-using JoberMQ.Common.Models.Response;
+﻿using JoberMQ.Library.Dbos;
+using JoberMQ.Library.Models;
+using JoberMQ.Library.Models.Response;
+using System.Threading.Tasks;
 
 namespace JoberMQ.Timing.Abstraction
 {
     internal interface ITiming
     {
-        public JobAddResponseModel Timing(JobDbo job);
+        public Task<ResponseModel> Timing(JobDbo job);
     }
 }

@@ -1,12 +1,13 @@
 ﻿using JoberMQ.Broker.Abstraction;
+using JoberMQ.Broker.Implementation.Default;
 using JoberMQ.Client.Abstraction;
-using JoberMQ.Common.Dbos;
-using JoberMQ.Common.Enums.Broker;
 using JoberMQ.Configuration.Abstraction;
-using JoberMQ.Database.Abstraction.DbService;
+using JoberMQ.Database.Abstraction;
 using JoberMQ.Library.Database.Repository.Abstraction.Mem;
+using JoberMQ.Library.Dbos;
+using JoberMQ.Library.Enums.Broker;
 using JoberMQ.Library.StatusCode.Abstraction;
-using JoberMQ.Server.Implementation.Broker.Default;
+using JoberMQ.State.Abstraction;
 using Microsoft.AspNetCore.SignalR;
 using System;
 
@@ -18,20 +19,20 @@ namespace JoberMQ.Broker.Factories
             IConfiguration configuration,
             IStatusCode statusCode,
             IMemRepository<Guid, MessageDbo> messageMaster,
-            IMemRepository<string, IClient> clientMaster,
+            IClientMasterData clientMasterData,
             IDatabase database,
             ref IHubContext<THub> hubContext,
-            ref bool isJoberActive) where THub : Hub
+            ref IJoberState joberState) where THub : Hub
         {
             IMessageBroker messageBroker;
 
             switch (configuration.ConfigurationBroker.MessageBrokerFactory)
             {
                 case MessageBrokerFactoryEnum.Default:
-                    messageBroker = new DfMessageBroker<THub>(configuration, statusCode, messageMaster, clientMaster, database, hubContext, ref isJoberActive);
+                    messageBroker = new DfMessageBroker<THub>(configuration, statusCode, messageMaster, clientMasterData, database, hubContext, ref joberState);
                     break;
                 default:
-                    messageBroker = new DfMessageBroker<THub>(configuration, statusCode, messageMaster, clientMaster, database, hubContext, ref isJoberActive);
+                    messageBroker = new DfMessageBroker<THub>(configuration, statusCode, messageMaster, clientMasterData, database, hubContext, ref joberState);
                     break;
             }
 

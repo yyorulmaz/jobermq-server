@@ -1,7 +1,7 @@
-﻿using JoberMQ.Common.Enums.Database;
-using JoberMQ.Configuration.Abstraction;
-using JoberMQ.Database.Abstraction.DbService;
-using JoberMQ.Database.Implementation.DbService.Default;
+﻿using JoberMQ.Configuration.Abstraction;
+using JoberMQ.Database.Abstraction;
+using JoberMQ.Database.Implementation.Default;
+using JoberMQ.Library.Enums.Database;
 
 namespace JoberMQ.Database.Factories
 {

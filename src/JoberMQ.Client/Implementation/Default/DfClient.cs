@@ -1,6 +1,6 @@
 ﻿using JoberMQ.Client.Abstraction;
-using JoberMQ.Common.Enums.Client;
-using JoberMQ.Common.Models.DeclareConsume;
+using JoberMQ.Library.Enums.Client;
+using JoberMQ.Library.Models.Consume;
 using System.Collections.Concurrent;
 
 namespace JoberMQ.Client.Implementation.Default
@@ -14,7 +14,7 @@ namespace JoberMQ.Client.Implementation.Default
             this.clientGroupKey = clientGroupKey;
             this.clientType = clientType;
 
-            this.declareConsuming = new ConcurrentDictionary<string, DeclareConsumeModel>();
+            this.consuming = new ConcurrentDictionary<string, ConsumeModel>();
         }
 
         readonly string connectionId;
@@ -35,7 +35,7 @@ namespace JoberMQ.Client.Implementation.Default
         int number;
         public int Number { get => number; set => number = value; }
 
-        ConcurrentDictionary<string, DeclareConsumeModel> declareConsuming;
-        public ConcurrentDictionary<string, DeclareConsumeModel> DeclareConsuming { get => declareConsuming; set => declareConsuming = value; }
+        ConcurrentDictionary<string, ConsumeModel> consuming;
+        public ConcurrentDictionary<string, ConsumeModel> Consuming { get => consuming; set => consuming = value; }
     }
 }

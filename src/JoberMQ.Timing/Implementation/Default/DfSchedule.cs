@@ -1,5 +1,5 @@
-﻿using JoberMQ.Common.Dbos;
-using JoberMQ.Database.Abstraction.DbService;
+﻿using JoberMQ.Database.Abstraction;
+using JoberMQ.Library.Dbos;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;

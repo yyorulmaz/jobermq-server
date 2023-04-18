@@ -1,27 +1,27 @@
 ﻿using JoberMQ.Abstraction.Jober;
-using JoberMQ.Common.Enums.Jober;
 using JoberMQ.Configuration.Abstraction;
 using JoberMQ.Implementation.Jober.Default;
+using JoberMQ.Library.Enums.Jober;
 
 namespace JoberMQ.Factories.Jober
 {
     internal class JoberFactory
     {
-        internal static IJober CreateJober(JoberFactoryEnum factory, IConfiguration configuration)
+        public static IJober Create(JoberFactoryEnum joberFactory, IConfiguration configuration)
         {
-            IJober jober;
+            IJober result;
 
-            switch (factory)
+            switch (joberFactory)
             {
                 case JoberFactoryEnum.Default:
-                    jober = new DfJober(configuration);
+                    result = new DfJober(configuration);
                     break;
                 default:
-                    jober = new DfJober(configuration);
+                    result = new DfJober(configuration);
                     break;
             }
 
-            return jober;
+            return result;
         }
     }
 }

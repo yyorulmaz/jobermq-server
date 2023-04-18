@@ -1,8 +1,8 @@
-﻿using JoberMQ.Common.Dbos;
+﻿using JoberMQ.Library.Dbos;
 using System;
 using System.Collections.Concurrent;
 
-namespace JoberMQ.Client.Data
+namespace JoberMQ.Data
 {
     internal class InMemoryMessage
     {

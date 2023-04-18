@@ -1,12 +1,17 @@
-﻿using JoberMQ.Common.Enums.Configuration;
-using JoberMQ.Configuration.Abstraction;
+﻿using JoberMQ.Configuration.Abstraction;
 using JoberMQ.Configuration.Implementation.Default;
+using JoberMQ.Library.Enums.Configuration;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace JoberMQ.Configuration.Factories
 {
     internal class ConfigurationFactory
     {
-        public static IConfiguration CreateConfiguration(
+        public static IConfiguration Create(
             ConfigurationFactoryEnum factory,
             ConfigurationJoberFactoryEnum configurationJoberFactory = ConfigurationJoberFactoryEnum.Default,
             ConfigurationStatusCodeFactoryEnum configurationStatusCodeFactory = ConfigurationStatusCodeFactoryEnum.Default,
@@ -18,7 +23,8 @@ namespace JoberMQ.Configuration.Factories
             ConfigurationBrokerFactoryEnum configurationBrokerFactory = ConfigurationBrokerFactoryEnum.Default,
             ConfigurationSecurityFactoryEnum configurationSecurityFactory = ConfigurationSecurityFactoryEnum.Default,
             ConfigurationHostFactoryEnum configurationHostFactory = ConfigurationHostFactoryEnum.Default,
-            ConfigurationTimingFactoryEnum configurationTimingFactory = ConfigurationTimingFactoryEnum.Default
+            ConfigurationTimingFactoryEnum configurationTimingFactory = ConfigurationTimingFactoryEnum.Default,
+            ConfigurationPublisherFactoryEnum configurationPublisherFactory = ConfigurationPublisherFactoryEnum.Default
             )
         {
             IConfiguration configuration;
@@ -37,7 +43,9 @@ namespace JoberMQ.Configuration.Factories
                         configurationBrokerFactory,
                         configurationSecurityFactory,
                         configurationHostFactory,
-                        configurationTimingFactory);
+                        configurationTimingFactory,
+                        configurationPublisherFactory
+                        );
                     break;
                 default:
                     configuration = new DfConfiguration(
@@ -51,7 +59,9 @@ namespace JoberMQ.Configuration.Factories
                         configurationBrokerFactory,
                         configurationSecurityFactory,
                         configurationHostFactory,
-                        configurationTimingFactory);
+                        configurationTimingFactory,
+                        configurationPublisherFactory
+                        );
                     break;
             }
 

@@ -1,12 +1,14 @@
 ﻿using JoberMQ.Client.Abstraction;
-using JoberMQ.Common.Dbos;
-using JoberMQ.Common.Enums;
-using JoberMQ.Common.Enums.Queue;
 using JoberMQ.Configuration.Abstraction;
+using JoberMQ.Database.Abstraction;
 using JoberMQ.Library.Database.Repository.Abstraction.Mem;
 using JoberMQ.Library.Database.Repository.Abstraction.Opr;
+using JoberMQ.Library.Dbos;
+using JoberMQ.Library.Enums.Permission;
+using JoberMQ.Library.Enums.Queue;
 using JoberMQ.Queue.Abstraction;
 using JoberMQ.Queue.Implementation.Default;
+using JoberMQ.State.Abstraction;
 using Microsoft.AspNetCore.SignalR;
 using System;
 
@@ -15,37 +17,37 @@ namespace JoberMQ.Queue.Factories
     internal class QueueFactory
     {
         internal static IMessageQueue Create<THub>(
-            IConfigurationQueue configurationQueue,
-            string distributorKey,
+            IConfiguration configuration,
+            IDatabase database,
             string queueKey,
             MatchTypeEnum matchType,
             SendTypeEnum sendType,
             PermissionTypeEnum permissionType,
             bool isDurable,
-            IMemRepository<string, IClient> masterClient,
+            IClientMasterData clientMasterData,
             IMemRepository<Guid, MessageDbo> masterMessages,
             IOprRepositoryGuid<MessageDbo> messageDbOpr,
-            ref bool isJoberActive,
-            IHubContext<THub> context) where THub : Hub
+            ref IHubContext<THub> context,
+            ref IJoberState joberState) where THub : Hub
         {
             IMessageQueue queue;
 
-            switch (configurationQueue.QueueFactory)
+            switch (configuration.ConfigurationQueue.QueueFactory)
             {
                 case QueueFactoryEnum.Default:
                     switch (sendType)
                     {
                         case SendTypeEnum.Priority:
-                            queue = new DfMessageQueuePriority<THub>(distributorKey, queueKey, matchType, sendType, permissionType, isDurable, masterClient, masterMessages, messageDbOpr, ref isJoberActive, context);
+                            queue = new DfMessageQueuePriority<THub>(configuration, database, queueKey, matchType, sendType, permissionType, isDurable, clientMasterData, masterMessages, messageDbOpr, ref joberState, ref context);
                             break;
                         case SendTypeEnum.FIFO:
-                            queue = new DfMessageQueueFIFO<THub>(distributorKey, queueKey, matchType, sendType, permissionType, isDurable, masterClient, masterMessages, messageDbOpr, ref isJoberActive, context);
+                            queue = new DfMessageQueueFIFO<THub>(configuration, database, queueKey, matchType, sendType, permissionType, isDurable, clientMasterData, masterMessages, messageDbOpr, ref joberState, ref context);
                             break;
                         case SendTypeEnum.LIFO:
-                            queue = new DfMessageQueueLIFO<THub>(distributorKey, queueKey, matchType, sendType, permissionType, isDurable, masterClient, masterMessages, messageDbOpr, ref isJoberActive, context);
+                            queue = new DfMessageQueueLIFO<THub>(configuration, database, queueKey, matchType, sendType, permissionType, isDurable, clientMasterData, masterMessages, messageDbOpr, ref joberState, ref context);
                             break;
                         default:
-                            queue = new DfMessageQueueFIFO<THub>(distributorKey, queueKey, matchType, sendType, permissionType, isDurable, masterClient, masterMessages, messageDbOpr, ref isJoberActive, context);
+                            queue = new DfMessageQueueFIFO<THub>(configuration, database, queueKey, matchType, sendType, permissionType, isDurable, clientMasterData, masterMessages, messageDbOpr, ref joberState, ref context);
                             break;
                     }
                     break;
@@ -53,16 +55,16 @@ namespace JoberMQ.Queue.Factories
                     switch (sendType)
                     {
                         case SendTypeEnum.Priority:
-                            queue = new DfMessageQueuePriority<THub>(distributorKey, queueKey, matchType, sendType, permissionType, isDurable, masterClient, masterMessages, messageDbOpr, ref isJoberActive, context);
+                            queue = new DfMessageQueuePriority<THub>(configuration, database, queueKey, matchType, sendType, permissionType, isDurable, clientMasterData, masterMessages, messageDbOpr,  ref joberState, ref context);
                             break;
                         case SendTypeEnum.FIFO:
-                            queue = new DfMessageQueueFIFO<THub>(distributorKey, queueKey, matchType, sendType, permissionType, isDurable, masterClient, masterMessages, messageDbOpr, ref isJoberActive, context);
+                            queue = new DfMessageQueueFIFO<THub>(configuration, database, queueKey, matchType, sendType, permissionType, isDurable, clientMasterData, masterMessages, messageDbOpr,  ref joberState, ref context);
                             break;
                         case SendTypeEnum.LIFO:
-                            queue = new DfMessageQueueLIFO<THub>(distributorKey, queueKey, matchType, sendType, permissionType, isDurable, masterClient, masterMessages, messageDbOpr, ref isJoberActive, context);
+                            queue = new DfMessageQueueLIFO<THub>(configuration, database, queueKey, matchType, sendType, permissionType, isDurable, clientMasterData, masterMessages, messageDbOpr,  ref joberState, ref context);
                             break;
                         default:
-                            queue = new DfMessageQueueFIFO<THub>(distributorKey, queueKey, matchType, sendType, permissionType, isDurable, masterClient, masterMessages, messageDbOpr, ref isJoberActive, context);
+                            queue = new DfMessageQueueFIFO<THub>(configuration, database, queueKey, matchType, sendType, permissionType, isDurable, clientMasterData, masterMessages, messageDbOpr,  ref joberState, ref context);
                             break;
                     }
                     break;

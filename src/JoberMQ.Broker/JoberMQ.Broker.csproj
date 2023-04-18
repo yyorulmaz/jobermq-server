@@ -1,12 +1,10 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFramework>net7.0</TargetFramework>
 	</PropertyGroup>
-	
-	<ItemGroup>
-		<ProjectReference Include="..\..\..\jobermq-library\src\JoberMQ.Library\JoberMQ.Library.csproj" />
-	</ItemGroup>
+
+
 
 
 	<ItemGroup>
@@ -15,15 +13,20 @@
 		<PackageReference Include="Microsoft.AspNetCore.Owin" Version="7.0.1" />
 	</ItemGroup>
 
-	<ItemGroup Condition=" '$(Configuration)' == 'Release'">
+	<ItemGroup>
+		<ProjectReference Include="..\..\..\..\..\..\src\jobermq-library\src\JoberMQ.Library\JoberMQ.Library.csproj" />
+	</ItemGroup>
 
-		<Compile Include="..\JoberMQ.Common\**\*.cs" Exclude="..\JoberMQ.Common\Properties\AssemblyInfo.cs;..\JoberMQ.Common\obj\**;..\JoberMQ.Common\bin\**">
-			<Link>Common\%(RecursiveDir)%(Filename)%(Extension)</Link>
-			<Visible>false</Visible>
-		</Compile>
+
+	<ItemGroup Condition=" '$(Configuration)' == 'Release'">
 
 		<Compile Include="..\JoberMQ.Configuration\**\*.cs" Exclude="..\JoberMQ.Configuration\Properties\AssemblyInfo.cs;..\JoberMQ.Configuration\obj\**;..\JoberMQ.Configuration\bin\**">
 			<Link>Configuration\%(RecursiveDir)%(Filename)%(Extension)</Link>
+			<Visible>false</Visible>
+		</Compile>
+
+		<Compile Include="..\JoberMQ.State\**\*.cs" Exclude="..\JoberMQ.State\Properties\AssemblyInfo.cs;..\JoberMQ.State\obj\**;..\JoberMQ.State\bin\**">
+			<Link>State\%(RecursiveDir)%(Filename)%(Extension)</Link>
 			<Visible>false</Visible>
 		</Compile>
 
@@ -51,13 +54,13 @@
 
 	<ItemGroup Condition=" '$(Configuration)' == 'Debug'">
 
-		<Compile Include="..\JoberMQ.Common\**\*.cs" Exclude="..\JoberMQ.Common\Properties\AssemblyInfo.cs;..\JoberMQ.Common\obj\**;..\JoberMQ.Common\bin\**">
-			<Link>Common\%(RecursiveDir)%(Filename)%(Extension)</Link>
+		<Compile Include="..\JoberMQ.Configuration\**\*.cs" Exclude="..\JoberMQ.Configuration\Properties\AssemblyInfo.cs;..\JoberMQ.Configuration\obj\**;..\JoberMQ.Configuration\bin\**">
+			<Link>Configuration\%(RecursiveDir)%(Filename)%(Extension)</Link>
 			<Visible>false</Visible>
 		</Compile>
 
-		<Compile Include="..\JoberMQ.Configuration\**\*.cs" Exclude="..\JoberMQ.Configuration\Properties\AssemblyInfo.cs;..\JoberMQ.Configuration\obj\**;..\JoberMQ.Configuration\bin\**">
-			<Link>Configuration\%(RecursiveDir)%(Filename)%(Extension)</Link>
+		<Compile Include="..\JoberMQ.State\**\*.cs" Exclude="..\JoberMQ.State\Properties\AssemblyInfo.cs;..\JoberMQ.State\obj\**;..\JoberMQ.State\bin\**">
+			<Link>State\%(RecursiveDir)%(Filename)%(Extension)</Link>
 			<Visible>false</Visible>
 		</Compile>
 
@@ -82,7 +85,5 @@
 		</Compile>
 
 	</ItemGroup>
-
-
 
 </Project>
