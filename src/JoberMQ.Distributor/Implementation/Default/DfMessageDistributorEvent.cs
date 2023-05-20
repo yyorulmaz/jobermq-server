@@ -38,9 +38,16 @@ namespace JoberMQ.Distributor.Implementation.Default
                     {
                         message.Id = Guid.NewGuid();
                         message.EventGroupsId = eventGroupsId;
-                        var rslt = await queues.Get(item.EventKey).Queueing(message);
-                        //todo hata kontrol
+
+                        message.Message.Routing.ClientKey = item.ClientKey;
+                        message.Message.Routing.ClientGroupKey = item.ClientGroupKey;
+
+                        //var rslt = await queues.Get(item.EventKey).Queueing(message);
+                        var que = queues.Get(item.EventKey);
+                        if (que != null)
+                            await que.Queueing(message);
                     }
+
                 }
             }
             catch (Exception)

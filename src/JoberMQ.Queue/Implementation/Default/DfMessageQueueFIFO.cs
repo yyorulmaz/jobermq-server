@@ -1,17 +1,15 @@
 ﻿using JoberMQ.Client.Abstraction;
-using JoberMQ.Client.Factories;
 using JoberMQ.Configuration.Abstraction;
 using JoberMQ.Database.Abstraction;
 using JoberMQ.Library.Database.Factories;
 using JoberMQ.Library.Database.Repository.Abstraction.Mem;
 using JoberMQ.Library.Database.Repository.Abstraction.Opr;
 using JoberMQ.Library.Dbos;
-using JoberMQ.Library.Enums.Client;
 using JoberMQ.Library.Enums.Permission;
 using JoberMQ.Library.Enums.Queue;
 using JoberMQ.Library.Enums.Status;
 using JoberMQ.Library.Models.Response;
-using JoberMQ.State.Abstraction;
+using JoberMQ.State;
 using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json;
 using System;
@@ -27,20 +25,14 @@ namespace JoberMQ.Queue.Implementation.Default
 
         public override int ChildMessageCount => messageChilds.Count;
 
-        public DfMessageQueueFIFO(IConfiguration configuration, IDatabase database, string queueKey, MatchTypeEnum matchType, SendTypeEnum sendType, PermissionTypeEnum permissionType, bool isDurable, IClientMasterData clientMasterData, IMemRepository<Guid, MessageDbo> masterMessages, IOprRepositoryGuid<MessageDbo> messageDbOpr, ref IJoberState joberState, ref IHubContext<THub> hubContext) : base(configuration, database, queueKey, matchType, sendType, permissionType, isDurable, clientMasterData, masterMessages, messageDbOpr, ref joberState)
+        public DfMessageQueueFIFO(IConfiguration configuration, IDatabase database, string queueKey, MatchTypeEnum matchType, SendTypeEnum sendType, PermissionTypeEnum permissionType, bool isDurable, IClientMasterData clientMasterData, IMemRepository<Guid, MessageDbo> masterMessages, IOprRepositoryGuid<MessageDbo> messageDbOpr, ref IHubContext<THub> hubContext) : base(configuration, database, queueKey, matchType, sendType, permissionType, isDurable, clientMasterData, masterMessages, messageDbOpr)
         {
-            joberState.IsJoberActiveEvent += JoberState_IsJoberActiveEvent;
-
             messageChilds = MemChildFactory.CreateChildFIFO<Guid, MessageDbo>(Library.Database.Enums.MemChildFactoryEnum.Default, masterMessages);
             this.hubContext = hubContext;
             
             this.clientChildData.ChangedAdded += ClientChilds_ChangedAdded;
             this.clientChildData.ChangedUpdated += ClientChilds_ChangedUpdated;
             messageChilds.ChangedAdded += MessageChilds_ChangedAdded;
-        }
-        private void JoberState_IsJoberActiveEvent(bool obj)
-        {
-            isJoberActive = obj;
         }
 
 
@@ -49,7 +41,7 @@ namespace JoberMQ.Queue.Implementation.Default
         private void MessageChilds_ChangedAdded(Guid arg1, MessageDbo arg2) => SendOperation();
         private void SendOperation()
         {
-            if (IsSendRuning == false && messageChilds.Count > 0 && isJoberActive == true)
+            if (IsSendRuning == false && messageChilds.Count > 0 && JoberMQState.IsJoberActive == true)
             {
                 IsSendRuning = true;
 
@@ -64,9 +56,12 @@ namespace JoberMQ.Queue.Implementation.Default
             var result = new ResponseModel();
             result.IsOnline = true;
 
+
             var msgAdd = database.Message.Add(message.Id, message);
             if (msgAdd)
             {
+                
+
                 var msgChildAdd = messageChilds.Add(message.Id, message);
                 if (msgChildAdd)
                     result.IsSucces = true;
@@ -90,31 +85,32 @@ namespace JoberMQ.Queue.Implementation.Default
             {
                 while (messageChilds.ChildData != null && messageChilds.ChildData.Count > 0)
                 {
-                    var message = messageChilds.Get();
-                    IClient client;
+                        var message = messageChilds.Get();
+                        IClient client;
 
 
-                    //todo burada group olma durumunda ne olacak düşün
-                    if (MatchType == MatchTypeEnum.Special)
-                        client = ClientChildData.Get(x => x.ClientKey == message.Message.Routing.ClientKey);
-                    else
-                        client = ClientChildData.Get(x => x.Number > endConsumerNumber);
+                        //todo burada group olma durumunda ne olacak düşün
+                        if (MatchType == MatchTypeEnum.Special)
+                            client = ClientChildData.Get(x => x.ClientKey == message.Message.Routing.ClientKey);
+                        else
+                            client = ClientChildData.Get(x => x.Number > endConsumerNumber);
 
 
-                    if (client != null)
-                    {
-                        hubContext.Clients.Client(client.ConnectionId).SendCoreAsync("ReceiveData", new[] { JsonConvert.SerializeObject(message) }).ConfigureAwait(false);
-                        message.Status.StatusTypeMessage = StatusTypeMessageEnum.SendClient;
-                        messageDbOpr.Update(message.Id, message);
+                        if (client != null)
+                        {
 
-                        messageChilds.Remove(message.Id);
+                            hubContext.Clients.Client(client.ConnectionId).SendCoreAsync("ReceiveData", new[] { JsonConvert.SerializeObject(message) }).ConfigureAwait(false);
+                            message.Status.StatusTypeMessage = StatusTypeMessageEnum.SendClient;
+                            messageDbOpr.Update(message.Id, message);
 
-                        endConsumerNumber = client.Number;
-                    }
-                    else
-                    {
-                        // todo mesajın denenme durumlarına göre operasyonlar
-                    }
+                            messageChilds.Remove(message.Id);
+
+                            endConsumerNumber = client.Number;
+                        }
+                        else
+                        {
+                            // todo mesajın denenme durumlarına göre operasyonlar
+                        }
                 }
 
                 IsSendRuning = false;

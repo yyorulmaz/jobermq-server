@@ -1,18 +1,15 @@
 ﻿using JoberMQ.Client.Abstraction;
-using JoberMQ.Client.Factories;
 using JoberMQ.Configuration.Abstraction;
 using JoberMQ.Database.Abstraction;
 using JoberMQ.Library.Database.Factories;
 using JoberMQ.Library.Database.Repository.Abstraction.Mem;
 using JoberMQ.Library.Database.Repository.Abstraction.Opr;
 using JoberMQ.Library.Dbos;
-using JoberMQ.Library.Enums.Client;
-using JoberMQ.Library.Enums.Consume;
 using JoberMQ.Library.Enums.Permission;
 using JoberMQ.Library.Enums.Queue;
 using JoberMQ.Library.Enums.Status;
 using JoberMQ.Library.Models.Response;
-using JoberMQ.State.Abstraction;
+using JoberMQ.State;
 using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json;
 using System;
@@ -29,10 +26,8 @@ namespace JoberMQ.Queue.Implementation.Default
 
         public override int ChildMessageCount => messageChilds.Count;
 
-        public DfMessageQueueLIFO(IConfiguration configuration, IDatabase database, string queueKey, MatchTypeEnum matchType, SendTypeEnum sendType, PermissionTypeEnum permissionType, bool isDurable, IClientMasterData clientMasterData, IMemRepository<Guid, MessageDbo> masterMessages, IOprRepositoryGuid<MessageDbo> messageDbOpr, ref IJoberState joberState, ref IHubContext<THub> hubContext) : base(configuration, database, queueKey, matchType, sendType, permissionType, isDurable, clientMasterData, masterMessages, messageDbOpr, ref joberState)
+        public DfMessageQueueLIFO(IConfiguration configuration, IDatabase database, string queueKey, MatchTypeEnum matchType, SendTypeEnum sendType, PermissionTypeEnum permissionType, bool isDurable, IClientMasterData clientMasterData, IMemRepository<Guid, MessageDbo> masterMessages, IOprRepositoryGuid<MessageDbo> messageDbOpr, ref IHubContext<THub> hubContext) : base(configuration, database, queueKey, matchType, sendType, permissionType, isDurable, clientMasterData, masterMessages, messageDbOpr)
         {
-            joberState.IsJoberActiveEvent +=JoberState_IsJoberActiveEvent;
-
             messageChilds = MemChildFactory.CreateChildLIFO<Guid, MessageDbo>(Library.Database.Enums.MemChildFactoryEnum.Default, masterMessages);
             this.hubContext = hubContext;
 
@@ -40,17 +35,13 @@ namespace JoberMQ.Queue.Implementation.Default
             this.ClientChildData.ChangedUpdated += ClientChilds_ChangedUpdated;
             messageChilds.ChangedAdded += MessageChilds_ChangedAdded;
         }
-        private void JoberState_IsJoberActiveEvent(bool obj)
-        {
-            isJoberActive = obj;
-        }
 
         private void ClientChilds_ChangedAdded(string arg1, IClient arg2) => SendOperation();
         private void ClientChilds_ChangedUpdated(string arg1, IClient arg2) => SendOperation();
         private void MessageChilds_ChangedAdded(Guid arg1, MessageDbo arg2) => SendOperation();
         private void SendOperation()
         {
-            if (IsSendRuning == false && messageChilds.Count > 0 && isJoberActive == true)
+            if (IsSendRuning == false && messageChilds.Count > 0 && JoberMQState.IsJoberActive == true)
             {
                 IsSendRuning = true;
                 Task.Run(() => {
@@ -63,6 +54,7 @@ namespace JoberMQ.Queue.Implementation.Default
         {
             var result = new ResponseModel();
             result.IsOnline = true;
+
 
             var msgAdd = database.Message.Add(message.Id, message);
             if (msgAdd)

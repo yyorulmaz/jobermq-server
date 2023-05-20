@@ -33,34 +33,26 @@ namespace JoberMQ.Configuration.Constants
         {
             var clientDatas = new ConcurrentDictionary<string, DefaultDistributorConfigModel>();
 
-            clientDatas.TryAdd("distributor.default.direct.special", new DefaultDistributorConfigModel
+            clientDatas.TryAdd("default.distributor.direct", new DefaultDistributorConfigModel
             {
-                DistributorKey = "distributor.default.direct.special",
+                DistributorKey = "default.distributor.direct",
                 DistributorType = DistributorTypeEnum.Direct,
                 PermissionType = PermissionTypeEnum.All,
                 IsDurable = true
             });
 
-            clientDatas.TryAdd("distributor.default.direct.group", new DefaultDistributorConfigModel
+            clientDatas.TryAdd("default.distributor.event", new DefaultDistributorConfigModel
             {
-                DistributorKey = "distributor.default.direct.group",
-                DistributorType = DistributorTypeEnum.Direct,
-                PermissionType = PermissionTypeEnum.All,
-                IsDurable = true
-            });
-
-            clientDatas.TryAdd("distributor.default.direct.queue", new DefaultDistributorConfigModel
-            {
-                DistributorKey = "distributor.default.direct.queue",
-                DistributorType = DistributorTypeEnum.Direct,
-                PermissionType = PermissionTypeEnum.All,
-                IsDurable = true
-            });
-
-            clientDatas.TryAdd("distributor.default.event", new DefaultDistributorConfigModel
-            {
-                DistributorKey = "distributor.default.event",
+                DistributorKey = "default.distributor.event",
                 DistributorType = DistributorTypeEnum.Event,
+                PermissionType = PermissionTypeEnum.All,
+                IsDurable = true
+            });
+
+            clientDatas.TryAdd("default.distributor.filter", new DefaultDistributorConfigModel
+            {
+                DistributorKey = "default.distributor.filter",
+                DistributorType = DistributorTypeEnum.Filter,
                 PermissionType = PermissionTypeEnum.All,
                 IsDurable = true
             });

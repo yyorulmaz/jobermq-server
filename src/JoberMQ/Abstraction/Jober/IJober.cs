@@ -8,7 +8,6 @@ using JoberMQ.Library.Dbos;
 using JoberMQ.Library.Models.Response;
 using JoberMQ.Library.Models.Rpc;
 using JoberMQ.Library.StatusCode.Abstraction;
-using JoberMQ.State.Abstraction;
 using JoberMQ.Timing.Abstraction;
 using Microsoft.AspNetCore.SignalR;
 using System;
@@ -23,9 +22,8 @@ namespace JoberMQ.Abstraction.Jober
         public Task StartAsync();
 
 
-        internal bool IsJoberActive { get; set; }
+        //internal bool IsJoberActive { get; set; }
         internal IConfiguration Configuration { get; }
-        internal IJoberState JoberState { get; set; }
         internal IStatusCode StatusCode { get; }
         internal IDatabase Database { get; }
         internal IClientMasterData ClientMasterData { get; }

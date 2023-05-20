@@ -4,7 +4,6 @@ using JoberMQ.Broker.Factories;
 using JoberMQ.Client.Abstraction;
 using JoberMQ.Client.Data;
 using JoberMQ.Client.Factories;
-using JoberMQ.Client.Implementation.Default;
 using JoberMQ.Configuration.Abstraction;
 using JoberMQ.Configuration.Constants;
 using JoberMQ.Data;
@@ -15,6 +14,7 @@ using JoberMQ.Library.Database.Enums;
 using JoberMQ.Library.Database.Factories;
 using JoberMQ.Library.Database.Repository.Abstraction.Mem;
 using JoberMQ.Library.Dbos;
+using JoberMQ.Library.Enums.Consume;
 using JoberMQ.Library.Enums.Distributor;
 using JoberMQ.Library.Enums.Jober;
 using JoberMQ.Library.Enums.Queue;
@@ -30,8 +30,7 @@ using JoberMQ.Library.Models.Rpc;
 using JoberMQ.Library.StatusCode.Abstraction;
 using JoberMQ.Library.StatusCode.Factories;
 using JoberMQ.Publisher.Factories;
-using JoberMQ.State.Abstraction;
-using JoberMQ.State.Factories;
+using JoberMQ.State;
 using JoberMQ.Timing.Abstraction;
 using JoberMQ.Timing.Factories;
 using Microsoft.AspNetCore;
@@ -39,18 +38,16 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SignalR;
-using Microsoft.AspNetCore.SignalR.Protocol;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Concurrent;
-using System.Diagnostics.Metrics;
+using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Channels;
 using System.Threading.Tasks;
-using static Quartz.Logging.OperationName;
 
 namespace JoberMQ.Implementation.Jober.Default
 {
@@ -62,15 +59,11 @@ namespace JoberMQ.Implementation.Jober.Default
         #endregion
 
         #region property helper
-        bool isJoberActive { get; set; }
-        public bool IsJoberActive { get => isJoberActive; set => isJoberActive = value; }
+        //bool isJoberActive { get; set; }
+        //public bool IsJoberActive { get => isJoberActive; set => isJoberActive = value; }
 
         readonly IConfiguration configuration;
         IConfiguration IJober.Configuration => configuration;
-
-
-        IJoberState joberState;
-        public IJoberState JoberState { get => joberState; set => joberState = value; }
 
 
         IStatusCode statusCode;
@@ -108,7 +101,6 @@ namespace JoberMQ.Implementation.Jober.Default
         public async Task StartAsync()
         {
             this.channels = new ConcurrentDictionary<Guid, Channel<RpcResponseModel>>();
-            this.joberState = JoberStateFactory.Create(JoberStateFactoryEnum.Default);
             this.statusCode = StatusCodeFactory.Create(configuration.ConfigurationStatusCode.StatusCodeFactory, configuration.ConfigurationStatusCode.StatusCodeDatas, configuration.ConfigurationStatusCode.StatusCodeMessageLanguage);
             this.database = DatabaseFactory.Create(configuration.ConfigurationDatabase);
             this.clientMasterData = ClientMasterDataFactory.Create(configuration.ConfigurationClient.ClientMasterDataFactory, InMemoryClient.ClientMasterDataDatabase);
@@ -156,7 +148,7 @@ namespace JoberMQ.Implementation.Jober.Default
             #endregion
 
             #region Message Broker
-            this.messageBroker = MessageBrokerFactory.Create<JoberHub>(configuration, statusCode, messageMasterData, clientMasterData, database, ref joberHubContext, ref joberState);
+            this.messageBroker = MessageBrokerFactory.Create<JoberHub>(configuration, statusCode, messageMasterData, clientMasterData, database, ref joberHubContext);
             var br1 = await messageBroker.ImportDatabaseDistributors();
             var br2 = await messageBroker.ImportDatabaseQueues();
             var br3 = await messageBroker.CreateDefaultDistributors();
@@ -165,9 +157,7 @@ namespace JoberMQ.Implementation.Jober.Default
             #endregion
 
 
-
-            isJoberActive = true;
-            joberState.JoberActive(true);
+            JoberMQState.IsJoberActive =true;
 
             JoberHost.Jober = this;
         }
@@ -273,6 +263,26 @@ namespace JoberMQ.Implementation.Jober.Default
                     clientInfoData.ClientGroupKey,
                     clientInfoData.ClientType);
 
+
+
+
+
+                //// todo kontrol et. EventDbo tablosuna ClientGroupKey koymuştum onu kullanıyormuyum. 
+                //var eventSubList = database.EventSub.GetAll(x => x.IsActive == true && x.IsDelete == false && x.ClientKey == clientInfoData.ClientKey).ToList();
+                //foreach (var eventSub in eventSubList)
+                //{
+                //    var sub = client.Consuming.Where(x => x.Value.ConsumeType == ConsumeTypeEnum.Event && x.Value.DeclareKey == eventSub.EventKey);
+                //    if (sub == null || sub.Count() == 0)
+                //    {
+                //        var consume = new ConsumeModel();
+                //        consume.ConsumeType = ConsumeTypeEnum.Event;
+                //        consume.DeclareKey = eventSub.EventKey;
+                //        client.Consuming.TryAdd(Guid.NewGuid(), consume);
+                //    }
+                //}
+
+
+
                 result = clientMasterData.Add(context.ConnectionId, client);
             });
 
@@ -291,7 +301,7 @@ namespace JoberMQ.Implementation.Jober.Default
             //    Startup.ServerService.IsHighAvailability = true;
 
             if (result)
-                await joberHubContext.Clients.Client(context.ConnectionId).SendCoreAsync("ReceiveServerActive", new object[] { isJoberActive });
+                await joberHubContext.Clients.Client(context.ConnectionId).SendCoreAsync("ReceiveServerActive", new object[] { JoberMQState.IsJoberActive });
 
             return result;
         }
@@ -359,14 +369,78 @@ namespace JoberMQ.Implementation.Jober.Default
         }
         async Task<ResponseModel> IJober.ConsumeOperation(string connectionId, string consumeData)
         {
+            //#region eski
+            //var result = new ResponseModel();
+            //result.IsOnline = true;
+
+            //await Task.Run(() =>
+            //{
+            //    var data = JsonConvert.DeserializeObject<ConcurrentDictionary<string, ConsumeModel>>(consumeData);
+            //    var client = JoberHost.Jober.ClientMasterData.Get(connectionId);
+            //    client.Consuming = data;
+            //    result.IsSucces = JoberHost.Jober.ClientMasterData.Update(connectionId, client);
+            //});
+
+            //return result;
+            //#endregion
+
+
             var result = new ResponseModel();
             result.IsOnline = true;
 
             await Task.Run(() =>
             {
-                var data = JsonConvert.DeserializeObject<ConcurrentDictionary<string, ConsumeModel>>(consumeData);
+                var data = JsonConvert.DeserializeObject<ConsumeRequestModel>(consumeData);
                 var client = JoberHost.Jober.ClientMasterData.Get(connectionId);
-                client.Consuming = data;
+                client.Consuming = data.Consuming;
+
+
+                // todo kontrol et. Tüm consume yapısını düzenlemeliyim. Bu sub, unsub işleri içime sinmedi
+                // bu yapıyı her ConsumeType için ayrı ayrı yapmalıyım
+                if (data.ConsumeOperationType == ConsumeOperationTypeEnum.EventSubscript)
+                {
+                    var eventSub = new EventSubDbo();
+                    eventSub.Id = Guid.NewGuid();
+                    eventSub.EventKey = data.DeclareKey;
+                    eventSub.MatchType = MatchTypeEnum.Special;
+                    eventSub.ClientKey = client.ClientKey;
+                    eventSub.ClientGroupKey = client.ClientGroupKey;
+
+                    var eventCheck = database.EventSub.Get(x => x.ClientKey == client.ClientKey && x.EventKey == data.DeclareKey);
+                    if (eventCheck == null)
+                        database.EventSub.Add(eventSub.Id, eventSub);
+                    else
+                    {
+                        eventCheck.IsActive = true;
+                        eventCheck.IsDelete = false;
+                        database.EventSub.Update(eventCheck.Id, eventCheck);
+                    }
+                }
+                else if (data.ConsumeOperationType == ConsumeOperationTypeEnum.EventUnSubscript)
+                {
+                    var eventCheck = database.EventSub.Get(x => x.ClientKey == client.ClientKey && x.EventKey == data.DeclareKey);
+                    if (eventCheck != null)
+                    {
+                        database.EventSub.Delete(eventCheck.Id, eventCheck);
+                    }
+                }
+
+                var eventSubList = database.EventSub.GetAll(x => x.IsActive == true && x.IsDelete == false && x.ClientKey == client.ClientKey).ToList();
+                foreach (var eventSub in eventSubList)
+                {
+                    var sub = client.Consuming.Where(x => x.Value.ConsumeType == ConsumeTypeEnum.Event && x.Value.DeclareKey == eventSub.EventKey);
+                    if (sub == null || sub.Count() == 0)
+                    {
+                        var consume = new ConsumeModel();
+                        consume.ConsumeType = ConsumeTypeEnum.Event;
+                        consume.DeclareKey = eventSub.EventKey;
+                        client.Consuming.TryAdd(Guid.NewGuid(), consume);
+                    }
+                }
+
+
+
+
 
                 result.IsSucces = JoberHost.Jober.ClientMasterData.Update(connectionId, client);
             });

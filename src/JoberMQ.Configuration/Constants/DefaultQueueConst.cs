@@ -30,15 +30,18 @@ namespace JoberMQ.Configuration.Constants
         {
             var clientDatas = new ConcurrentDictionary<string, QueueModel>();
 
-            clientDatas.TryAdd("queue.default.special", new QueueModel
+            clientDatas.TryAdd("default.queue.special.fifo", new QueueModel
             {
-                QueueKey = "queue.default.special",
+                QueueKey = "default.queue.special.fifo",
                 MatchType = MatchTypeEnum.Special,
                 SendType = SendTypeEnum.FIFO,
                 PermissionType = PermissionTypeEnum.All,
                 IsDurable = true
             });
+
             
+
+
             return clientDatas;
         }
 

@@ -2,7 +2,6 @@
 using JoberMQ.Client.Abstraction;
 using JoberMQ.Configuration.Abstraction;
 using JoberMQ.Configuration.Constants;
-using JoberMQ.Configuration.Implementation.Default;
 using JoberMQ.Database.Abstraction;
 using JoberMQ.Distributor.Abstraction;
 using JoberMQ.Distributor.Factories;
@@ -20,15 +19,10 @@ using JoberMQ.Library.Models.Response;
 using JoberMQ.Library.StatusCode.Abstraction;
 using JoberMQ.Queue.Abstraction;
 using JoberMQ.Queue.Factories;
-using JoberMQ.State.Abstraction;
 using Microsoft.AspNetCore.SignalR;
-using Quartz;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
-using static Quartz.Logging.OperationName;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace JoberMQ.Broker.Implementation.Default
 {
@@ -50,7 +44,6 @@ namespace JoberMQ.Broker.Implementation.Default
         IDatabase database;
         IHubContext<THub> hubContext;
         bool isJoberActive;
-        IJoberState joberState;
 
         public DfMessageBroker(
             IConfiguration configuration,
@@ -58,11 +51,8 @@ namespace JoberMQ.Broker.Implementation.Default
             IMemRepository<Guid, MessageDbo> messageMaster,
             IClientMasterData clientMasterData,
             IDatabase database,
-            IHubContext<THub> hubContext,
-            ref IJoberState joberState)
+            IHubContext<THub> hubContext)
         {
-
-            this.joberState = joberState;
             this.configuration = configuration;
             this.statusCode = statusCode;
             this.database = database;
@@ -119,7 +109,7 @@ namespace JoberMQ.Broker.Implementation.Default
             {
                 try
                 {
-                    var que = QueueFactory.Create<THub>(configuration, database, item.QueueKey, item.MatchType, item.SendType, item.PermissionType, item.IsDurable, clientMasterData, messageMaster, database.Message, ref hubContext, ref joberState);
+                    var que = QueueFactory.Create<THub>(configuration, database, item.QueueKey, item.MatchType, item.SendType, item.PermissionType, item.IsDurable, clientMasterData, messageMaster, database.Message, ref hubContext);
                     messageQueues.Add(item.QueueKey, que);
                 }
                 catch (Exception)
@@ -170,7 +160,7 @@ namespace JoberMQ.Broker.Implementation.Default
                 {
                     if (messageQueues.Get(item.Key) == null)
                     {
-                        var que = QueueFactory.Create<THub>(configuration, database, item.Value.QueueKey, item.Value.MatchType, item.Value.SendType, item.Value.PermissionType, item.Value.IsDurable, clientMasterData, messageMaster, database.Message, ref hubContext, ref joberState);
+                        var que = QueueFactory.Create<THub>(configuration, database, item.Value.QueueKey, item.Value.MatchType, item.Value.SendType, item.Value.PermissionType, item.Value.IsDurable, clientMasterData, messageMaster, database.Message, ref hubContext);
                         messageQueues.Add(item.Value.QueueKey, que);
                     }
                 }
@@ -400,8 +390,7 @@ namespace JoberMQ.Broker.Implementation.Default
                     clientMasterData,
                     messageMaster,
                     database.Message,
-                    ref hubContext,
-                    ref joberState);
+                    ref hubContext);
                     var resultQueueAdd = messageQueues.Add(queueKey, newtQueue);
 
                     if (resultQueueAdd == true && resultDatabase == true)
@@ -616,7 +605,7 @@ namespace JoberMQ.Broker.Implementation.Default
             throw new NotImplementedException();
         }
         public async Task<ResponseModel> MessageAdd(MessageDbo message)
-        => await messageDistributors.Get(message.Message.Routing.DistributorKey).Distributoring(message);
+            => await messageDistributors.Get(message.Message.Routing.DistributorKey).Distributoring(message);
         public bool MessageAdd(List<MessageDbo> messages)
         {
 

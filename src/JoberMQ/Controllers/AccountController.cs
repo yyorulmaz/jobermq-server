@@ -1,5 +1,6 @@
 ﻿using JoberMQ.Library.Helpers;
 using JoberMQ.Library.Models.Account;
+using JoberMQ.State;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -35,11 +36,12 @@ namespace JoberMQ.Controllers
         {
             var result = new ResponseLoginModel();
 
-            if (!JoberHost.Jober.IsJoberActive)
+            if (JoberHost.Jober == null || JoberMQState.IsJoberActive == false)
             {
                 result.IsSuccess = false;
                 result.StatusCode = "0.0.13";
-                result.Message = JoberHost.Jober.StatusCode.GetStatusMessage("0.0.13");
+                //result.Message = JoberHost.Jober.StatusCode.GetStatusMessage("0.0.13");
+                result.Message = "Sunucu hazırlanıyor, erişemezsiniz.";
                 return Unauthorized(JsonConvert.SerializeObject(result));
             }
 

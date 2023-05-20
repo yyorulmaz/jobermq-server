@@ -10,7 +10,6 @@ using JoberMQ.Library.Enums.Permission;
 using JoberMQ.Library.Enums.Queue;
 using JoberMQ.Library.Models.Response;
 using JoberMQ.Queue.Abstraction;
-using JoberMQ.State.Abstraction;
 using System;
 using System.Threading.Tasks;
 
@@ -28,8 +27,7 @@ namespace JoberMQ.Queue.Implementation
             bool isDurable,
             IClientMasterData clientMasterData,
             IMemRepository<Guid, MessageDbo> masterMessages,
-            IOprRepositoryGuid<MessageDbo> messageDbOpr,
-            ref IJoberState joberState)
+            IOprRepositoryGuid<MessageDbo> messageDbOpr)
         {
             this.configuration = configuration;
             this.database = database;
@@ -94,9 +92,6 @@ namespace JoberMQ.Queue.Implementation
         protected int endConsumerNumber = 0;
 
         protected readonly IOprRepositoryGuid<MessageDbo> messageDbOpr;
-
-
-        protected bool isJoberActive;
 
 
         public abstract Task<ResponseModel> Queueing(MessageDbo message);

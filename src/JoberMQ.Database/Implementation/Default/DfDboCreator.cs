@@ -4,6 +4,7 @@ using JoberMQ.Library.Dbos;
 using JoberMQ.Library.Enums.Status;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 
 namespace JoberMQ.Database.Implementation.Default
@@ -41,6 +42,8 @@ namespace JoberMQ.Database.Implementation.Default
                 jobTransactionDbo.JobTransactioDetails.Add(jobTransactionDetailDbo);
             }
 
+            jobTransactionDbo.IsDbTextSave = jobDbo.IsDbTextSave;
+
             return jobTransactionDbo;
         }
         public MessageDbo MessageDboCreate(JobDbo jobDbo, JobDetailDbo jobDetailDbo, JobTransactionDbo jobTransactionDbo, JobTransactionDetailDbo jobTransactionDetailDbo, Guid? eventGroupId)
@@ -62,7 +65,7 @@ namespace JoberMQ.Database.Implementation.Default
             messageDbo.Status.IsError = false;
             messageDbo.Status.StatusTypeMessage = StatusTypeMessageEnum.None;
             messageDbo.Status.TempAgainDate = null;
-
+            messageDbo.IsDbTextSave = jobDbo.IsDbTextSave;
             return messageDbo;
         }
         public List<MessageDbo> MessageDboCreates(JobTransactionDbo jobTransactionDbo)
@@ -98,6 +101,8 @@ namespace JoberMQ.Database.Implementation.Default
                 messageDbo.Status.IsError = false;
                 messageDbo.Status.StatusTypeMessage = StatusTypeMessageEnum.None;
                 messageDbo.Status.TempAgainDate = null;
+
+                messageDbo.IsDbTextSave = jobTransactionDbo.IsDbTextSave;
 
                 messageDbos.Add(messageDbo);
             }
@@ -150,6 +155,7 @@ namespace JoberMQ.Database.Implementation.Default
             result.Status = jobDbo.Status;
             result.IsResultMessageClientSend = false;
             result.CreatedJobId = jobDbo.Id;
+            result.IsDbTextSave = jobDbo.IsDbTextSave;
 
 
             //foreach (var item in jobTransactionDbo.JobTransactioDetails)
@@ -161,6 +167,7 @@ namespace JoberMQ.Database.Implementation.Default
                 detail.IsResultMessageClientSend = false;
                 detail.CreatedJobId = jobDbo.Id;
                 detail.CreatedJobDetailId = item.Id;
+                detail.IsDbTextSave = item.IsDbTextSave;
 
                 result.JobTransactioDetails.Add(detail);
             }
