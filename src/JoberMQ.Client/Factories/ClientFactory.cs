@@ -6,16 +6,16 @@ namespace JoberMQ.Client.Factories
 {
     internal class ClientFactory
     {
-        internal static IClient CreateClient(ClientFactoryEnum clientFactory, string connectionId, string clientKey, string clientGroupKey, ClientTypeEnum clientType)
+        internal static IClient CreateClient(ClientFactoryEnum clientFactory, string connectionId, string clientKey, ClientTypeEnum clientType)
         {
             IClient client;
             switch (clientFactory)
             {
                 case ClientFactoryEnum.Default:
-                    client = new DfClient(connectionId, clientKey, clientGroupKey, clientType);
+                    client = new DfClient(connectionId, clientKey, clientType);
                     break;
                 default:
-                    client = new DfClient(connectionId, clientKey, clientGroupKey, clientType);
+                    client = new DfClient(connectionId, clientKey, clientType);
                     break;
             }
 

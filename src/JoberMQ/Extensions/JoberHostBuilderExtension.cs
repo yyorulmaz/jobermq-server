@@ -6,7 +6,7 @@ using JoberMQ.Factories.Jober;
 
 namespace JoberMQ.Extensions
 {
-    public static class BuilderExtension
+    public static class JoberHostBuilderExtension
     {
         public static JoberHostBuilder Configuration(this JoberHostBuilder joberHostBuilder, IConfiguration configuration)
         {

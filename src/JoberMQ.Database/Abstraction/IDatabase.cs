@@ -10,7 +10,7 @@ namespace JoberMQ.Database.Abstraction
         public IOprRepositoryGuid<UserDbo> User { get; }
         public IOprRepositoryGuid<DistributorDbo> Distributor { get; }
         public IOprRepositoryGuid<QueueDbo> Queue { get; }
-        public IOprRepositoryGuid<EventSubDbo> EventSub { get; }
+        public IOprRepositoryGuid<SubscriptDbo> Subscript { get; }
         public IOprRepositoryGuid<JobDbo> Job { get; }
         public IOprRepositoryGuid<JobTransactionDbo> JobTransaction { get; }
         public IOprRepositoryGuid<MessageDbo> Message { get; }

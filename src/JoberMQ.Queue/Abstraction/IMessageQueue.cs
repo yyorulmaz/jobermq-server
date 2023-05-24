@@ -13,8 +13,8 @@ namespace JoberMQ.Queue.Abstraction
     {
         public string DistributorKey { get; set; }
         public string QueueKey { get; set; }
-        public MatchTypeEnum MatchType { get; set; }
-        public SendTypeEnum SendType { get; set; }
+        public QueueMatchTypeEnum MatchType { get; set; }
+        public QueueOrderOfSendingTypeEnum QueueOrderOfSendingType { get; set; }
         public PermissionTypeEnum PermissionType { get; set; }
         public bool IsDurable { get; set; }
         public bool IsActive { get; set; }

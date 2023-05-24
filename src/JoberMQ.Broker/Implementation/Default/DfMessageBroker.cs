@@ -109,7 +109,7 @@ namespace JoberMQ.Broker.Implementation.Default
             {
                 try
                 {
-                    var que = QueueFactory.Create<THub>(configuration, database, item.QueueKey, item.MatchType, item.SendType, item.PermissionType, item.IsDurable, clientMasterData, messageMaster, database.Message, ref hubContext);
+                    var que = QueueFactory.Create<THub>(configuration, database, item.QueueKey, item.MatchType, item.QueueOrderOfSendingType, item.PermissionType, item.IsDurable, clientMasterData, messageMaster, database.Message, ref hubContext);
                     messageQueues.Add(item.QueueKey, que);
                 }
                 catch (Exception)
@@ -160,7 +160,7 @@ namespace JoberMQ.Broker.Implementation.Default
                 {
                     if (messageQueues.Get(item.Key) == null)
                     {
-                        var que = QueueFactory.Create<THub>(configuration, database, item.Value.QueueKey, item.Value.MatchType, item.Value.SendType, item.Value.PermissionType, item.Value.IsDurable, clientMasterData, messageMaster, database.Message, ref hubContext);
+                        var que = QueueFactory.Create<THub>(configuration, database, item.Value.QueueKey, item.Value.QueueMatchType, item.Value.QueueOrderOfSendingType, item.Value.PermissionType, item.Value.IsDurable, clientMasterData, messageMaster, database.Message, ref hubContext);
                         messageQueues.Add(item.Value.QueueKey, que);
                     }
                 }
@@ -355,7 +355,7 @@ namespace JoberMQ.Broker.Implementation.Default
 
 
 
-        public async Task<ResponseModel> QueueCreate(string queueKey, MatchTypeEnum matchType, SendTypeEnum sendType, PermissionTypeEnum permissionType, bool isDurable)
+        public async Task<ResponseModel> QueueCreate(string queueKey, QueueMatchTypeEnum matchType, QueueOrderOfSendingTypeEnum queueOrderOfSendingType, PermissionTypeEnum permissionType, bool isDurable)
         {
             var result = new ResponseModel();
             result.IsOnline = true;
@@ -374,7 +374,7 @@ namespace JoberMQ.Broker.Implementation.Default
                     {
                         QueueKey= queueKey,
                         MatchType=matchType,
-                        SendType=sendType,
+                        QueueOrderOfSendingType=queueOrderOfSendingType,
                         PermissionType=permissionType,
                         IsDurable=isDurable
                     });
@@ -384,7 +384,7 @@ namespace JoberMQ.Broker.Implementation.Default
                     database,
                     queueKey,
                     matchType,
-                    sendType,
+                    queueOrderOfSendingType,
                     permissionType,
                     isDurable,
                     clientMasterData,
@@ -408,7 +408,7 @@ namespace JoberMQ.Broker.Implementation.Default
 
             return result;
         }
-        public async Task<ResponseModel> QueueUpdate(string queueKey, MatchTypeEnum matchType, SendTypeEnum sendType, PermissionTypeEnum permissionType, bool isDurable)
+        public async Task<ResponseModel> QueueUpdate(string queueKey, QueueMatchTypeEnum matchType, QueueOrderOfSendingTypeEnum queueOrderOfSendingType, PermissionTypeEnum permissionType, bool isDurable)
         {
             var result = new ResponseModel();
             result.IsOnline = true;
@@ -434,13 +434,13 @@ namespace JoberMQ.Broker.Implementation.Default
                         var getDatabaseQueue = database.Queue.Get(x => x.QueueKey == queueKey);
                         getDatabaseQueue.QueueKey = queueKey;
                         getDatabaseQueue.MatchType = matchType;
-                        getDatabaseQueue.SendType = sendType;
+                        getDatabaseQueue.QueueOrderOfSendingType = queueOrderOfSendingType;
                         getDatabaseQueue.PermissionType = permissionType;
                         getDatabaseQueue.IsDurable = isDurable;
                         var resultDatabase = database.Queue.Update(getDatabaseQueue.Id, getDatabaseQueue);
 
                         queue.MatchType = matchType;
-                        queue.SendType = sendType;
+                        queue.QueueOrderOfSendingType = queueOrderOfSendingType;
                         queue.PermissionType = permissionType;
                         queue.IsDurable = isDurable;
                         var resultQueueUpdate = messageQueues.Update(queueKey, queue);
@@ -587,7 +587,7 @@ namespace JoberMQ.Broker.Implementation.Default
             {
                 QueueModel newQueue = DefaultQueueConst.NewClientGroupData;
                 newQueue.QueueKey = message.Message.Routing.QueueKey;
-                var resultNewQueue = await QueueCreate(newQueue.QueueKey, newQueue.MatchType, newQueue.SendType, newQueue.PermissionType, newQueue.IsDurable);
+                var resultNewQueue = await QueueCreate(newQueue.QueueKey, newQueue.QueueMatchType, newQueue.QueueOrderOfSendingType, newQueue.PermissionType, newQueue.IsDurable);
 
                 if (resultNewQueue.IsSucces)
                 {

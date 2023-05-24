@@ -33,8 +33,8 @@ namespace JoberMQ.Broker.Abstraction
         public Task<ResponseModel> DistributorRemove(string distributorKey);
 
 
-        public Task<ResponseModel> QueueCreate(string queueKey, MatchTypeEnum matchType, SendTypeEnum sendType, PermissionTypeEnum permissionType, bool isDurable);
-        public Task<ResponseModel> QueueUpdate(string queueKey, MatchTypeEnum matchType, SendTypeEnum sendType, PermissionTypeEnum permissionType, bool isDurable);
+        public Task<ResponseModel> QueueCreate(string queueKey, QueueMatchTypeEnum matchType, QueueOrderOfSendingTypeEnum queueOrderOfSendingType, PermissionTypeEnum permissionType, bool isDurable);
+        public Task<ResponseModel> QueueUpdate(string queueKey, QueueMatchTypeEnum matchType, QueueOrderOfSendingTypeEnum queueOrderOfSendingType, PermissionTypeEnum permissionType, bool isDurable);
         public Task<ResponseModel> QueueRemove(string queueKey);
         public Task<ResponseModel> QueueMerge(string distributorKey, string queueKey);
 

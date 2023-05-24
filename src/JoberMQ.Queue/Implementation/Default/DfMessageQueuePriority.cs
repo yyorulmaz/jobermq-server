@@ -27,7 +27,7 @@ namespace JoberMQ.Queue.Implementation.Default
         public override int ChildMessageCount => messageChilds.Count;
         IMemChildGeneralRepository<Guid, MessageDbo> messageChilds { get; set; }
 
-        public DfMessageQueuePriority(IConfiguration configuration, IDatabase database, string queueKey, MatchTypeEnum matchType, SendTypeEnum sendType, PermissionTypeEnum permissionType, bool isDurable, IClientMasterData clientMasterData, IMemRepository<Guid, MessageDbo> masterMessages, IOprRepositoryGuid<MessageDbo> messageDbOpr, ref IHubContext<THub> hubContext) : base(configuration, database, queueKey, matchType, sendType, permissionType, isDurable, clientMasterData, masterMessages, messageDbOpr)
+        public DfMessageQueuePriority(IConfiguration configuration, IDatabase database, string queueKey, QueueMatchTypeEnum matchType, QueueOrderOfSendingTypeEnum queueOrderOfSendingType, PermissionTypeEnum permissionType, bool isDurable, IClientMasterData clientMasterData, IMemRepository<Guid, MessageDbo> masterMessages, IOprRepositoryGuid<MessageDbo> messageDbOpr, ref IHubContext<THub> hubContext) : base(configuration, database, queueKey, matchType, queueOrderOfSendingType, permissionType, isDurable, clientMasterData, masterMessages, messageDbOpr)
         {
             messageChilds = MemChildFactory.CreateChildGeneral<Guid, MessageDbo>(MemChildFactoryEnum.Default, masterMessages);
             this.hubContext = hubContext;
@@ -114,7 +114,7 @@ namespace JoberMQ.Queue.Implementation.Default
             {
                 IClient client;
 
-                if (MatchType == MatchTypeEnum.Special)
+                if (MatchType == QueueMatchTypeEnum.Special)
                     //client = ClientChildData.Get(x => x.ClientKey == message.Value.Consuming.ClientKey);
                     client = ClientChildData.Get(x => x.ClientKey == message.Value.Message.Routing.ClientKey);
                 else

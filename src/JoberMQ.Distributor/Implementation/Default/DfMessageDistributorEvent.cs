@@ -29,7 +29,7 @@ namespace JoberMQ.Distributor.Implementation.Default
 
             try
             {
-                var subList = database.EventSub.GetAll(x => x.IsActive == true && x.IsDelete == false && x.EventKey == message.Message.Routing.EventName).ToList();
+                var subList = database.Subscript.GetAll(x => x.IsActive == true && x.IsDelete == false && x.EventKey == message.Message.Routing.EventName).ToList();
 
                 var eventGroupsId = Guid.NewGuid();
                 if (subList != null && subList.Count > 0)
@@ -40,7 +40,6 @@ namespace JoberMQ.Distributor.Implementation.Default
                         message.EventGroupsId = eventGroupsId;
 
                         message.Message.Routing.ClientKey = item.ClientKey;
-                        message.Message.Routing.ClientGroupKey = item.ClientGroupKey;
 
                         //var rslt = await queues.Get(item.EventKey).Queueing(message);
                         var que = queues.Get(item.EventKey);

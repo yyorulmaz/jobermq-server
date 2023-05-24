@@ -112,7 +112,7 @@ namespace JoberMQ.Implementation.Jober.Default
             if (!jobScheduleTimerStartResult)
                 throw new Exception(statusCode.GetStatusMessage("0.0.4"));
 
-
+            
             var userId = Guid.Parse("3b1fb872-c5de-40f4-8a93-342e754da53a");
             var userCheck = database.User.Get(userId);
             if (userCheck == null)
@@ -128,6 +128,9 @@ namespace JoberMQ.Implementation.Jober.Default
                     DataStatusType = DataStatusTypeEnum.Insert
                 });
             }
+
+
+
 
 
             #region Jober Host
@@ -260,14 +263,13 @@ namespace JoberMQ.Implementation.Jober.Default
                     JoberHost.Jober.Configuration.ConfigurationClient.ClientFactory,
                     context.ConnectionId,
                     clientInfoData.ClientKey,
-                    clientInfoData.ClientGroupKey,
                     clientInfoData.ClientType);
 
 
 
 
 
-                //// todo kontrol et. EventDbo tablosuna ClientGroupKey koymuştum onu kullanıyormuyum. 
+                //// todo kontrol et. EventDbo tablosuna  koymuştum onu kullanıyormuyum. 
                 //var eventSubList = database.EventSub.GetAll(x => x.IsActive == true && x.IsDelete == false && x.ClientKey == clientInfoData.ClientKey).ToList();
                 //foreach (var eventSub in eventSubList)
                 //{
@@ -287,9 +289,8 @@ namespace JoberMQ.Implementation.Jober.Default
             });
 
 
-            QueueModel queue = DefaultQueueConst.NewClientGroupData;
-            queue.QueueKey = clientInfoData.ClientGroupKey;
-            await QueueOperation(queue);
+            //QueueModel queue = DefaultQueueConst.NewClientGroupData;
+            //await QueueOperation(queue);
 
 
 
@@ -352,10 +353,10 @@ namespace JoberMQ.Implementation.Jober.Default
             switch (data.QueueOperationType)
             {
                 case QueueOperationTypeEnum.Create:
-                    result = await JoberHost.Jober.MessageBroker.QueueCreate(data.QueueKey, data.MatchType, data.SendType, data.PermissionType, data.IsDurable);
+                    result = await JoberHost.Jober.MessageBroker.QueueCreate(data.QueueKey, data.QueueMatchType, data.QueueOrderOfSendingType, data.PermissionType, data.IsDurable);
                     break;
                 case QueueOperationTypeEnum.Update:
-                    result = await JoberHost.Jober.MessageBroker.QueueUpdate(data.QueueKey, data.MatchType, data.SendType, data.PermissionType, data.IsDurable);
+                    result = await JoberHost.Jober.MessageBroker.QueueUpdate(data.QueueKey, data.QueueMatchType, data.QueueOrderOfSendingType, data.PermissionType, data.IsDurable);
                     break;
                 case QueueOperationTypeEnum.Remove:
                     result = await JoberHost.Jober.MessageBroker.QueueRemove(data.QueueKey);
@@ -399,33 +400,32 @@ namespace JoberMQ.Implementation.Jober.Default
                 // bu yapıyı her ConsumeType için ayrı ayrı yapmalıyım
                 if (data.ConsumeOperationType == ConsumeOperationTypeEnum.EventSubscript)
                 {
-                    var eventSub = new EventSubDbo();
+                    var eventSub = new SubscriptDbo();
                     eventSub.Id = Guid.NewGuid();
                     eventSub.EventKey = data.DeclareKey;
-                    eventSub.MatchType = MatchTypeEnum.Special;
+                    eventSub.MatchType = QueueMatchTypeEnum.Special;
                     eventSub.ClientKey = client.ClientKey;
-                    eventSub.ClientGroupKey = client.ClientGroupKey;
 
-                    var eventCheck = database.EventSub.Get(x => x.ClientKey == client.ClientKey && x.EventKey == data.DeclareKey);
+                    var eventCheck = database.Subscript.Get(x => x.ClientKey == client.ClientKey && x.EventKey == data.DeclareKey);
                     if (eventCheck == null)
-                        database.EventSub.Add(eventSub.Id, eventSub);
+                        database.Subscript.Add(eventSub.Id, eventSub);
                     else
                     {
                         eventCheck.IsActive = true;
                         eventCheck.IsDelete = false;
-                        database.EventSub.Update(eventCheck.Id, eventCheck);
+                        database.Subscript.Update(eventCheck.Id, eventCheck);
                     }
                 }
                 else if (data.ConsumeOperationType == ConsumeOperationTypeEnum.EventUnSubscript)
                 {
-                    var eventCheck = database.EventSub.Get(x => x.ClientKey == client.ClientKey && x.EventKey == data.DeclareKey);
+                    var eventCheck = database.Subscript.Get(x => x.ClientKey == client.ClientKey && x.EventKey == data.DeclareKey);
                     if (eventCheck != null)
                     {
-                        database.EventSub.Delete(eventCheck.Id, eventCheck);
+                        database.Subscript.Delete(eventCheck.Id, eventCheck);
                     }
                 }
 
-                var eventSubList = database.EventSub.GetAll(x => x.IsActive == true && x.IsDelete == false && x.ClientKey == client.ClientKey).ToList();
+                var eventSubList = database.Subscript.GetAll(x => x.IsActive == true && x.IsDelete == false && x.ClientKey == client.ClientKey).ToList();
                 foreach (var eventSub in eventSubList)
                 {
                     var sub = client.Consuming.Where(x => x.Value.ConsumeType == ConsumeTypeEnum.Event && x.Value.DeclareKey == eventSub.EventKey);

@@ -33,8 +33,8 @@ namespace JoberMQ.Configuration.Constants
             clientDatas.TryAdd("default.queue.special.fifo", new QueueModel
             {
                 QueueKey = "default.queue.special.fifo",
-                MatchType = MatchTypeEnum.Special,
-                SendType = SendTypeEnum.FIFO,
+                QueueMatchType = QueueMatchTypeEnum.Special,
+                QueueOrderOfSendingType = QueueOrderOfSendingTypeEnum.FIFO,
                 PermissionType = PermissionTypeEnum.All,
                 IsDurable = true
             });
@@ -49,8 +49,8 @@ namespace JoberMQ.Configuration.Constants
         internal const bool IsGroupQueueCreate = true;
         internal static QueueModel NewClientGroupData = new QueueModel {
             QueueKey = null,
-            MatchType = MatchTypeEnum.Group,
-            SendType = SendTypeEnum.FIFO,
+            QueueMatchType = QueueMatchTypeEnum.Group,
+            QueueOrderOfSendingType = QueueOrderOfSendingTypeEnum.FIFO,
             PermissionType = PermissionTypeEnum.All,
             IsDurable = true
         };

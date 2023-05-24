@@ -25,7 +25,7 @@ namespace JoberMQ.Queue.Implementation.Default
 
         public override int ChildMessageCount => messageChilds.Count;
 
-        public DfMessageQueueFIFO(IConfiguration configuration, IDatabase database, string queueKey, MatchTypeEnum matchType, SendTypeEnum sendType, PermissionTypeEnum permissionType, bool isDurable, IClientMasterData clientMasterData, IMemRepository<Guid, MessageDbo> masterMessages, IOprRepositoryGuid<MessageDbo> messageDbOpr, ref IHubContext<THub> hubContext) : base(configuration, database, queueKey, matchType, sendType, permissionType, isDurable, clientMasterData, masterMessages, messageDbOpr)
+        public DfMessageQueueFIFO(IConfiguration configuration, IDatabase database, string queueKey, QueueMatchTypeEnum matchType, QueueOrderOfSendingTypeEnum queueOrderOfSendingType, PermissionTypeEnum permissionType, bool isDurable, IClientMasterData clientMasterData, IMemRepository<Guid, MessageDbo> masterMessages, IOprRepositoryGuid<MessageDbo> messageDbOpr, ref IHubContext<THub> hubContext) : base(configuration, database, queueKey, matchType, queueOrderOfSendingType, permissionType, isDurable, clientMasterData, masterMessages, messageDbOpr)
         {
             messageChilds = MemChildFactory.CreateChildFIFO<Guid, MessageDbo>(Library.Database.Enums.MemChildFactoryEnum.Default, masterMessages);
             this.hubContext = hubContext;
@@ -60,8 +60,6 @@ namespace JoberMQ.Queue.Implementation.Default
             var msgAdd = database.Message.Add(message.Id, message);
             if (msgAdd)
             {
-                
-
                 var msgChildAdd = messageChilds.Add(message.Id, message);
                 if (msgChildAdd)
                     result.IsSucces = true;
@@ -90,7 +88,7 @@ namespace JoberMQ.Queue.Implementation.Default
 
 
                         //todo burada group olma durumunda ne olacak düşün
-                        if (MatchType == MatchTypeEnum.Special)
+                        if (MatchType == QueueMatchTypeEnum.Special)
                             client = ClientChildData.Get(x => x.ClientKey == message.Message.Routing.ClientKey);
                         else
                             client = ClientChildData.Get(x => x.Number > endConsumerNumber);

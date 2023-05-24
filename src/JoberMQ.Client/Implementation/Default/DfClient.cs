@@ -8,11 +8,10 @@ namespace JoberMQ.Client.Implementation.Default
 {
     internal class DfClient : IClient
     {
-        public DfClient(string connectionId, string clientKey, string clientGroupKey, ClientTypeEnum clientType)
+        public DfClient(string connectionId, string clientKey, ClientTypeEnum clientType)
         {
             this.connectionId = connectionId;
             this.clientKey = clientKey;
-            this.clientGroupKey = clientGroupKey;
             this.clientType = clientType;
 
             this.consuming = new ConcurrentDictionary<Guid, ConsumeModel>();
@@ -24,8 +23,6 @@ namespace JoberMQ.Client.Implementation.Default
         readonly string clientKey;
         public string ClientKey => clientKey;
 
-        readonly string clientGroupKey;
-        public string ClientGroupKey => clientGroupKey;
 
         bool isActive = false;
         public bool IsActive { get => isActive; set => isActive = value; }

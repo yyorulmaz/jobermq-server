@@ -22,7 +22,7 @@ namespace JoberMQ.Database.Implementation.Default
             user = OprFactory.Create<UserDbo>(configuration.DbOprFactory, configuration.DbMemFactory, configuration.DbMemDataFactory, UserMemData.UserDatas, configuration.DbTextFactory, configuration.DbTextFileConfigDatas.FirstOrDefault(x => x.Key == "User").Value);
             distributor = OprFactory.Create<DistributorDbo>(configuration.DbOprFactory, configuration.DbMemFactory, configuration.DbMemDataFactory, DistributorMemData.DistributorDatas, configuration.DbTextFactory, configuration.DbTextFileConfigDatas.FirstOrDefault(x => x.Key == "Distributor").Value);
             queue = OprFactory.Create<QueueDbo>(configuration.DbOprFactory, configuration.DbMemFactory, configuration.DbMemDataFactory, QueueMemData.QueueDatas, configuration.DbTextFactory, configuration.DbTextFileConfigDatas.FirstOrDefault(x => x.Key == "Queue").Value);
-            eventSub = OprFactory.Create<EventSubDbo>(configuration.DbOprFactory, configuration.DbMemFactory, configuration.DbMemDataFactory, EventSubMemData.EventSubDatas, configuration.DbTextFactory, configuration.DbTextFileConfigDatas.FirstOrDefault(x => x.Key == "EventSub").Value);
+            subscript = OprFactory.Create<SubscriptDbo>(configuration.DbOprFactory, configuration.DbMemFactory, configuration.DbMemDataFactory, SubscriptMemData.SubscriptDatas, configuration.DbTextFactory, configuration.DbTextFileConfigDatas.FirstOrDefault(x => x.Key == "Subscript").Value);
             job = OprFactory.Create<JobDbo>(configuration.DbOprFactory, configuration.DbMemFactory, configuration.DbMemDataFactory, JobMemData.JobDatas, configuration.DbTextFactory, configuration.DbTextFileConfigDatas.FirstOrDefault(x => x.Key == "Job").Value);
             jobTransaction = OprFactory.Create<JobTransactionDbo>(configuration.DbOprFactory, configuration.DbMemFactory, configuration.DbMemDataFactory, JobTransactionMemData.JobTransactionDatas, configuration.DbTextFactory, configuration.DbTextFileConfigDatas.FirstOrDefault(x => x.Key == "JobTransaction").Value);
             message = OprFactory.Create<MessageDbo>(configuration.DbOprFactory, configuration.DbMemFactory, configuration.DbMemDataFactory, MessageMemData.MessageDatas, configuration.DbTextFactory, configuration.DbTextFileConfigDatas.FirstOrDefault(x => x.Key == "Message").Value);
@@ -54,8 +54,8 @@ namespace JoberMQ.Database.Implementation.Default
         public IOprRepositoryGuid<QueueDbo> Queue => queue;
 
 
-        private readonly IOprRepositoryGuid<EventSubDbo> eventSub;
-        public IOprRepositoryGuid<EventSubDbo> EventSub => eventSub;
+        private readonly IOprRepositoryGuid<SubscriptDbo> subscript;
+        public IOprRepositoryGuid<SubscriptDbo> Subscript => subscript;
 
 
         private readonly IOprRepositoryGuid<JobDbo> job;
@@ -190,7 +190,7 @@ namespace JoberMQ.Database.Implementation.Default
             User.Setups();
             Distributor.Setups();
             Queue.Setups();
-            EventSub.Setups();
+            Subscript.Setups();
             Job.Setups();
             JobTransaction.Setups();
             Message.Setups();

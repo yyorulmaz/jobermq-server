@@ -21,8 +21,8 @@ namespace JoberMQ.Queue.Implementation
             IConfiguration configuration,
             IDatabase database,
             string queueKey,
-            MatchTypeEnum matchType,
-            SendTypeEnum sendType,
+            QueueMatchTypeEnum matchType,
+            QueueOrderOfSendingTypeEnum queueOrderOfSendingType,
             PermissionTypeEnum permissionType,
             bool isDurable,
             IClientMasterData clientMasterData,
@@ -33,7 +33,7 @@ namespace JoberMQ.Queue.Implementation
             this.database = database;
             this.queueKey = queueKey;
             this.matchType = matchType;
-            this.sendType = sendType;
+            this.queueOrderOfSendingType = queueOrderOfSendingType;
             this.permissionType = permissionType;
             this.isDurable = isDurable;
             this.clientMasterData = clientMasterData;
@@ -58,11 +58,11 @@ namespace JoberMQ.Queue.Implementation
         string queueKey;
         public string QueueKey { get => queueKey; set => queueKey = value; }
 
-        MatchTypeEnum matchType;
-        public MatchTypeEnum MatchType { get => matchType; set => matchType = value; }
+        QueueMatchTypeEnum matchType;
+        public QueueMatchTypeEnum MatchType { get => matchType; set => matchType = value; }
 
-        SendTypeEnum sendType;
-        public SendTypeEnum SendType { get => sendType; set => sendType = value; }
+        QueueOrderOfSendingTypeEnum queueOrderOfSendingType;
+        public QueueOrderOfSendingTypeEnum QueueOrderOfSendingType { get => queueOrderOfSendingType; set => queueOrderOfSendingType = value; }
 
         PermissionTypeEnum permissionType;
         public PermissionTypeEnum PermissionType { get => permissionType; set => permissionType = value; }

@@ -69,11 +69,11 @@ namespace JoberMQ.Configuration.Constants
                 MaxRowCount = maxRowCount
             });
 
-            clientDatas.TryAdd("EventSub", new TextFileConfigModel
+            clientDatas.TryAdd("SubscriptDbo", new TextFileConfigModel
             {
                 DbPath = dbPath,
-                DbFolderPath = "EventSub",
-                DbFileName = "EventSub",
+                DbFolderPath = "SubscriptDbo",
+                DbFileName = "SubscriptDbo",
                 DbFileSeparator = dbFileSeparator,
                 DbArchiveFileSeparator = dbArchiveFileSeparator,
                 DbFileExtension = dbFileExtension,

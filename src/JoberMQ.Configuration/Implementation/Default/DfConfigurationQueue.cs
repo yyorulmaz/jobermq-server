@@ -10,22 +10,6 @@ namespace JoberMQ.Configuration.Implementation.Default
 {
     internal class DfConfigurationQueue : IConfigurationQueue
     {
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         QueueFactoryEnum queueFactory = DefaultQueueConst.QueueFactory;
         public QueueFactoryEnum QueueFactory { get => queueFactory; set => queueFactory = value; }
 

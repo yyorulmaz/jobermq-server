@@ -81,60 +81,6 @@ namespace JoberMQ.Timing.Implementation.Default
                 {
                     var creatorJobDetail = jobDbo.JobDetails.FirstOrDefault(x => x.Id == item.CreatedJobDetailId);
                     var eventGroupId = Guid.NewGuid();
-
-                    //todo düzelt
-                    //if (creatorJobDetail.TransportType == TransportTypeEnum.Route)
-                    //{
-                    //    var createJobMessageDbo = dboCreatorService.JobMessageDboCreate(jobDbo, creatorJobDetail, clone, item, null);
-
-                    //    if (clone.IsTriggerMain)
-                    //    {
-                    //        createJobMessageDbo.IsActive = true;
-                    //        dbOprService.Message.Add(createJobMessageDbo);
-                    //    }
-                    //    else
-                    //    {
-                    //        createJobMessageDbo.IsActive = false;
-                    //        dbOprService.Message.Add(createJobMessageDbo);
-                    //    }
-                    //}
-                    //else if (creatorJobDetail.TransportType == TransportTypeEnum.Event)
-                    //{
-                    //    var createJobMessageDbo = dboCreatorService.JobMessageDboCreate(jobDbo, creatorJobDetail, clone, item, eventGroupId);
-                    //    var eventSubscribers = dbOprService.EventSubscriber.GetAll(x => x.EventName == creatorJobDetail.EventName);
-
-                    //    foreach (var itemevent in eventSubscribers)
-                    //    {
-                    //        if (itemevent.EventSubscriberType == RoutingTypeEnum.Special)
-                    //        {
-                    //            createJobMessageDbo.ConsumerClientKey = itemevent.ClientKey;
-                    //            if (clone.IsTriggerMain)
-                    //            {
-                    //                createJobMessageDbo.IsActive = true;
-                    //                dbOprService.Message.Add(createJobMessageDbo);
-                    //            }
-                    //            else
-                    //            {
-                    //                createJobMessageDbo.IsActive = false;
-                    //                dbOprService.Message.Add(createJobMessageDbo);
-                    //            }
-                    //        }
-                    //        else if (itemevent.EventSubscriberType == RoutingTypeEnum.Group)
-                    //        {
-                    //            createJobMessageDbo.ConsumerClientGroupKey = itemevent.ClientGroupKey;
-                    //            if (clone.IsTriggerMain)
-                    //            {
-                    //                createJobMessageDbo.IsActive = true;
-                    //                dbOprService.Message.Add(createJobMessageDbo);
-                    //            }
-                    //            else
-                    //            {
-                    //                createJobMessageDbo.IsActive = false;
-                    //                dbOprService.Message.Add(createJobMessageDbo);
-                    //            }
-                    //        }
-                    //    }
-                    //}
                 }
             }
 

@@ -9,7 +9,6 @@ namespace JoberMQ.Client.Abstraction
     {
         public string ConnectionId { get; }
         public string ClientKey { get; }
-        public string ClientGroupKey { get; }
 
         public bool IsActive { get; set; }
         public ClientTypeEnum ClientType { get; set; }
