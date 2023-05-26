@@ -1,6 +1,6 @@
 ﻿using JoberMQ.Configuration.Abstraction;
 using JoberMQ.Configuration.Constants;
-using JoberMQ.Library.Enums.Host;
+using JoberMQ.Common.Enums.Host;
 
 namespace JoberMQ.Configuration.Implementation.Default
 {

@@ -1,4 +1,4 @@
-﻿using JoberMQ.Library.Dbos;
+﻿using JoberMQ.Common.Dbos;
 using System;
 using System.Collections.Concurrent;
 

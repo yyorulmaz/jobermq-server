@@ -1,26 +1,24 @@
-﻿using JoberMQ.Abstraction.Jober;
-using JoberMQ.Implementation.Jober.Default;
-using JoberMQ.Library.Models.Response;
-using JoberMQ.Library.Models.Rpc;
+﻿using JoberMQ.Common.Dbos;
+using JoberMQ.Common.Models.Base;
+using JoberMQ.Common.Models.Distributor;
+using JoberMQ.Common.Models.Queue;
+using JoberMQ.Common.Models.Response;
+using JoberMQ.Common.Models.Rpc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Threading.Channels;
-using System.Threading.Tasks;
 
 namespace JoberMQ.Hubs
 {
     internal class JoberHub : Hub
     {
+        #region Connect
         public override Task OnConnectedAsync()
         {
-            var result = JoberHost.Jober.ConnectedOperation(Context).Result;
+            var result = JoberHost.JoberMQ.ConnectedOperationAsync(Context).Result;
             if (result == false)
             {
-                var errorMessage = JoberHost.Jober.StatusCode.GetStatusMessage("0.0.14");
-                return base.OnDisconnectedAsync(new System.Exception(errorMessage));
+                var errorMessage = JoberHost.JoberMQ.StatusCode.GetStatusMessage("0.0.14");
+                return base.OnDisconnectedAsync(new Exception(errorMessage));
             }
             else
             {
@@ -29,117 +27,77 @@ namespace JoberMQ.Hubs
         }
         public override Task OnDisconnectedAsync(Exception exception)
         {
-            var result = JoberHost.Jober.DisConnectedOperation(Context).Result;
+            var result = JoberHost.JoberMQ.DisconnectedOperationAsync(Context).Result;
             return base.OnDisconnectedAsync(exception);
         }
-
-
-
-        [Authorize(Roles = "administrators")]
-        public async Task<ResponseModel> Distributor(string distributorData)
-            => await JoberHost.Jober.DistributorOperation(distributorData);
-
-        [Authorize(Roles = "administrators")]
-        public async Task<ResponseModel> Queue(string queueData)
-            => await JoberHost.Jober.QueueOperation(queueData);
-
-        [Authorize(Roles = "administrators")]
-        public async Task<ResponseModel> Consume(string consumeData)
-            => await JoberHost.Jober.ConsumeOperation(Context.ConnectionId, consumeData);
-
-
-
-
-        public async Task<ResponseModel> Job(string job)
-            => await JoberHost.Jober.JobOperation(job);
-
-        public async Task<ResponseModel> Message(string message)
-            => await JoberHost.Jober.MessageOperation(message);
-
-        public async Task<RpcResponseModel> Rpc(string rpc)
-            => await JoberHost.Jober.RpcOperation(rpc);
-        public async Task RpcResponse(string rpc)
-            => await JoberHost.Jober.RpcResponseOperation(rpc);
-
-
-        public async Task<ResponseModel> MessageStarted(string data)
-            => await JoberHost.Jober.MessageStartedOperation(data);
-
-        public async Task<ResponseModel> MessageCompleted(string data)
-           => await JoberHost.Jober.MessageCompletedOperation(data);
-
-    }
-
-
-    public interface IChannel<T> : IDisposable
-    {
-
-    }
-    public class DfChannel<T> : IChannel<T>
-    {
-        Channel<T> channel;
-        string id;
-        public DfChannel(string id)
-        {
-            this.id = id;
-            channel = Channel.CreateUnbounded<T>();
-        }
-
-        #region Dispose
-        private bool disposedValue;
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!disposedValue)
-            {
-                if (disposing)
-                {
-                    // TODO: dispose managed state (managed objects)
-                }
-
-                // TODO: free unmanaged resources (unmanaged objects) and override finalizer
-                // TODO: set large fields to null
-                disposedValue=true;
-            }
-        }
-
-        // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
-        // ~DfChannel()
-        // {
-        //     // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-        //     Dispose(disposing: false);
-        // }
-
-        public void Dispose()
-        {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
-        }
-
         #endregion
-    }
-    public enum ChannelFactoryEnum
-    {
-        Default = 1
-    }
-    internal class ChannelFactory
-    {
-        public static IChannel<T> Create<T>(ChannelFactoryEnum channelFactory, string id)
+
+        #region Distributor
+        [Authorize(Roles = "administrators")]
+        public async Task<ResponseBaseModel<DistributorModel>> DistributorGet(string data)
+            => await JoberHost.JoberMQ.DistributorOperationGetAsync(data);
+        [Authorize(Roles = "administrators")]
+        public async Task<ResponseBaseModel> DistributorCreate(DistributorModel data)
+            => await JoberHost.JoberMQ.DistributorOperationCreateAsync(data);
+        [Authorize(Roles = "administrators")]
+        public async Task<ResponseBaseModel> DistributorEdit(DistributorModel data)
+            => await JoberHost.JoberMQ.DistributorOperationEditAsync(data);
+        [Authorize(Roles = "administrators")]
+        public async Task<ResponseBaseModel> DistributorRemove(string data)
+            => await JoberHost.JoberMQ.DistributorOperationRemoveAsync(data);
+        #endregion
+
+        #region Queue
+        [Authorize(Roles = "administrators")]
+        public async Task<ResponseBaseModel<QueueModel>> QueueGet(string data)
+            => await JoberHost.JoberMQ.QueueOperationGetAsync(data);
+        [Authorize(Roles = "administrators")]
+        public async Task<ResponseBaseModel> QueueCreate(QueueModel data)
+            => await JoberHost.JoberMQ.QueueOperationCreateAsync(data);
+        [Authorize(Roles = "administrators")]
+        public async Task<ResponseBaseModel> QueueEdit(QueueModel data)
+            => await JoberHost.JoberMQ.QueueOperationEditAsync(data);
+        [Authorize(Roles = "administrators")]
+        public async Task<ResponseBaseModel> QueueRemove(string data)
+            => await JoberHost.JoberMQ.QueueOperationRemoveAsync(data);
+        [Authorize(Roles = "administrators")]
+        public async Task<ResponseBaseModel> QueueBind(string data)
+            => await JoberHost.JoberMQ.QueueOperationBindAsync(data);
+        #endregion
+
+        #region Consume
+        // todo başlangıçta birkaçtane yetki gruplarına göre kullanıcı ekle
+        //[Authorize(Roles = "user")]
+        [Authorize(Roles = "administrators")]
+        public async Task<ResponseBaseModel> ConsumeSub(string clientKey, string queueKey, bool isDurable)
         {
-            IChannel<T> result;
-
-            switch (channelFactory)
-            {
-                case ChannelFactoryEnum.Default:
-                    result = new DfChannel<T>(id);
-                    break;
-                default:
-                    result = new DfChannel<T>(id);
-                    break;
-            }
-
+            var result = await JoberHost.JoberMQ.ConsumeOperationSubAsync(clientKey, queueKey, isDurable);
+            JoberHost.JoberMQ.Clients.InvokeChangedAdded(Context.ConnectionId);
             return result;
         }
-    }
+        //[Authorize(Roles = "user")]
+        [Authorize(Roles = "administrators")]
+        public async Task<ResponseBaseModel> ConsumeUnSub(string clientKey, string queueKey)
+        {
+            var result = await JoberHost.JoberMQ.ConsumeOperationUnSubAsync(clientKey, queueKey);
+            JoberHost.JoberMQ.Clients.InvokeChangedRemoved(Context.ConnectionId);
+            return result;
+        }
+        #endregion
 
+        #region Message
+        [Authorize(Roles = "administrators")]
+        public async Task<ResponseModel> Message(MessageDbo data)
+            => await JoberHost.JoberMQ.MessageOperationAsync(data);
+        [Authorize(Roles = "administrators")]
+        public async Task<ResponseModel> Job(string data)
+            => await JoberHost.JoberMQ.JobOperationAsync(data);
+        [Authorize(Roles = "administrators")]
+        public async Task<RpcResponseModel> Rpc(string data)
+            => await JoberHost.JoberMQ.RpcOperationAsync(data);
+        [Authorize(Roles = "administrators")]
+        public async Task RpcResponse(string rpc)
+            => await JoberHost.JoberMQ.RpcResponseOperationAsync(rpc);
+        #endregion
+    }
 }

@@ -1,9 +1,9 @@
 ﻿using JoberMQ.Configuration.Abstraction;
 using JoberMQ.Database.Abstraction;
-using JoberMQ.Library.Dbos;
-using JoberMQ.Library.Models;
-using JoberMQ.Library.Models.Response;
-using JoberMQ.Library.StatusCode.Abstraction;
+using JoberMQ.Common.Dbos;
+using JoberMQ.Common.Models;
+using JoberMQ.Common.Models.Response;
+using JoberMQ.Common.StatusCode.Abstraction;
 using System.Threading.Tasks;
 
 namespace JoberMQ.Publisher.Implementation.Default

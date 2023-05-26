@@ -2,8 +2,8 @@
 using JoberMQ.Configuration.Abstraction;
 using JoberMQ.Configuration.Implementation.Default;
 using JoberMQ.Database.Abstraction;
-using JoberMQ.Library.Enums.Publisher;
-using JoberMQ.Library.StatusCode.Abstraction;
+using JoberMQ.Common.Enums.Publisher;
+using JoberMQ.Common.StatusCode.Abstraction;
 using JoberMQ.Publisher.Abstraction;
 using JoberMQ.Publisher.Implementation.Default;
 using JoberMQ.Timing.Abstraction;

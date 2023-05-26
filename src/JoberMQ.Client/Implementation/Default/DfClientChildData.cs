@@ -1,5 +1,5 @@
 ﻿using JoberMQ.Client.Abstraction;
-using JoberMQ.Library.Enums.Consume;
+using JoberMQ.Common.Enums.Consume;
 using System;
 using System.Collections.Concurrent;
 using System.Linq;

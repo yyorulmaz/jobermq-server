@@ -3,10 +3,10 @@ using JoberMQ.Broker.Implementation.Default;
 using JoberMQ.Client.Abstraction;
 using JoberMQ.Configuration.Abstraction;
 using JoberMQ.Database.Abstraction;
-using JoberMQ.Library.Database.Repository.Abstraction.Mem;
-using JoberMQ.Library.Dbos;
-using JoberMQ.Library.Enums.Broker;
-using JoberMQ.Library.StatusCode.Abstraction;
+using JoberMQ.Common.Database.Repository.Abstraction.Mem;
+using JoberMQ.Common.Dbos;
+using JoberMQ.Common.Enums.Broker;
+using JoberMQ.Common.StatusCode.Abstraction;
 using Microsoft.AspNetCore.SignalR;
 using System;
 

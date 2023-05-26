@@ -1,7 +1,7 @@
 ﻿using JoberMQ.Configuration.Abstraction;
 using JoberMQ.Configuration.Constants;
-using JoberMQ.Library.StatusCode.Enums;
-using JoberMQ.Library.StatusCode.Models;
+using JoberMQ.Common.StatusCode.Enums;
+using JoberMQ.Common.StatusCode.Models;
 using System.Collections.Concurrent;
 
 namespace JoberMQ.Configuration.Implementation.Default

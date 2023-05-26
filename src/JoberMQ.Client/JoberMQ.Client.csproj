@@ -8,6 +8,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\..\..\..\..\src\jobermq-library\src\JoberMQ.Library\JoberMQ.Library.csproj" />
+		<ProjectReference Include="..\..\..\jobermq-common\src\JoberMQ.Common\JoberMQ.Common.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

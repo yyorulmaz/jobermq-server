@@ -1,6 +1,6 @@
 ﻿using JoberMQ.Configuration.Abstraction;
 using JoberMQ.Configuration.Implementation.Default;
-using JoberMQ.Library.Enums.Configuration;
+using JoberMQ.Common.Enums.Configuration;
 
 namespace JoberMQ.Configuration.Factories
 {

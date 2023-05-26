@@ -1,7 +1,7 @@
-﻿using JoberMQ.Library.Database.Enums;
-using JoberMQ.Library.Enums.Queue;
-using JoberMQ.Library.Models.Configuration;
-using JoberMQ.Library.Models.Queue;
+﻿using JoberMQ.Common.Database.Enums;
+using JoberMQ.Common.Enums.Queue;
+using JoberMQ.Common.Models.Configuration;
+using JoberMQ.Common.Models.Queue;
 using System.Collections.Concurrent;
 
 namespace JoberMQ.Configuration.Abstraction

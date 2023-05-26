@@ -1,5 +1,5 @@
-﻿using JoberMQ.Library.Enums.Client;
-using JoberMQ.Library.Models.Consume;
+﻿using JoberMQ.Common.Enums.Client;
+using JoberMQ.Common.Models.Consume;
 using System;
 using System.Collections.Concurrent;
 

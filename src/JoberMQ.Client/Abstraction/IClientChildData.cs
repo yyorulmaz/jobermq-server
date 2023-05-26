@@ -1,4 +1,4 @@
-﻿using JoberMQ.Library.Database.Repository.Abstraction.Mem;
+﻿using JoberMQ.Common.Database.Repository.Abstraction.Mem;
 using System;
 using System.Collections.Concurrent;
 

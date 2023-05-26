@@ -1,5 +1,5 @@
-﻿using JoberMQ.Library.Database.Repository.Abstraction.Opr;
-using JoberMQ.Library.Dbos;
+﻿using JoberMQ.Common.Database.Repository.Abstraction.Opr;
+using JoberMQ.Common.Dbos;
 
 namespace JoberMQ.Database.Abstraction
 {

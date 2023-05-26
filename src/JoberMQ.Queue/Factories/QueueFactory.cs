@@ -1,11 +1,11 @@
 ﻿using JoberMQ.Client.Abstraction;
 using JoberMQ.Configuration.Abstraction;
 using JoberMQ.Database.Abstraction;
-using JoberMQ.Library.Database.Repository.Abstraction.Mem;
-using JoberMQ.Library.Database.Repository.Abstraction.Opr;
-using JoberMQ.Library.Dbos;
-using JoberMQ.Library.Enums.Permission;
-using JoberMQ.Library.Enums.Queue;
+using JoberMQ.Common.Database.Repository.Abstraction.Mem;
+using JoberMQ.Common.Database.Repository.Abstraction.Opr;
+using JoberMQ.Common.Dbos;
+using JoberMQ.Common.Enums.Permission;
+using JoberMQ.Common.Enums.Queue;
 using JoberMQ.Queue.Abstraction;
 using JoberMQ.Queue.Implementation.Default;
 using Microsoft.AspNetCore.SignalR;

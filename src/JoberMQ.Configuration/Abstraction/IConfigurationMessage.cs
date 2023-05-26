@@ -1,4 +1,4 @@
-﻿using JoberMQ.Library.Database.Enums;
+﻿using JoberMQ.Common.Database.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;

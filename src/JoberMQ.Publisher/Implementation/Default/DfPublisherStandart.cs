@@ -2,10 +2,10 @@
 using JoberMQ.Configuration.Abstraction;
 using JoberMQ.Configuration.Implementation.Default;
 using JoberMQ.Database.Abstraction;
-using JoberMQ.Library.Dbos;
-using JoberMQ.Library.Enums.Timing;
-using JoberMQ.Library.Models.Response;
-using JoberMQ.Library.StatusCode.Abstraction;
+using JoberMQ.Common.Dbos;
+using JoberMQ.Common.Enums.Timing;
+using JoberMQ.Common.Models.Response;
+using JoberMQ.Common.StatusCode.Abstraction;
 using JoberMQ.Timing.Abstraction;
 using JoberMQ.Timing.Factories;
 using System.Threading.Tasks;

@@ -1,4 +1,4 @@
-﻿using JoberMQ.Library.Enums.Publisher;
+﻿using JoberMQ.Common.Enums.Publisher;
 
 namespace JoberMQ.Configuration.Abstraction
 {

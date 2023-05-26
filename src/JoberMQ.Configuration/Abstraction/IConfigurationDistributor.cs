@@ -1,6 +1,6 @@
-﻿using JoberMQ.Library.Database.Enums;
-using JoberMQ.Library.Enums.Distributor;
-using JoberMQ.Library.Models.Configuration;
+﻿using JoberMQ.Common.Database.Enums;
+using JoberMQ.Common.Enums.Distributor;
+using JoberMQ.Common.Models.Configuration;
 using System.Collections.Concurrent;
 
 namespace JoberMQ.Configuration.Abstraction

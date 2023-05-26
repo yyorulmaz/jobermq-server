@@ -1,8 +1,8 @@
 ﻿using JoberMQ.Database.Abstraction;
 using JoberMQ.Database.Implementation.Default;
-using JoberMQ.Library.Database.Repository.Abstraction.Opr;
-using JoberMQ.Library.Dbos;
-using JoberMQ.Library.Enums.Database;
+using JoberMQ.Common.Database.Repository.Abstraction.Opr;
+using JoberMQ.Common.Dbos;
+using JoberMQ.Common.Enums.Database;
 
 namespace JoberMQ.Database.Factories
 {

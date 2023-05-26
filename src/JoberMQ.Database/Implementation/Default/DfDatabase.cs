@@ -2,9 +2,9 @@
 using JoberMQ.Database.Abstraction;
 using JoberMQ.Database.Data;
 using JoberMQ.Database.Factories;
-using JoberMQ.Library.Database.Factories;
-using JoberMQ.Library.Database.Repository.Abstraction.Opr;
-using JoberMQ.Library.Dbos;
+using JoberMQ.Common.Database.Factories;
+using JoberMQ.Common.Database.Repository.Abstraction.Opr;
+using JoberMQ.Common.Dbos;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;

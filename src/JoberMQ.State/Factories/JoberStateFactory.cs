@@ -1,4 +1,4 @@
-﻿//using JoberMQ.Library.Enums.Jober;
+﻿//using JoberMQ.Common.Enums.Jober;
 //using JoberMQ.State.Abstraction;
 //using JoberMQ.State.Implementation.Default;
 

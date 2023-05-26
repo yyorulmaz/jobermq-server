@@ -1,9 +1,9 @@
 ﻿using JoberMQ.Client.Abstraction;
-using JoberMQ.Library.Database.Repository.Abstraction.Mem;
-using JoberMQ.Library.Dbos;
-using JoberMQ.Library.Enums.Permission;
-using JoberMQ.Library.Enums.Queue;
-using JoberMQ.Library.Models.Response;
+using JoberMQ.Common.Database.Repository.Abstraction.Mem;
+using JoberMQ.Common.Dbos;
+using JoberMQ.Common.Enums.Permission;
+using JoberMQ.Common.Enums.Queue;
+using JoberMQ.Common.Models.Response;
 using System;
 using System.Threading.Tasks;
 

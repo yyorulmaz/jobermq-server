@@ -1,8 +1,6 @@
-﻿using JoberMQ.Abstraction.Jober;
-using JoberMQ.Configuration.Abstraction;
-using JoberMQ.Configuration.Constants;
-using JoberMQ.Configuration.Factories;
-using JoberMQ.Factories.Jober;
+﻿using JoberMQ.Abstraction;
+using JoberMQ.Abstraction.Configuration;
+using JoberMQ.Implementation;
 
 namespace JoberMQ.Extensions
 {
@@ -14,7 +12,7 @@ namespace JoberMQ.Extensions
             return joberHostBuilder;
         }
 
-        public static IJober Build(this JoberHostBuilder joberHostBuilder)
-            => JoberFactory.Create(DefaultJoberConst.JoberFactory, joberHostBuilder.Configuration == null ? ConfigurationFactory.Create(DefaultConfigurationConst.ConfigurationFactory) : joberHostBuilder.Configuration);
+        public static IJoberMQHost Build(this JoberHostBuilder joberHostBuilder)
+            => new DefaultJoberMQHost(joberHostBuilder.Configuration);
     }
 }

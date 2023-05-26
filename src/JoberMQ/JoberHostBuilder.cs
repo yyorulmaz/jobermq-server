@@ -1,4 +1,4 @@
-﻿using JoberMQ.Configuration.Abstraction;
+﻿using JoberMQ.Abstraction.Configuration;
 
 namespace JoberMQ
 {

@@ -1,6 +1,6 @@
 ﻿using JoberMQ.Client.Abstraction;
 using JoberMQ.Client.Implementation.Default;
-using JoberMQ.Library.Enums.Client;
+using JoberMQ.Common.Enums.Client;
 using System.Collections.Concurrent;
 
 namespace JoberMQ.Client.Factories

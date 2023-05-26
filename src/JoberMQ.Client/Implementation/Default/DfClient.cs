@@ -1,6 +1,6 @@
 ﻿using JoberMQ.Client.Abstraction;
-using JoberMQ.Library.Enums.Client;
-using JoberMQ.Library.Models.Consume;
+using JoberMQ.Common.Enums.Client;
+using JoberMQ.Common.Models.Consume;
 using System.Collections.Concurrent;
 using System;
 

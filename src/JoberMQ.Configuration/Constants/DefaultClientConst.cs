@@ -1,5 +1,5 @@
-﻿using JoberMQ.Library.Database.Enums;
-using JoberMQ.Library.Enums.Client;
+﻿using JoberMQ.Common.Database.Enums;
+using JoberMQ.Common.Enums.Client;
 
 namespace JoberMQ.Configuration.Constants
 {
