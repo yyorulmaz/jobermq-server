@@ -157,6 +157,8 @@ namespace JoberMQ.Implementation
             var br5 = await messageBroker.QueueSetMessages();
             #endregion
 
+            Console.WriteLine("icerdeyim");
+
             JoberHost.IsJoberActive = true;
             JoberHost.JoberMQ = this;
         }
