@@ -191,6 +191,7 @@ namespace JoberMQ.Implementation.Broker.Default
                     var newDistributor = DistributorFactory.Create(JoberHost.JoberMQ.Configuration.ConfigurationDistributor.DistributorFactory, distributorKey, distributorType, distributorSearchSourceType, PermissionTypeEnum.All, isDurable, false);
                     var resultDatabase = JoberHost.JoberMQ.Database.Distributor.Add(Guid.NewGuid(), new DistributorDbo
                     {
+                        Id = Guid.NewGuid(),
                         DistributorKey = distributorKey,
                         DistributorType = distributorType,
                         PermissionType = permissionType,
@@ -343,6 +344,7 @@ namespace JoberMQ.Implementation.Broker.Default
                 {
                     var resultDatabase = JoberHost.JoberMQ.Database.Queue.Add(Guid.NewGuid(), new QueueDbo
                     {
+                        Id = Guid.NewGuid(),
                         QueueKey = queueKey,
                         QueueMatchType = queueMatchType,
                         QueueOrderOfSendingType = queueOrderOfSendingType,
