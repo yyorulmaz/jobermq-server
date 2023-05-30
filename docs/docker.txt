@@ -39,16 +39,18 @@ WORKDIR /app
 COPY bin/Release/net7.0/publish /app/
 ENTRYPOINT ["dotnet", "JoberMQServer.dll"]
 
+
 7	-	proje publish et
 
 8	-	docker volume create jobermq_data
 
-9	-	docker build --pull -t jobermqserver:v1 .
+9	-	docker build --pull -t jobermq_server:v1 .
 
 /////////////////////10	-	docker create --rm -it -p 7654:80 -p 7655:443 --name jobermqservercontainer -e ASPNETCORE_URLS="https://+;http://+" -e ASPNETCORE_HTTPS_PORT=7655 -e ASPNETCORE_ENVIRONMENT=Development -v $env:APPDATA\microsoft\UserSecrets\:/root/.microsoft/usersecrets -v $env:USERPROFILE\.aspnet\https:/root/.aspnet/https/ -v jobermq_data:/app/Database jobermqserver:v1
-10	-	docker create -it -p 7654:80 -p 7655:443 --name jobermqservercontainer -e ASPNETCORE_URLS="https://+;http://+" -e ASPNETCORE_HTTPS_PORT=7655 -e ASPNETCORE_ENVIRONMENT=Development -v $env:APPDATA\microsoft\UserSecrets\:/root/.microsoft/usersecrets -v $env:USERPROFILE\.aspnet\https:/root/.aspnet/https/ -v jobermq_data:/app/Database jobermqserver:v1
+/////////////////////10	-	docker create -it -p 7654:80 -p 7655:443 --name jobermqservercontainer -e ASPNETCORE_URLS="https://+;http://+" -e ASPNETCORE_HTTPS_PORT=7655 -e ASPNETCORE_ENVIRONMENT=Development -v $env:APPDATA\microsoft\UserSecrets\:/root/.microsoft/usersecrets -v $env:USERPROFILE\.aspnet\https:/root/.aspnet/https/ -v jobermq_data:/app/Database jobermqserver:v1
+10	-	docker create -it --restart=always --ip=172.20.0.2 --network=investnetwork -p 7654:80 -p 7655:443 --name jobermq_server_container -e ASPNETCORE_URLS="https://+;http://+" -e ASPNETCORE_HTTPS_PORT=7655 -e ASPNETCORE_ENVIRONMENT=Development -v $env:APPDATA\microsoft\UserSecrets\:/root/.microsoft/usersecrets -v $env:USERPROFILE\.aspnet\https:/root/.aspnet/https/ -v jobermq_data:/app/Database jobermq_server:v1
 
-11	-	docker start jobermqservercontainer
+11	-	docker start jobermq_server_container
 
 
 
