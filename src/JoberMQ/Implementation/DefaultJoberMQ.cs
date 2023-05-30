@@ -69,7 +69,8 @@ namespace JoberMQ.Implementation
 
 
         IHubContext<JoberHub> joberHubContext;
-        IHubContext<JoberHub> IJoberMQ.JoberHubContext => joberHubContext;
+        //IHubContext<JoberHub> IJoberMQ.JoberHubContext => joberHubContext;
+        public IHubContext<JoberHub> JoberHubContext { get => joberHubContext; set => joberHubContext = value; }
 
 
         IMemRepository<Guid, MessageDbo> messageMasterData;
@@ -97,10 +98,7 @@ namespace JoberMQ.Implementation
         IMemRepository<string, IMessageQueue> IJoberMQ.Queues => queues;
 
 
-
-
-
-        async Task IJoberMQ.StartAsync()
+        async Task IJoberMQ.StartAsync(bool owinHost, IHubContext<JoberHub> hubContext = null)
         {
             #region Schedule Start
             var jobScheduleTimerStartResult = schedule.Start();
@@ -133,20 +131,27 @@ namespace JoberMQ.Implementation
             #endregion
 
             #region Jober Host
-            // todo url yapısını düzelt
-            Uri urlHttp = new Uri($"http://{configuration.ConfigurationHost.HostName}:{configuration.ConfigurationHost.Port}");
-            Uri urlHttps = new Uri($"https://{configuration.ConfigurationHost.HostName}:{configuration.ConfigurationHost.PortSsl}");
+            if (owinHost)
+            {
+                // todo url yapısını düzelt
+                Uri urlHttp = new Uri($"http://{configuration.ConfigurationHost.HostName}:{configuration.ConfigurationHost.Port}");
+                Uri urlHttps = new Uri($"https://{configuration.ConfigurationHost.HostName}:{configuration.ConfigurationHost.PortSsl}");
 
-            var host = WebHost
-                .CreateDefaultBuilder()
-                .ConfigureServices(services => ConfigureServices(services))
-                .Configure(app => Configure(app))
-                .UseUrls(urlHttp.ToString(), urlHttps.ToString())
-                .Build();
+                var host = WebHost
+                    .CreateDefaultBuilder()
+                    .ConfigureServices(services => JoberHost.ConfigureServices(services))
+                    .Configure(app => JoberHost.Configure(app))
+                    .UseUrls(urlHttp.ToString(), urlHttps.ToString())
+                    .Build();
 
-            joberHubContext = host.Services.GetService<IHubContext<JoberHub>>();
+                joberHubContext = host.Services.GetService<IHubContext<JoberHub>>();
 
-            host.RunAsync();
+                host.RunAsync();
+            }
+            else
+            {
+                joberHubContext = hubContext;
+            }
             #endregion
 
             #region Message Broker
@@ -157,95 +162,10 @@ namespace JoberMQ.Implementation
             var br5 = await messageBroker.QueueSetMessages();
             #endregion
 
-            Console.WriteLine("icerdeyim");
-
             JoberHost.IsJoberActive = true;
             JoberHost.JoberMQ = this;
         }
-        private void ConfigureServices(IServiceCollection services)
-        {
-            #region Newtonsoft Json Protocol
-            services
-                .AddSignalR()
-                //https://learn.microsoft.com/tr-tr/aspnet/core/signalr/messagepackhubprotocol?view=aspnetcore-7.0
-                ////.AddMessagePackProtocol();
-                //.AddMessagePackProtocol(options =>
-                //{
-                //    options.SerializerOptions = MessagePackSerializerOptions.Standard
-                //        .WithResolver(new CustomResolver())
-                //        .WithSecurity(MessagePackSecurity.UntrustedData);
-                //});
-                .AddNewtonsoftJsonProtocol(options =>
-                {
-                    options.PayloadSerializerSettings.NullValueHandling = NullValueHandling.Ignore;
-                    options.PayloadSerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-                });
-            #endregion
-
-            #region Quartz Disabled Log
-            Quartz.Logging.LogProvider.IsDisabled = true;
-            #endregion
-
-            #region Authorization and Authentication
-            services
-                .AddAuthorization(options =>
-                {
-                    options.AddPolicy(JwtBearerDefaults.AuthenticationScheme, policy =>
-                    {
-                        policy.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme);
-                        policy.RequireClaim(ClaimTypes.NameIdentifier);
-                    });
-
-                });
-
-            services
-                .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options =>
-                {
-                    options.TokenValidationParameters =
-                        new TokenValidationParameters
-                        {
-                            ValidateAudience = false,
-                            ValidateIssuer = false,
-                            ValidateActor = false,
-                            ValidateLifetime = false,
-                            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration.ConfigurationSecurity.SecurityKey))
-                        };
-
-
-                    options.Events = new JwtBearerEvents
-                    {
-                        OnTokenValidated = ctx =>
-                        {
-                            return Task.CompletedTask;
-                        },
-                        OnAuthenticationFailed = ctx =>
-                        {
-                            return Task.CompletedTask;
-                        },
-                    };
-
-
-                });
-            #endregion
-
-            #region Controllers
-            services.AddControllers();
-            #endregion
-        }
-        private void Configure(IApplicationBuilder app)
-        {
-            app.UseOwin();
-            app.UseRouting();
-            app.UseAuthentication();
-            app.UseAuthorization();
-
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapHub<JoberHub>("/JoberHub");
-                endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
-            });
-        }
+        
 
 
         #region Connect

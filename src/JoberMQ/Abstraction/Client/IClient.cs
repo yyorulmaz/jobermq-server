@@ -3,7 +3,7 @@ using JoberMQ.Common.Enums.Client;
 
 namespace JoberMQ.Abstraction.Client
 {
-    internal interface IClient : IDisposable
+    public interface IClient : IDisposable
     {
         public string ConnectionId { get; }
         public string ClientKey { get; }

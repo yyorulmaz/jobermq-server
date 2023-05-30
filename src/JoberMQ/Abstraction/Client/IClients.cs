@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace JoberMQ.Abstraction.Client
 {
-    internal interface IClients : IDisposable
+    public interface IClients : IDisposable
     {
         #region Data
         ConcurrentDictionary<string, IClient> Database { get; }

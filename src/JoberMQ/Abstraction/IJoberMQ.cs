@@ -20,59 +20,59 @@ using JoberMQ.Hubs;
 
 namespace JoberMQ.Abstraction
 {
-    internal interface IJoberMQ
+    public interface IJoberMQ
     {
-        internal IConfiguration Configuration { get; }
-        internal IStatusCode StatusCode { get; }
-        internal IClients Clients { get; }
-        internal IHubContext<JoberHub> JoberHubContext { get; }
+        public IConfiguration Configuration { get; }
+        public IStatusCode StatusCode { get; }
+        public IClients Clients { get; }
+        public IHubContext<JoberHub> JoberHubContext { get; set; }
         internal IMemRepository<Guid, MessageDbo> MessageMasterData { get; }
-        internal IDatabase Database { get; }
+        public IDatabase Database { get; }
         internal ISchedule Schedule { get; }
         internal IMessageBroker MessageBroker { get; }
         internal IMemRepository<string, IMessageDistributor> Distributors { get; }
         internal IMemRepository<string, IMessageQueue> Queues { get; }
 
-        Task StartAsync();
+        Task StartAsync(bool owinHost, IHubContext<JoberHub> hubContext = null);
 
 
 
 
 
         #region Connect
-        internal Task<bool> ConnectedOperationAsync(HubCallerContext context);
-        internal Task<bool> DisconnectedOperationAsync(HubCallerContext context);
+        public Task<bool> ConnectedOperationAsync(HubCallerContext context);
+        public Task<bool> DisconnectedOperationAsync(HubCallerContext context);
         #endregion
 
 
         #region Distributor
-        internal Task<ResponseBaseModel<DistributorModel>> DistributorOperationGetAsync(string data);
-        internal Task<ResponseBaseModel> DistributorOperationCreateAsync(DistributorModel data);
-        internal Task<ResponseBaseModel> DistributorOperationEditAsync(DistributorModel data);
-        internal Task<ResponseBaseModel> DistributorOperationRemoveAsync(string data);
+        public Task<ResponseBaseModel<DistributorModel>> DistributorOperationGetAsync(string data);
+        public Task<ResponseBaseModel> DistributorOperationCreateAsync(DistributorModel data);
+        public Task<ResponseBaseModel> DistributorOperationEditAsync(DistributorModel data);
+        public Task<ResponseBaseModel> DistributorOperationRemoveAsync(string data);
         #endregion
 
 
         #region Queue
-        internal Task<ResponseBaseModel<QueueModel>> QueueOperationGetAsync(string data);
-        internal Task<ResponseBaseModel> QueueOperationCreateAsync(QueueModel data);
-        internal Task<ResponseBaseModel> QueueOperationEditAsync(QueueModel data);
-        internal Task<ResponseBaseModel> QueueOperationRemoveAsync(string data);
-        internal Task<ResponseBaseModel> QueueOperationBindAsync(string data);
+        public Task<ResponseBaseModel<QueueModel>> QueueOperationGetAsync(string data);
+        public Task<ResponseBaseModel> QueueOperationCreateAsync(QueueModel data);
+        public Task<ResponseBaseModel> QueueOperationEditAsync(QueueModel data);
+        public Task<ResponseBaseModel> QueueOperationRemoveAsync(string data);
+        public Task<ResponseBaseModel> QueueOperationBindAsync(string data);
         #endregion
 
 
         #region Consume
-        internal Task<ResponseBaseModel> ConsumeOperationSubAsync(string clientKey, string queueKey, bool isDurable);
-        internal Task<ResponseBaseModel> ConsumeOperationUnSubAsync(string clientKey, string queueKey);
+        public Task<ResponseBaseModel> ConsumeOperationSubAsync(string clientKey, string queueKey, bool isDurable);
+        public Task<ResponseBaseModel> ConsumeOperationUnSubAsync(string clientKey, string queueKey);
         #endregion
 
 
         #region Message
-        internal Task<ResponseModel> MessageOperationAsync(MessageDbo data);
-        internal Task<ResponseModel> JobOperationAsync(string data);
-        internal Task<RpcResponseModel> RpcOperationAsync(string data);
-        internal Task RpcResponseOperationAsync(string rpc);
+        public Task<ResponseModel> MessageOperationAsync(MessageDbo data);
+        public Task<ResponseModel> JobOperationAsync(string data);
+        public Task<RpcResponseModel> RpcOperationAsync(string data);
+        public Task RpcResponseOperationAsync(string rpc);
         #endregion
     }
 }

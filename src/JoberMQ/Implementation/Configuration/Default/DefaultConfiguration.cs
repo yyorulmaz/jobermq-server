@@ -1,6 +1,7 @@
 ﻿using JoberMQ.Common.Enums.Configuration;
 using JoberMQ.Abstraction.Configuration;
 using JoberMQ.Factories.Configuration;
+using JoberMQ.Constants;
 
 namespace JoberMQ.Implementation.Configuration.Default
 {
@@ -31,6 +32,9 @@ namespace JoberMQ.Implementation.Configuration.Default
             configurationDistributor = ConfigurationDistributorFactory.Create(configurationDistributorFactory);
             configurationBroker = ConfigurationBrokerFactory.Create(configurationBrokerFactory);
         }
+
+        public bool isOwinHost = ConfigurationConst.IsOwinHost;
+        public bool IsOwinHost { get => isOwinHost; set => isOwinHost = value; }
 
         IConfigurationClient configurationClient;
         public IConfigurationClient ConfigurationClient { get => configurationClient; set => configurationClient = value; }

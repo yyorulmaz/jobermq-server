@@ -2,6 +2,7 @@
 {
     public interface IConfiguration
     {
+        public bool IsOwinHost { get; set; }
         public IConfigurationClient ConfigurationClient { get; set; }
         public IConfigurationStatusCode ConfigurationStatusCode { get; set; }
         public IConfigurationPublisher ConfigurationPublisher { get; set; }
@@ -13,10 +14,5 @@
         public IConfigurationSecurity ConfigurationSecurity { get; set; }
         public IConfigurationDistributor ConfigurationDistributor { get; set; }
         public IConfigurationBroker ConfigurationBroker { get; set; }
-        
-
-
-
-
     }
 }

@@ -3,7 +3,7 @@ using JoberMQ.Common.Dbos;
 
 namespace JoberMQ.Abstraction.Database
 {
-    internal interface IDatabase
+    public interface IDatabase
     {
         public IDboCreator DboCreator { get; }
 

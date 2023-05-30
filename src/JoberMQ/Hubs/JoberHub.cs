@@ -9,7 +9,8 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace JoberMQ.Hubs
 {
-    internal class JoberHub : Hub
+
+    public class JoberHub : Hub
     {
         #region Connect
         public override Task OnConnectedAsync()

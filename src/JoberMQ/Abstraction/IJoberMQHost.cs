@@ -4,12 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using JoberMQ.Abstraction.Configuration;
+using JoberMQ.Hubs;
+using Microsoft.AspNetCore.SignalR;
 
 namespace JoberMQ.Abstraction
 {
     public interface IJoberMQHost
     {
         internal IConfiguration Configuration { get; }
-        public Task StartAsync();
+        public Task StartAsync(IHubContext<JoberHub> hubContext = null);
     }
 }

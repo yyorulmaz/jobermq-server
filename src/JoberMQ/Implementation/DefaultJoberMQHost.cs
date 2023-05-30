@@ -4,6 +4,8 @@ using JoberMQ.Abstraction.Configuration;
 using JoberMQ.Constants;
 using JoberMQ.Factories;
 using JoberMQ.Factories.Configuration;
+using JoberMQ.Hubs;
+using Microsoft.AspNetCore.SignalR;
 
 namespace JoberMQ.Implementation
 {
@@ -17,10 +19,10 @@ namespace JoberMQ.Implementation
         readonly IConfiguration configuration;
         IConfiguration IJoberMQHost.Configuration => configuration;
 
-        public async Task StartAsync()
+        public async Task StartAsync(IHubContext<JoberHub> hubContext = null)
         {
             var joberMQ = JoberMQFactory.Create(JoberMQConst.JoberMQFactory, configuration == null ? ConfigurationFactory.Create(ConfigurationConst.ConfigurationFactory) : configuration);
-            await joberMQ.StartAsync();
+            await joberMQ.StartAsync(configuration.IsOwinHost, hubContext);
         }
     }
 }

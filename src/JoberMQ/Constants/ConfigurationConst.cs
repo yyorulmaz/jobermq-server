@@ -4,6 +4,7 @@ namespace JoberMQ.Constants
 {
     internal class ConfigurationConst
     {
+        internal const bool IsOwinHost = true;
         internal const ConfigurationFactoryEnum ConfigurationFactory = ConfigurationFactoryEnum.Default;
         internal const ConfigurationClientFactoryEnum ConfigurationClientFactory = ConfigurationClientFactoryEnum.Default;
         internal const ConfigurationStatusCodeFactoryEnum ConfigurationStatusCodeFactory = ConfigurationStatusCodeFactoryEnum.Default;

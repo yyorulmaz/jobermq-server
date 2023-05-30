@@ -1,4 +1,0 @@
-docker volume create jobermq_data
-docker build -t jobermq:v1 .
-docker run -d -p 7654:7654 -p 7655:7655 --name jobermqcontainer -v jobermq_data:/data jobermq:v1 .
-docker start jobermqcontainer

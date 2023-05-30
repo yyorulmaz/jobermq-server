@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Worker">
+﻿<Project Sdk="Microsoft.NET.Sdk.Worker">
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
@@ -17,7 +17,40 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\jobermq-common\src\JoberMQ.Common\JoberMQ.Common.csproj" />
     <ProjectReference Include="..\JoberMQ\JoberMQ.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Controllers\" />
+  </ItemGroup>
+
+	<ItemGroup Condition=" '$(Configuration)' == 'Release'">
+
+		<Compile Include="C:\src\jobermq-server\src\JoberMQ\Controllers\AccountController.cs">
+			<Link>Controllers\%(RecursiveDir)%(Filename)%(Extension)</Link>
+			<Visible>true</Visible>
+		</Compile>
+
+		<!--<Compile Include="C:\src\jobermq-server\src\JoberMQ\Hubs\JoberHub.cs">
+			<Link>Hubs\%(RecursiveDir)%(Filename)%(Extension)</Link>
+			<Visible>true</Visible>
+		</Compile>-->
+
+	</ItemGroup>
+
+	<ItemGroup Condition=" '$(Configuration)' == 'Debug'">
+
+		<Compile Include="C:\src\jobermq-server\src\JoberMQ\Controllers\AccountController.cs">
+			<Link>Controllers\%(RecursiveDir)%(Filename)%(Extension)</Link>
+			<Visible>true</Visible>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Compile>
+
+		<!--<Compile Include="C:\src\jobermq-server\src\JoberMQ\Hubs\JoberHub.cs">
+			<Link>Hubs\%(RecursiveDir)%(Filename)%(Extension)</Link>
+			<Visible>true</Visible>
+		</Compile>-->
+
+	</ItemGroup>
+	
 </Project>
