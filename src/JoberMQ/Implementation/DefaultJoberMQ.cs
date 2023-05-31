@@ -42,7 +42,7 @@ namespace JoberMQ.Implementation
 {
     internal class DefaultJoberMQ : IJoberMQ
     {
-        public DefaultJoberMQ(IConfiguration configuration)
+        public DefaultJoberMQ(JoberMQ.Abstraction.Configuration.IConfiguration configuration)
         {
             this.configuration = configuration;
             this.statusCode = StatusCodeFactory.Create(configuration.ConfigurationStatusCode.StatusCodeFactory, configuration.ConfigurationStatusCode.StatusCodeDatas, configuration.ConfigurationStatusCode.StatusCodeMessageLanguage);
@@ -57,8 +57,8 @@ namespace JoberMQ.Implementation
             JoberHost.JoberMQ = this;
         }
 
-        IConfiguration configuration;
-        IConfiguration IJoberMQ.Configuration => configuration;
+        JoberMQ.Abstraction.Configuration.IConfiguration configuration;
+        JoberMQ.Abstraction.Configuration.IConfiguration IJoberMQ.Configuration => configuration;
 
         IStatusCode statusCode;
         IStatusCode IJoberMQ.StatusCode => statusCode;

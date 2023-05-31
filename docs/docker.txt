@@ -33,7 +33,7 @@ COPY bin/Release/net7.0/publish /app/
 ENTRYPOINT ["dotnet", "JoberMQServer.dll"]
 
 
-7	-	proje publish et
+7	-	projemi publish ettim
 
 8	-	docker volume create jobermq_data
 
@@ -55,3 +55,24 @@ docker volume create jobermq_data
 docker build -t jobermq:v1 .
 docker run -d -p 7654:7654 -p 7655:7655 --name jobermqcontainer -v jobermq_data:/data jobermq:v1 .
 docker start jobermqcontainer
+
+
+Aþaðýdaki iþlemler ile docker üzerinde bir asp.net core web projesi yayýnladým. 
+1. cd C:\src\jobermq-server\src\JoberMQServer
+2. dotnet dev-certs https -ep $env:USERPROFILE\.aspnet\https\jobermqserver.pfx -p Yy13082104Yy
+3. dotnet dev-certs https --trust
+4. dotnet user-secrets -p JoberMQServer.csproj set "Kestrel:Certificates:Development:Password" "Yy13082104Yy"
+5. projemi publish ettim
+6. docker volume create jobermq_data
+7. docker build --pull -t jobermq_server:v1 .
+8. docker create -it --restart=always --ip=172.20.0.2 --network=investnetwork -p 7654:80 -p 7655:443 --name jobermq_server_container -e ASPNETCORE_URLS="https://+;http://+" -e ASPNETCORE_HTTPS_PORT=7655 -e ASPNETCORE_ENVIRONMENT=Development -v $env:APPDATA\microsoft\UserSecrets\:/root/.microsoft/usersecrets -v $env:USERPROFILE\.aspnet\https:/root/.aspnet/https/ -v jobermq_data:/app/Database jobermq_server:v1
+9. docker start jobermq_server_container
+
+Sonra kendi bilgisayarýmdan aðagýdaki gibi iþlem çalýþtýrdýðýmda
+HubConnection hub = new HubConnectionBuilder()
+    .WithUrl("https://localhost:7655/TestHub", options => { })
+    .Build();
+await hub.StartAsync();
+
+Bana þu haqtayý veriyor
+The SSL connection could not be established, see inner exception

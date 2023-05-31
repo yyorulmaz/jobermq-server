@@ -7,7 +7,7 @@ namespace JoberMQ.Factories
 {
     internal class JoberMQFactory
     {
-        internal static IJoberMQ Create(JoberMQFactoryEnum joberMQFactory, IConfiguration configuration)
+        internal static IJoberMQ Create(JoberMQFactoryEnum joberMQFactory, JoberMQ.Abstraction.Configuration.IConfiguration configuration)
         {
             IJoberMQ result;
 

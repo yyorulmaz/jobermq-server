@@ -11,7 +11,7 @@ namespace JoberMQ.Abstraction
 {
     public interface IJoberMQHost
     {
-        internal IConfiguration Configuration { get; }
+        internal JoberMQ.Abstraction.Configuration.IConfiguration Configuration { get; }
         public Task StartAsync(IHubContext<JoberHub> hubContext = null);
     }
 }

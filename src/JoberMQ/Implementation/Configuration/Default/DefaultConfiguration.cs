@@ -5,7 +5,7 @@ using JoberMQ.Constants;
 
 namespace JoberMQ.Implementation.Configuration.Default
 {
-    internal class DefaultConfiguration : IConfiguration
+    internal class DefaultConfiguration : JoberMQ.Abstraction.Configuration.IConfiguration
     {
         public DefaultConfiguration(
             ConfigurationClientFactoryEnum configurationClientFactory,

@@ -19,7 +19,7 @@ namespace JoberMQ
         public static IJoberMQ JoberMQ { get; set; }
         public static bool IsJoberActive { get; set; }
 
-        public static IConfiguration CreateConfiguration(ConfigurationFactoryEnum configurationFactory = ConfigurationConst.ConfigurationFactory)
+        public static JoberMQ.Abstraction.Configuration.IConfiguration CreateConfiguration(ConfigurationFactoryEnum configurationFactory = ConfigurationConst.ConfigurationFactory)
             => ConfigurationFactory.Create(configurationFactory);
 
         public static JoberHostBuilder CreateBuilder()

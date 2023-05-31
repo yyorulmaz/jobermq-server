@@ -7,7 +7,7 @@ namespace JoberMQ.Factories.Configuration
 {
     internal class ConfigurationFactory
     {
-        internal static IConfiguration Create(
+        internal static JoberMQ.Abstraction.Configuration.IConfiguration Create(
             ConfigurationFactoryEnum configurationFactory,
             ConfigurationClientFactoryEnum configurationClientFactory = ConfigurationConst.ConfigurationClientFactory,
             ConfigurationStatusCodeFactoryEnum configurationStatusCodeFactory = ConfigurationConst.ConfigurationStatusCodeFactory,
@@ -21,7 +21,7 @@ namespace JoberMQ.Factories.Configuration
             ConfigurationDistributorFactoryEnum configurationDistributorFactory = ConfigurationConst.ConfigurationDistributorFactory,
             ConfigurationBrokerFactoryEnum configurationBrokerFactory = ConfigurationConst.ConfigurationBrokerFactory)
         {
-            IConfiguration result;
+            JoberMQ.Abstraction.Configuration.IConfiguration result;
 
             switch (configurationFactory)
             {

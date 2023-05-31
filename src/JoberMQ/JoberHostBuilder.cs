@@ -4,6 +4,6 @@ namespace JoberMQ
 {
     public class JoberHostBuilder
     {
-        public IConfiguration Configuration { get; set; }
+        public JoberMQ.Abstraction.Configuration.IConfiguration Configuration { get; set; }
     }
 }

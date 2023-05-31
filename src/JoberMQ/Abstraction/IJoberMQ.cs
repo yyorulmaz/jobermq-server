@@ -22,7 +22,7 @@ namespace JoberMQ.Abstraction
 {
     public interface IJoberMQ
     {
-        public IConfiguration Configuration { get; }
+        public JoberMQ.Abstraction.Configuration.IConfiguration Configuration { get; }
         public IStatusCode StatusCode { get; }
         public IClients Clients { get; }
         public IHubContext<JoberHub> JoberHubContext { get; set; }

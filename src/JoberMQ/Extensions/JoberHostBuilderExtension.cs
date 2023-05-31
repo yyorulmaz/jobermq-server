@@ -6,7 +6,7 @@ namespace JoberMQ.Extensions
 {
     public static class JoberHostBuilderExtension
     {
-        public static JoberHostBuilder Configuration(this JoberHostBuilder joberHostBuilder, IConfiguration configuration)
+        public static JoberHostBuilder Configuration(this JoberHostBuilder joberHostBuilder, JoberMQ.Abstraction.Configuration.IConfiguration configuration)
         {
             joberHostBuilder.Configuration = configuration;
             return joberHostBuilder;

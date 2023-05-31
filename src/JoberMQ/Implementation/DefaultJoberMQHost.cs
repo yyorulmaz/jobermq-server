@@ -11,13 +11,13 @@ namespace JoberMQ.Implementation
 {
     internal class DefaultJoberMQHost : IJoberMQHost
     {
-        public DefaultJoberMQHost(IConfiguration configuration)
+        public DefaultJoberMQHost(JoberMQ.Abstraction.Configuration.IConfiguration configuration)
         {
             this.configuration = configuration;
         }
 
-        readonly IConfiguration configuration;
-        IConfiguration IJoberMQHost.Configuration => configuration;
+        readonly JoberMQ.Abstraction.Configuration.IConfiguration configuration;
+        JoberMQ.Abstraction.Configuration.IConfiguration IJoberMQHost.Configuration => configuration;
 
         public async Task StartAsync(IHubContext<JoberHub> hubContext = null)
         {
