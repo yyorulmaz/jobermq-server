@@ -37,7 +37,7 @@ builder.Services.AddHostedService<Worker>();
 #endregion
 
 var app = builder.Build();
-JoberHost.Configure(app);
+JoberHost.Configure(app, false);
 
 Class1.serviceProvider =  app.Services;
 

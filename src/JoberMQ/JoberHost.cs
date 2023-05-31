@@ -97,9 +97,11 @@ namespace JoberMQ
             services.AddControllers();
             #endregion
         }
-        public static void Configure(IApplicationBuilder app)
+        public static void Configure(IApplicationBuilder app, bool owinHost)
         {
-            app.UseOwin();
+            if (owinHost)
+                app.UseOwin();
+
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();

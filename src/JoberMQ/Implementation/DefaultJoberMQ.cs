@@ -140,7 +140,7 @@ namespace JoberMQ.Implementation
                 var host = WebHost
                     .CreateDefaultBuilder()
                     .ConfigureServices(services => JoberHost.ConfigureServices(services))
-                    .Configure(app => JoberHost.Configure(app))
+                    .Configure(app => JoberHost.Configure(app, true))
                     .UseUrls(urlHttp.ToString(), urlHttps.ToString())
                     .Build();
 
