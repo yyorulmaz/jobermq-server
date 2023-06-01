@@ -35,8 +35,16 @@ ENTRYPOINT ["dotnet", "JoberMQServerWeb.dll"]
 
 6	-	docker volume create jobermq_data
 
-7	-	docker build --pull -t jobermq_server:v1 .
+7	-	docker build --pull -t jobermq_server:v1.0.0 .
 
-8	-	docker create -it --restart=always --ip=172.20.0.2 --network=investnetwork -p 7654:80 -p 7655:443 --name jobermq_server_container -e ASPNETCORE_URLS="https://+;http://+" -e ASPNETCORE_HTTPS_PORT=7655 -e ASPNETCORE_ENVIRONMENT=Development -v $env:APPDATA\microsoft\UserSecrets\:/root/.microsoft/usersecrets -v $env:USERPROFILE\.aspnet\https:/root/.aspnet/https/ -v jobermq_data:/app/Database jobermq_server:v1
+8	-	docker create -it --restart=always --ip=172.20.0.2 --network=investnetwork -p 7654:80 -p 7655:443 --name jobermq_server_container -e ASPNETCORE_URLS="https://+;http://+" -e ASPNETCORE_HTTPS_PORT=7655 -e ASPNETCORE_ENVIRONMENT=Development -v $env:APPDATA\microsoft\UserSecrets\:/root/.microsoft/usersecrets -v $env:USERPROFILE\.aspnet\https:/root/.aspnet/https/ -v jobermq_data:/app/Database jobermq_server:v1.0.0
 		
 9	-	docker start jobermq_server_container
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+8	-	docker create -it --restart=always --ip=172.20.0.2 --network=investnetwork -p 7654:80 -p 7655:443 --name jobermq_server_container -e ASPNETCORE_URLS="https://+;http://+" -e ASPNETCORE_HTTPS_PORT=7655 -e ASPNETCORE_ENVIRONMENT=Development -v $env:APPDATA\microsoft\UserSecrets\:/root/.microsoft/usersecrets -v $env:USERPROFILE\.aspnet\https:/root/.aspnet/https/ -v jobermq_data:/app/Database jobermq_server:v1
+
+
