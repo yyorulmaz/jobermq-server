@@ -50,25 +50,42 @@ namespace JoberMQ.Implementation.Queue.Default
             while (messageChilds.ChildData != null)
             {
                 var message = messageChilds.Get();
-                //var client = JoberHost.JoberMQ.Clients.Get(x => x.ClientKey == message.Message.Routing.ClientKey);
                 var client = clientChildData.FirstOrDefault(x => x.Value.ClientKey == message.Message.Routing.ClientKey);
 
                 if (client.Value != null)
                 {
-                    //JoberHost.JoberMQ.JoberHubContext.Clients.Client(client.ConnectionId).SendCoreAsync("ReceiveData", new[] { JsonConvert.SerializeObject(message) }).ConfigureAwait(false);
                     JoberHost.JoberMQ.JoberHubContext.Clients.Client(client.Key).SendCoreAsync("ReceiveData", new[] { message }).ConfigureAwait(false);
-                    message.Status.StatusTypeMessage = StatusTypeMessageEnum.SendClient;
-                    JoberHost.JoberMQ.Database.Message.Update(message.Id, message);
-
-                    messageChilds.Remove(message.Id);
+                    MessageEndOperation(message);
                 }
                 else
                 {
-                    // todo mesajın denenme durumlarına göre operasyonlar
+                    MessageEndOperation(message);
                 }
             }
 
             IsSendRuning = false;
+        }
+
+        private void MessageEndOperation(MessageDbo message)
+        {
+            message.Message.MessageConsuming.ConsumingRetryCounter++;
+            message.Status.StatusTypeMessage = StatusTypeMessageEnum.SendClient;
+
+            if (message.Message.MessageConsuming.ConsumingRetryCounter == message.Message.MessageConsuming.ConsumingRetryMaxCount && message.IsResult == false)
+            {
+                JoberHost.JoberMQ.Database.Message.Delete(message.Id, message);
+                messageChilds.Remove(message.Id);
+            }
+            else if (message.Message.MessageConsuming.ConsumingRetryCounter == message.Message.MessageConsuming.ConsumingRetryMaxCount && message.IsResult == true)
+            {
+                JoberHost.JoberMQ.Database.Message.Delete(message.Id, message);
+            }
+            else
+            {
+                messageChilds.Remove(message.Id);
+                messageChilds.Add(message.Id, message);
+                JoberHost.JoberMQ.Database.Message.Update(message.Id, message);
+            }
         }
     }
 }
