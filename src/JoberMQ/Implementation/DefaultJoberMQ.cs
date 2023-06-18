@@ -271,15 +271,20 @@ namespace JoberMQ.Implementation
 
             var subCheck = database.Subscript.Get(x => x.ClientKey == clientKey && x.QueueKey == queueKey);
 
-            var subscrriptDbo = new SubscriptDbo();
-            subscrriptDbo.ClientKey = clientKey;
-            subscrriptDbo.QueueKey = queueKey;
-            subscrriptDbo.IsDurable = isDurable;
-
             if (subCheck == null)
-                database.Subscript.Add(Guid.NewGuid(), subscrriptDbo);
+            {
+                var subscrriptDbo = new SubscriptDbo();
+                subscrriptDbo.Id = Guid.NewGuid();
+                subscrriptDbo.ClientKey = clientKey;
+                subscrriptDbo.QueueKey = queueKey;
+                subscrriptDbo.IsDurable = isDurable;
+                database.Subscript.Add(subscrriptDbo.Id, subscrriptDbo);
+            }
             else
-                database.Subscript.Update(subCheck.Id, subscrriptDbo);
+            {
+                subCheck.IsDurable = isDurable;
+                database.Subscript.Update(subCheck.Id, subCheck);
+            }
 
             return result;
         }

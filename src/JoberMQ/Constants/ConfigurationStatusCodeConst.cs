@@ -614,9 +614,37 @@ namespace JoberMQ.Constants
             });
             #endregion
 
-            
-            
-            
+
+
+
+
+            datas.TryAdd("1.6.1", new StatusCodeModel
+            {
+                StatusCodeType = StatusCodeTypeEnum.Error,
+                StatusCode = "1.6.1",
+                StatusCodeMessages = new List<StatusCodeMessageModel>
+                {
+                    new StatusCodeMessageModel
+                    {
+                        Language = StatusCodeMessageLanguageEnum.tr,
+                        Message = ""
+                    },
+                    new StatusCodeMessageModel
+                    {
+                        Language = StatusCodeMessageLanguageEnum.en,
+                        Message = ""
+                    }
+                }
+            });
+
+
+
+
+
+
+
+
+
 
             datas.TryAdd("1.7.11", new StatusCodeModel
             {

@@ -30,7 +30,8 @@ namespace JoberMQ.Implementation.Queue.Default
             {
                 IsSendRuning = true;
 
-                Task.Run(() => {
+                Task.Run(() =>
+                {
                     Qperation();
                 });
             }
@@ -52,10 +53,9 @@ namespace JoberMQ.Implementation.Queue.Default
 
                 //todo paralel for kullanırmıyım
                 foreach (var client in clientChildData)
-                {
                     JoberHost.JoberMQ.JoberHubContext.Clients.Client(client.Value.ConnectionId).SendCoreAsync("ReceiveData", new[] { message }).ConfigureAwait(false);
-                    MessageEndOperation(message);
-                }
+
+                MessageEndOperation(message);
             }
 
             IsSendRuning = false;
