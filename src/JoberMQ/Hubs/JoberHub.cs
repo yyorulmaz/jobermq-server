@@ -57,6 +57,9 @@ namespace JoberMQ.Hubs
         public async Task<ResponseBaseModel<QueueModel>> QueueGet(string data)
             => await JoberHost.JoberMQ.QueueOperationGetAsync(data);
         [Authorize(Roles = "administrators")]
+        public async Task<ResponseBaseModel<List<QueueModel>>> QueueGetAll(string data)
+           => await JoberHost.JoberMQ.QueueOperationGetAllAsync(data);
+        [Authorize(Roles = "administrators")]
         public async Task<ResponseBaseModel> QueueCreate(QueueModel data)
             => await JoberHost.JoberMQ.QueueOperationCreateAsync(data);
         [Authorize(Roles = "administrators")]
@@ -105,106 +108,5 @@ namespace JoberMQ.Hubs
             => await JoberHost.JoberMQ.RpcResponseOperationAsync(rpc);
         #endregion
 
-
-
-
-
-
-
-
-
-        public async Task<List<StatusSSSSModel>> StatusGet(string data)
-        {
-            var result = new List<StatusSSSSModel>();
-
-            result.Add(new StatusSSSSModel
-            {
-                Name = "DistributorMemData.DistributorDatas.Count",
-                Value = DistributorMemData.DistributorDatas.Count.ToString(),   
-            });
-            result.Add(new StatusSSSSModel
-            {
-                Name = "InMemoryMessage.MessageMasterData.Count",
-                Value = InMemoryMessage.MessageMasterData.Count.ToString(),
-            });
-            result.Add(new StatusSSSSModel
-            {
-                Name = "JobMemData.JobDatas.Count",
-                Value = JobMemData.JobDatas.Count.ToString(),
-            });
-            result.Add(new StatusSSSSModel
-            {
-                Name = "JobTransactionMemData.JobTransactionDatas.Count",
-                Value = JobTransactionMemData.JobTransactionDatas.Count.ToString(),
-            });
-            result.Add(new StatusSSSSModel
-            {
-                Name = "MessageMemData.MessageDatas.Count",
-                Value = MessageMemData.MessageDatas.Count.ToString(),
-            });
-            result.Add(new StatusSSSSModel
-            {
-                Name = "MessageResultMemData.MessageResultDatas.Count",
-                Value = MessageResultMemData.MessageResultDatas.Count.ToString(),
-            });
-            result.Add(new StatusSSSSModel
-            {
-                Name = "QueueMemData.QueueDatas.Count",
-                Value = QueueMemData.QueueDatas.Count.ToString(),
-            });
-            result.Add(new StatusSSSSModel
-            {
-                Name = "SubscriptMemData.SubscriptDatas.Count",
-                Value = SubscriptMemData.SubscriptDatas.Count.ToString(),
-            });
-            result.Add(new StatusSSSSModel
-            {
-                Name = "UserMemData.UserDatas.Count",
-                Value = UserMemData.UserDatas.Count.ToString(),
-            });
-
-
-
-            result.Add(new StatusSSSSModel
-            {
-                Name = "JoberHost.IsJoberActive",
-                Value = JoberHost.IsJoberActive.ToString(),
-            });
-
-
-
-            result.Add(new StatusSSSSModel
-            {
-                Name = "JoberHost.JoberMQ.MessageMasterData.Count",
-                Value = JoberHost.JoberMQ.MessageMasterData.Count.ToString(),
-            });
-
-
-
-            foreach (var item in JoberHost.JoberMQ.Queues.MasterData)
-            {
-                if (item.Value.ChildMessageCount > 0)
-                {
-
-                    result.Add(new StatusSSSSModel
-                    {
-                        Name = item.Value.QueueKey,
-                        Value = item.Value.ChildMessageCount.ToString(),
-                    });
-                }
-            }
-
-            result.Add(new StatusSSSSModel
-            {
-                Name = "JoberHost.JoberMQ.Clients.Count",
-                Value = JoberHost.JoberMQ.Clients.Count.ToString(),
-            });
-
-
-
-            return result;
-        }
     }
-
-    
 }

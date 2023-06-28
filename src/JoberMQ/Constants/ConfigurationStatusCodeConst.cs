@@ -37,68 +37,6 @@ namespace JoberMQ.Constants
         {
             var datas = new ConcurrentDictionary<string, StatusCodeModel>();
 
-
-            #region Broker
-            datas.TryAdd("1.7.1", new StatusCodeModel
-            {
-                StatusCodeType = StatusCodeTypeEnum.Error,
-                StatusCode = "1.7.1",
-                StatusCodeMessages = new List<StatusCodeMessageModel>
-                {
-                    new StatusCodeMessageModel
-                    {
-                        Language = StatusCodeMessageLanguageEnum.tr,
-                        Message = "Bu isimde mevcut bir distributor var."
-                    },
-                    new StatusCodeMessageModel
-                    {
-                        Language = StatusCodeMessageLanguageEnum.en,
-                        Message = ""
-                    }
-                }
-            });
-            datas.TryAdd("1.7.2", new StatusCodeModel
-            {
-                StatusCodeType = StatusCodeTypeEnum.Information,
-                StatusCode = "1.7.2",
-                StatusCodeMessages = new List<StatusCodeMessageModel>
-                {
-                    new StatusCodeMessageModel
-                    {
-                        Language = StatusCodeMessageLanguageEnum.tr,
-                        Message = "Distributor eklendi."
-                    },
-                    new StatusCodeMessageModel
-                    {
-                        Language = StatusCodeMessageLanguageEnum.en,
-                        Message = ""
-                    }
-                }
-            });
-            datas.TryAdd("1.7.3", new StatusCodeModel
-            {
-                StatusCodeType = StatusCodeTypeEnum.Error,
-                StatusCode = "1.7.3",
-                StatusCodeMessages = new List<StatusCodeMessageModel>
-                {
-                    new StatusCodeMessageModel
-                    {
-                        Language = StatusCodeMessageLanguageEnum.tr,
-                        Message = "Distributor eklenirken hata oluştu."
-                    },
-                    new StatusCodeMessageModel
-                    {
-                        Language = StatusCodeMessageLanguageEnum.en,
-                        Message = ""
-                    }
-                }
-            });
-            #endregion
-
-
-
-
-
             #region JoberMQ.Broker
             datas.TryAdd("1.7.1", new StatusCodeModel
             {
@@ -282,16 +220,52 @@ namespace JoberMQ.Constants
             });
 
 
-            datas.TryAdd("1.7.51", new StatusCodeModel
+            datas.TryAdd("1.7.11", new StatusCodeModel
             {
                 StatusCodeType = StatusCodeTypeEnum.Error,
-                StatusCode = "1.7.51",
+                StatusCode = "1.7.11",
                 StatusCodeMessages = new List<StatusCodeMessageModel>
                 {
                     new StatusCodeMessageModel
                     {
                         Language = StatusCodeMessageLanguageEnum.tr,
-                        Message = "isminde bir distributor yok."
+                        Message = "Bu isimde mevcut bir distributor var."
+                    },
+                    new StatusCodeMessageModel
+                    {
+                        Language = StatusCodeMessageLanguageEnum.en,
+                        Message = ""
+                    }
+                }
+            });
+            datas.TryAdd("1.7.12", new StatusCodeModel
+            {
+                StatusCodeType = StatusCodeTypeEnum.Information,
+                StatusCode = "1.7.12",
+                StatusCodeMessages = new List<StatusCodeMessageModel>
+                {
+                    new StatusCodeMessageModel
+                    {
+                        Language = StatusCodeMessageLanguageEnum.tr,
+                        Message = "Distributor eklendi."
+                    },
+                    new StatusCodeMessageModel
+                    {
+                        Language = StatusCodeMessageLanguageEnum.en,
+                        Message = ""
+                    }
+                }
+            });
+            datas.TryAdd("1.7.13", new StatusCodeModel
+            {
+                StatusCodeType = StatusCodeTypeEnum.Error,
+                StatusCode = "1.7.13",
+                StatusCodeMessages = new List<StatusCodeMessageModel>
+                {
+                    new StatusCodeMessageModel
+                    {
+                        Language = StatusCodeMessageLanguageEnum.tr,
+                        Message = "Distributor eklenirken hata oluştu."
                     },
                     new StatusCodeMessageModel
                     {
@@ -301,6 +275,392 @@ namespace JoberMQ.Constants
                 }
             });
 
+            datas.TryAdd("1.7.14", new StatusCodeModel
+            {
+                StatusCodeType = StatusCodeTypeEnum.Error,
+                StatusCode = "1.7.14",
+                StatusCodeMessages = new List<StatusCodeMessageModel>
+                {
+                    new StatusCodeMessageModel
+                    {
+                        Language = StatusCodeMessageLanguageEnum.tr,
+                        Message = "Bu isimde bir distributor yok."
+                    },
+                    new StatusCodeMessageModel
+                    {
+                        Language = StatusCodeMessageLanguageEnum.en,
+                        Message = ""
+                    }
+                }
+            });
+            datas.TryAdd("1.7.15", new StatusCodeModel
+            {
+                StatusCodeType = StatusCodeTypeEnum.Error,
+                StatusCode = "1.7.15",
+                StatusCodeMessages = new List<StatusCodeMessageModel>
+                {
+                    new StatusCodeMessageModel
+                    {
+                        Language = StatusCodeMessageLanguageEnum.tr,
+                        Message = "Default Distributörler üzerinde değişiklik yapılamaz."
+                    },
+                    new StatusCodeMessageModel
+                    {
+                        Language = StatusCodeMessageLanguageEnum.en,
+                        Message = ""
+                    }
+                }
+            });
+            datas.TryAdd("1.7.16", new StatusCodeModel
+            {
+                StatusCodeType = StatusCodeTypeEnum.Information,
+                StatusCode = "1.7.16",
+                StatusCodeMessages = new List<StatusCodeMessageModel>
+                {
+                    new StatusCodeMessageModel
+                    {
+                        Language = StatusCodeMessageLanguageEnum.tr,
+                        Message = "Distributor güncellendi."
+                    },
+                    new StatusCodeMessageModel
+                    {
+                        Language = StatusCodeMessageLanguageEnum.en,
+                        Message = ""
+                    }
+                }
+            });
+            datas.TryAdd("1.7.17", new StatusCodeModel
+            {
+                StatusCodeType = StatusCodeTypeEnum.Error,
+                StatusCode = "1.7.17",
+                StatusCodeMessages = new List<StatusCodeMessageModel>
+                {
+                    new StatusCodeMessageModel
+                    {
+                        Language = StatusCodeMessageLanguageEnum.tr,
+                        Message = "Distributor güncellenirken hata oluştu."
+                    },
+                    new StatusCodeMessageModel
+                    {
+                        Language = StatusCodeMessageLanguageEnum.en,
+                        Message = ""
+                    }
+                }
+            });
+
+
+            datas.TryAdd("1.7.18", new StatusCodeModel
+            {
+                StatusCodeType = StatusCodeTypeEnum.Information,
+                StatusCode = "1.7.18",
+                StatusCodeMessages = new List<StatusCodeMessageModel>
+                {
+                    new StatusCodeMessageModel
+                    {
+                        Language = StatusCodeMessageLanguageEnum.tr,
+                        Message = "Default Distributörler silinemez."
+                    },
+                    new StatusCodeMessageModel
+                    {
+                        Language = StatusCodeMessageLanguageEnum.en,
+                        Message = ""
+                    }
+                }
+            });
+            datas.TryAdd("1.7.19", new StatusCodeModel
+            {
+                StatusCodeType = StatusCodeTypeEnum.Information,
+                StatusCode = "1.7.19",
+                StatusCodeMessages = new List<StatusCodeMessageModel>
+                {
+                    new StatusCodeMessageModel
+                    {
+                        Language = StatusCodeMessageLanguageEnum.tr,
+                        Message = "Distributor'e bağlı kuyruk var, silemezsiniz."
+                    },
+                    new StatusCodeMessageModel
+                    {
+                        Language = StatusCodeMessageLanguageEnum.en,
+                        Message = ""
+                    }
+                }
+            });
+            datas.TryAdd("1.7.20", new StatusCodeModel
+            {
+                StatusCodeType = StatusCodeTypeEnum.Information,
+                StatusCode = "1.7.20",
+                StatusCodeMessages = new List<StatusCodeMessageModel>
+                {
+                    new StatusCodeMessageModel
+                    {
+                        Language = StatusCodeMessageLanguageEnum.tr,
+                        Message = "Distributor silindi."
+                    },
+                    new StatusCodeMessageModel
+                    {
+                        Language = StatusCodeMessageLanguageEnum.en,
+                        Message = ""
+                    }
+                }
+            });
+            datas.TryAdd("1.7.21", new StatusCodeModel
+            {
+                StatusCodeType = StatusCodeTypeEnum.Error,
+                StatusCode = "1.7.21",
+                StatusCodeMessages = new List<StatusCodeMessageModel>
+                {
+                    new StatusCodeMessageModel
+                    {
+                        Language = StatusCodeMessageLanguageEnum.tr,
+                        Message = "Distributor silinirken hata oluştu."
+                    },
+                    new StatusCodeMessageModel
+                    {
+                        Language = StatusCodeMessageLanguageEnum.en,
+                        Message = ""
+                    }
+                }
+            });
+
+
+
+            datas.TryAdd("1.7.51", new StatusCodeModel
+            {
+                StatusCodeType = StatusCodeTypeEnum.Error,
+                StatusCode = "1.7.51",
+                StatusCodeMessages = new List<StatusCodeMessageModel>
+                {
+                    new StatusCodeMessageModel
+                    {
+                        Language = StatusCodeMessageLanguageEnum.tr,
+                        Message = "Bu isimde mevcut bir queue var."
+                    },
+                    new StatusCodeMessageModel
+                    {
+                        Language = StatusCodeMessageLanguageEnum.en,
+                        Message = ""
+                    }
+                }
+            });
+            datas.TryAdd("1.7.52", new StatusCodeModel
+            {
+                StatusCodeType = StatusCodeTypeEnum.Information,
+                StatusCode = "1.7.52",
+                StatusCodeMessages = new List<StatusCodeMessageModel>
+                {
+                    new StatusCodeMessageModel
+                    {
+                        Language = StatusCodeMessageLanguageEnum.tr,
+                        Message = "Queue eklendi."
+                    },
+                    new StatusCodeMessageModel
+                    {
+                        Language = StatusCodeMessageLanguageEnum.en,
+                        Message = ""
+                    }
+                }
+            });
+            datas.TryAdd("1.7.53", new StatusCodeModel
+            {
+                StatusCodeType = StatusCodeTypeEnum.Error,
+                StatusCode = "1.7.53",
+                StatusCodeMessages = new List<StatusCodeMessageModel>
+                {
+                    new StatusCodeMessageModel
+                    {
+                        Language = StatusCodeMessageLanguageEnum.tr,
+                        Message = "Queue eklenirken hata oluştu."
+                    },
+                    new StatusCodeMessageModel
+                    {
+                        Language = StatusCodeMessageLanguageEnum.en,
+                        Message = ""
+                    }
+                }
+            });
+
+            datas.TryAdd("1.7.54", new StatusCodeModel
+            {
+                StatusCodeType = StatusCodeTypeEnum.Error,
+                StatusCode = "1.7.54",
+                StatusCodeMessages = new List<StatusCodeMessageModel>
+                {
+                    new StatusCodeMessageModel
+                    {
+                        Language = StatusCodeMessageLanguageEnum.tr,
+                        Message = "Bu isimde bir queue yok."
+                    },
+                    new StatusCodeMessageModel
+                    {
+                        Language = StatusCodeMessageLanguageEnum.en,
+                        Message = ""
+                    }
+                }
+            });
+            datas.TryAdd("1.7.55", new StatusCodeModel
+            {
+                StatusCodeType = StatusCodeTypeEnum.Error,
+                StatusCode = "1.7.55",
+                StatusCodeMessages = new List<StatusCodeMessageModel>
+                {
+                    new StatusCodeMessageModel
+                    {
+                        Language = StatusCodeMessageLanguageEnum.tr,
+                        Message = "Default Queue ler üzerinde değişiklik yapılamaz."
+                    },
+                    new StatusCodeMessageModel
+                    {
+                        Language = StatusCodeMessageLanguageEnum.en,
+                        Message = ""
+                    }
+                }
+            });
+            datas.TryAdd("1.7.56", new StatusCodeModel
+            {
+                StatusCodeType = StatusCodeTypeEnum.Information,
+                StatusCode = "1.7.56",
+                StatusCodeMessages = new List<StatusCodeMessageModel>
+                {
+                    new StatusCodeMessageModel
+                    {
+                        Language = StatusCodeMessageLanguageEnum.tr,
+                        Message = "Queue güncellendi."
+                    },
+                    new StatusCodeMessageModel
+                    {
+                        Language = StatusCodeMessageLanguageEnum.en,
+                        Message = ""
+                    }
+                }
+            });
+            datas.TryAdd("1.7.57", new StatusCodeModel
+            {
+                StatusCodeType = StatusCodeTypeEnum.Error,
+                StatusCode = "1.7.57",
+                StatusCodeMessages = new List<StatusCodeMessageModel>
+                {
+                    new StatusCodeMessageModel
+                    {
+                        Language = StatusCodeMessageLanguageEnum.tr,
+                        Message = "Queue güncellenirken hata oluştu."
+                    },
+                    new StatusCodeMessageModel
+                    {
+                        Language = StatusCodeMessageLanguageEnum.en,
+                        Message = ""
+                    }
+                }
+            });
+
+            datas.TryAdd("1.7.58", new StatusCodeModel
+            {
+                StatusCodeType = StatusCodeTypeEnum.Information,
+                StatusCode = "1.7.58",
+                StatusCodeMessages = new List<StatusCodeMessageModel>
+                {
+                    new StatusCodeMessageModel
+                    {
+                        Language = StatusCodeMessageLanguageEnum.tr,
+                        Message = "Default Queue ler silinemez."
+                    },
+                    new StatusCodeMessageModel
+                    {
+                        Language = StatusCodeMessageLanguageEnum.en,
+                        Message = ""
+                    }
+                }
+            });
+            datas.TryAdd("1.7.59", new StatusCodeModel
+            {
+                StatusCodeType = StatusCodeTypeEnum.Information,
+                StatusCode = "1.7.59",
+                StatusCodeMessages = new List<StatusCodeMessageModel>
+                {
+                    new StatusCodeMessageModel
+                    {
+                        Language = StatusCodeMessageLanguageEnum.tr,
+                        Message = "İçerisinde mesaj olan Queue ler silinemez."
+                    },
+                    new StatusCodeMessageModel
+                    {
+                        Language = StatusCodeMessageLanguageEnum.en,
+                        Message = ""
+                    }
+                }
+            });
+            datas.TryAdd("1.7.60", new StatusCodeModel
+            {
+                StatusCodeType = StatusCodeTypeEnum.Information,
+                StatusCode = "1.7.60",
+                StatusCodeMessages = new List<StatusCodeMessageModel>
+                {
+                    new StatusCodeMessageModel
+                    {
+                        Language = StatusCodeMessageLanguageEnum.tr,
+                        Message = "Queue silindi."
+                    },
+                    new StatusCodeMessageModel
+                    {
+                        Language = StatusCodeMessageLanguageEnum.en,
+                        Message = ""
+                    }
+                }
+            });
+            datas.TryAdd("1.7.61", new StatusCodeModel
+            {
+                StatusCodeType = StatusCodeTypeEnum.Error,
+                StatusCode = "1.7.61",
+                StatusCodeMessages = new List<StatusCodeMessageModel>
+                {
+                    new StatusCodeMessageModel
+                    {
+                        Language = StatusCodeMessageLanguageEnum.tr,
+                        Message = "Queue silinirken hata oluştu."
+                    },
+                    new StatusCodeMessageModel
+                    {
+                        Language = StatusCodeMessageLanguageEnum.en,
+                        Message = ""
+                    }
+                }
+            });
+
+            datas.TryAdd("1.7.62", new StatusCodeModel
+            {
+                StatusCodeType = StatusCodeTypeEnum.Information,
+                StatusCode = "1.7.62",
+                StatusCodeMessages = new List<StatusCodeMessageModel>
+                {
+                    new StatusCodeMessageModel
+                    {
+                        Language = StatusCodeMessageLanguageEnum.tr,
+                        Message = "Bind işlemi gerçekleştirildi."
+                    },
+                    new StatusCodeMessageModel
+                    {
+                        Language = StatusCodeMessageLanguageEnum.en,
+                        Message = ""
+                    }
+                }
+            });
+            datas.TryAdd("1.7.63", new StatusCodeModel
+            {
+                StatusCodeType = StatusCodeTypeEnum.Error,
+                StatusCode = "1.7.63",
+                StatusCodeMessages = new List<StatusCodeMessageModel>
+                {
+                    new StatusCodeMessageModel
+                    {
+                        Language = StatusCodeMessageLanguageEnum.tr,
+                        Message = "Bind işlemi gerçekleştirilirken hata oluştu."
+                    },
+                    new StatusCodeMessageModel
+                    {
+                        Language = StatusCodeMessageLanguageEnum.en,
+                        Message = ""
+                    }
+                }
+            });
             #endregion
 
             #region JoberMQ.Timing
@@ -636,400 +996,6 @@ namespace JoberMQ.Constants
                     }
                 }
             });
-
-
-
-
-
-
-
-
-
-
-            datas.TryAdd("1.7.11", new StatusCodeModel
-            {
-                StatusCodeType = StatusCodeTypeEnum.Error,
-                StatusCode = "1.7.11",
-                StatusCodeMessages = new List<StatusCodeMessageModel>
-                {
-                    new StatusCodeMessageModel
-                    {
-                        Language = StatusCodeMessageLanguageEnum.tr,
-                        Message = "Bu isimde bir distributor yok."
-                    },
-                    new StatusCodeMessageModel
-                    {
-                        Language = StatusCodeMessageLanguageEnum.en,
-                        Message = ""
-                    }
-                }
-            });
-            datas.TryAdd("1.7.12", new StatusCodeModel
-            {
-                StatusCodeType = StatusCodeTypeEnum.Information,
-                StatusCode = "1.7.12",
-                StatusCodeMessages = new List<StatusCodeMessageModel>
-                {
-                    new StatusCodeMessageModel
-                    {
-                        Language = StatusCodeMessageLanguageEnum.tr,
-                        Message = "Default Distributörler üzerinde değişiklik yapılamaz."
-                    },
-                    new StatusCodeMessageModel
-                    {
-                        Language = StatusCodeMessageLanguageEnum.en,
-                        Message = ""
-                    }
-                }
-            });
-            datas.TryAdd("1.7.13", new StatusCodeModel
-            {
-                StatusCodeType = StatusCodeTypeEnum.Information,
-                StatusCode = "1.7.13",
-                StatusCodeMessages = new List<StatusCodeMessageModel>
-                {
-                    new StatusCodeMessageModel
-                    {
-                        Language = StatusCodeMessageLanguageEnum.tr,
-                        Message = "Distributor güncellendi."
-                    },
-                    new StatusCodeMessageModel
-                    {
-                        Language = StatusCodeMessageLanguageEnum.en,
-                        Message = ""
-                    }
-                }
-            });
-            datas.TryAdd("1.7.14", new StatusCodeModel
-            {
-                StatusCodeType = StatusCodeTypeEnum.Error,
-                StatusCode = "1.7.14",
-                StatusCodeMessages = new List<StatusCodeMessageModel>
-                {
-                    new StatusCodeMessageModel
-                    {
-                        Language = StatusCodeMessageLanguageEnum.tr,
-                        Message = "Distributor güncellenirken hata oluştu."
-                    },
-                    new StatusCodeMessageModel
-                    {
-                        Language = StatusCodeMessageLanguageEnum.en,
-                        Message = ""
-                    }
-                }
-            });
-
-            datas.TryAdd("1.7.15", new StatusCodeModel
-            {
-                StatusCodeType = StatusCodeTypeEnum.Information,
-                StatusCode = "1.7.15",
-                StatusCodeMessages = new List<StatusCodeMessageModel>
-                {
-                    new StatusCodeMessageModel
-                    {
-                        Language = StatusCodeMessageLanguageEnum.tr,
-                        Message = "Default Distributörler silinemez."
-                    },
-                    new StatusCodeMessageModel
-                    {
-                        Language = StatusCodeMessageLanguageEnum.en,
-                        Message = ""
-                    }
-                }
-            });
-            datas.TryAdd("1.7.16", new StatusCodeModel
-            {
-                StatusCodeType = StatusCodeTypeEnum.Information,
-                StatusCode = "1.7.16",
-                StatusCodeMessages = new List<StatusCodeMessageModel>
-                {
-                    new StatusCodeMessageModel
-                    {
-                        Language = StatusCodeMessageLanguageEnum.tr,
-                        Message = "Distributor'e bağlı kuyruk var, silemezsiniz."
-                    },
-                    new StatusCodeMessageModel
-                    {
-                        Language = StatusCodeMessageLanguageEnum.en,
-                        Message = ""
-                    }
-                }
-            });
-            datas.TryAdd("1.7.17", new StatusCodeModel
-            {
-                StatusCodeType = StatusCodeTypeEnum.Information,
-                StatusCode = "1.7.17",
-                StatusCodeMessages = new List<StatusCodeMessageModel>
-                {
-                    new StatusCodeMessageModel
-                    {
-                        Language = StatusCodeMessageLanguageEnum.tr,
-                        Message = "Distributor silindi."
-                    },
-                    new StatusCodeMessageModel
-                    {
-                        Language = StatusCodeMessageLanguageEnum.en,
-                        Message = ""
-                    }
-                }
-            });
-            datas.TryAdd("1.7.18", new StatusCodeModel
-            {
-                StatusCodeType = StatusCodeTypeEnum.Error,
-                StatusCode = "1.7.18",
-                StatusCodeMessages = new List<StatusCodeMessageModel>
-                {
-                    new StatusCodeMessageModel
-                    {
-                        Language = StatusCodeMessageLanguageEnum.tr,
-                        Message = "Distributor silinirken hata oluştu."
-                    },
-                    new StatusCodeMessageModel
-                    {
-                        Language = StatusCodeMessageLanguageEnum.en,
-                        Message = ""
-                    }
-                }
-            });
-
-            datas.TryAdd("1.7.51", new StatusCodeModel
-            {
-                StatusCodeType = StatusCodeTypeEnum.Error,
-                StatusCode = "1.7.51",
-                StatusCodeMessages = new List<StatusCodeMessageModel>
-                {
-                    new StatusCodeMessageModel
-                    {
-                        Language = StatusCodeMessageLanguageEnum.tr,
-                        Message = "Bu isimde mevcut bir queue var."
-                    },
-                    new StatusCodeMessageModel
-                    {
-                        Language = StatusCodeMessageLanguageEnum.en,
-                        Message = ""
-                    }
-                }
-            });
-            datas.TryAdd("1.7.52", new StatusCodeModel
-            {
-                StatusCodeType = StatusCodeTypeEnum.Information,
-                StatusCode = "1.7.52",
-                StatusCodeMessages = new List<StatusCodeMessageModel>
-                {
-                    new StatusCodeMessageModel
-                    {
-                        Language = StatusCodeMessageLanguageEnum.tr,
-                        Message = "Queue eklendi."
-                    },
-                    new StatusCodeMessageModel
-                    {
-                        Language = StatusCodeMessageLanguageEnum.en,
-                        Message = ""
-                    }
-                }
-            });
-            datas.TryAdd("1.7.53", new StatusCodeModel
-            {
-                StatusCodeType = StatusCodeTypeEnum.Error,
-                StatusCode = "1.7.53",
-                StatusCodeMessages = new List<StatusCodeMessageModel>
-                {
-                    new StatusCodeMessageModel
-                    {
-                        Language = StatusCodeMessageLanguageEnum.tr,
-                        Message = "Queue eklenirken hata oluştu."
-                    },
-                    new StatusCodeMessageModel
-                    {
-                        Language = StatusCodeMessageLanguageEnum.en,
-                        Message = ""
-                    }
-                }
-            });
-
-            datas.TryAdd("1.7.54", new StatusCodeModel
-            {
-                StatusCodeType = StatusCodeTypeEnum.Error,
-                StatusCode = "1.7.54",
-                StatusCodeMessages = new List<StatusCodeMessageModel>
-                {
-                    new StatusCodeMessageModel
-                    {
-                        Language = StatusCodeMessageLanguageEnum.tr,
-                        Message = "Bu isimde bir queue yok."
-                    },
-                    new StatusCodeMessageModel
-                    {
-                        Language = StatusCodeMessageLanguageEnum.en,
-                        Message = ""
-                    }
-                }
-            });
-            datas.TryAdd("1.7.55", new StatusCodeModel
-            {
-                StatusCodeType = StatusCodeTypeEnum.Error,
-                StatusCode = "1.7.55",
-                StatusCodeMessages = new List<StatusCodeMessageModel>
-                {
-                    new StatusCodeMessageModel
-                    {
-                        Language = StatusCodeMessageLanguageEnum.tr,
-                        Message = "Default Queue ler üzerinde değişiklik yapılamaz."
-                    },
-                    new StatusCodeMessageModel
-                    {
-                        Language = StatusCodeMessageLanguageEnum.en,
-                        Message = ""
-                    }
-                }
-            });
-            datas.TryAdd("1.7.56", new StatusCodeModel
-            {
-                StatusCodeType = StatusCodeTypeEnum.Information,
-                StatusCode = "1.7.56",
-                StatusCodeMessages = new List<StatusCodeMessageModel>
-                {
-                    new StatusCodeMessageModel
-                    {
-                        Language = StatusCodeMessageLanguageEnum.tr,
-                        Message = "Queue güncellendi."
-                    },
-                    new StatusCodeMessageModel
-                    {
-                        Language = StatusCodeMessageLanguageEnum.en,
-                        Message = ""
-                    }
-                }
-            });
-            datas.TryAdd("1.7.57", new StatusCodeModel
-            {
-                StatusCodeType = StatusCodeTypeEnum.Error,
-                StatusCode = "1.7.57",
-                StatusCodeMessages = new List<StatusCodeMessageModel>
-                {
-                    new StatusCodeMessageModel
-                    {
-                        Language = StatusCodeMessageLanguageEnum.tr,
-                        Message = "Queue güncellenirken hata oluştu."
-                    },
-                    new StatusCodeMessageModel
-                    {
-                        Language = StatusCodeMessageLanguageEnum.en,
-                        Message = ""
-                    }
-                }
-            });
-
-            datas.TryAdd("1.7.58", new StatusCodeModel
-            {
-                StatusCodeType = StatusCodeTypeEnum.Information,
-                StatusCode = "1.7.58",
-                StatusCodeMessages = new List<StatusCodeMessageModel>
-                {
-                    new StatusCodeMessageModel
-                    {
-                        Language = StatusCodeMessageLanguageEnum.tr,
-                        Message = "Default Queue ler silinemez."
-                    },
-                    new StatusCodeMessageModel
-                    {
-                        Language = StatusCodeMessageLanguageEnum.en,
-                        Message = ""
-                    }
-                }
-            });
-            datas.TryAdd("1.7.59", new StatusCodeModel
-            {
-                StatusCodeType = StatusCodeTypeEnum.Information,
-                StatusCode = "1.7.59",
-                StatusCodeMessages = new List<StatusCodeMessageModel>
-                {
-                    new StatusCodeMessageModel
-                    {
-                        Language = StatusCodeMessageLanguageEnum.tr,
-                        Message = "İçerisinde mesaj olan Queue ler silinemez."
-                    },
-                    new StatusCodeMessageModel
-                    {
-                        Language = StatusCodeMessageLanguageEnum.en,
-                        Message = ""
-                    }
-                }
-            });
-            datas.TryAdd("1.7.60", new StatusCodeModel
-            {
-                StatusCodeType = StatusCodeTypeEnum.Information,
-                StatusCode = "1.7.60",
-                StatusCodeMessages = new List<StatusCodeMessageModel>
-                {
-                    new StatusCodeMessageModel
-                    {
-                        Language = StatusCodeMessageLanguageEnum.tr,
-                        Message = "Queue silindi."
-                    },
-                    new StatusCodeMessageModel
-                    {
-                        Language = StatusCodeMessageLanguageEnum.en,
-                        Message = ""
-                    }
-                }
-            });
-            datas.TryAdd("1.7.61", new StatusCodeModel
-            {
-                StatusCodeType = StatusCodeTypeEnum.Error,
-                StatusCode = "1.7.61",
-                StatusCodeMessages = new List<StatusCodeMessageModel>
-                {
-                    new StatusCodeMessageModel
-                    {
-                        Language = StatusCodeMessageLanguageEnum.tr,
-                        Message = "Queue silinirken hata oluştu."
-                    },
-                    new StatusCodeMessageModel
-                    {
-                        Language = StatusCodeMessageLanguageEnum.en,
-                        Message = ""
-                    }
-                }
-            });
-
-            datas.TryAdd("1.7.62", new StatusCodeModel
-            {
-                StatusCodeType = StatusCodeTypeEnum.Information,
-                StatusCode = "1.7.62",
-                StatusCodeMessages = new List<StatusCodeMessageModel>
-                {
-                    new StatusCodeMessageModel
-                    {
-                        Language = StatusCodeMessageLanguageEnum.tr,
-                        Message = "Bind işlemi gerçekleştirildi."
-                    },
-                    new StatusCodeMessageModel
-                    {
-                        Language = StatusCodeMessageLanguageEnum.en,
-                        Message = ""
-                    }
-                }
-            });
-            datas.TryAdd("1.7.63", new StatusCodeModel
-            {
-                StatusCodeType = StatusCodeTypeEnum.Error,
-                StatusCode = "1.7.63",
-                StatusCodeMessages = new List<StatusCodeMessageModel>
-                {
-                    new StatusCodeMessageModel
-                    {
-                        Language = StatusCodeMessageLanguageEnum.tr,
-                        Message = "Bind işlemi gerçekleştirilirken hata oluştu."
-                    },
-                    new StatusCodeMessageModel
-                    {
-                        Language = StatusCodeMessageLanguageEnum.en,
-                        Message = ""
-                    }
-                }
-            });
-
 
 
 

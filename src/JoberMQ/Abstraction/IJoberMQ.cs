@@ -55,6 +55,7 @@ namespace JoberMQ.Abstraction
 
         #region Queue
         public Task<ResponseBaseModel<QueueModel>> QueueOperationGetAsync(string data);
+        public Task<ResponseBaseModel<List<QueueModel>>> QueueOperationGetAllAsync(string data);
         public Task<ResponseBaseModel> QueueOperationCreateAsync(QueueModel data);
         public Task<ResponseBaseModel> QueueOperationEditAsync(QueueModel data);
         public Task<ResponseBaseModel> QueueOperationRemoveAsync(string data);

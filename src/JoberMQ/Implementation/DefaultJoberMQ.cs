@@ -249,6 +249,34 @@ namespace JoberMQ.Implementation
 
             return result;
         }
+        async Task<ResponseBaseModel<List<QueueModel>>> IJoberMQ.QueueOperationGetAllAsync(string data)
+        {
+            var result = new ResponseBaseModel<List<QueueModel>>();
+            result.IsOnline = true;
+            result.Message = "";
+            result.IsSucces = true;
+            result.Data = new List<QueueModel>();
+
+            var queueAll = queues.GetAll();
+            foreach (var item in queueAll)
+            {
+                var que = new QueueModel
+                {
+                    QueueKey = item.QueueKey,
+                    Tags = item.Tags,
+                    QueueMatchType = item.QueueMatchType,
+                    QueueOrderOfSendingType = item.QueueOrderOfSendingType,
+                    PermissionType = item.PermissionType,
+                    IsDurable = item.IsDurable,
+                    IsDefault = item.IsDefault,
+                    IsActive = item.IsActive
+                };
+
+                result.Data.Add(que);
+            }
+
+            return result;
+        }
         async Task<ResponseBaseModel> IJoberMQ.QueueOperationCreateAsync(QueueModel data)
             => await messageBroker.QueueCreate(data.QueueKey, data.Tags, data.QueueMatchType.Value, data.QueueOrderOfSendingType.Value, data.PermissionType, data.IsDurable, data.IsActive);
         async Task<ResponseBaseModel> IJoberMQ.QueueOperationEditAsync(QueueModel data)

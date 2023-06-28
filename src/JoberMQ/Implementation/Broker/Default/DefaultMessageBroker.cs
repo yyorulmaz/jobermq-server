@@ -184,7 +184,7 @@ namespace JoberMQ.Implementation.Broker.Default
                 if (distributor != null)
                 {
                     result.IsSucces = false;
-                    result.Message = JoberHost.JoberMQ.StatusCode.GetStatusMessage("1.7.1");
+                    result.Message = JoberHost.JoberMQ.StatusCode.GetStatusMessage("1.7.11");
                 }
                 else
                 {
@@ -202,12 +202,12 @@ namespace JoberMQ.Implementation.Broker.Default
                     if (resultDistributorAdd == true && resultDatabase == true)
                     {
                         result.IsSucces = true;
-                        result.Message = JoberHost.JoberMQ.StatusCode.GetStatusMessage("1.7.2");
+                        result.Message = JoberHost.JoberMQ.StatusCode.GetStatusMessage("1.7.12");
                     }
                     else
                     {
                         result.IsSucces = false;
-                        result.Message = JoberHost.JoberMQ.StatusCode.GetStatusMessage("1.7.3");
+                        result.Message = JoberHost.JoberMQ.StatusCode.GetStatusMessage("1.7.13");
                     }
                 }
             });
@@ -225,12 +225,12 @@ namespace JoberMQ.Implementation.Broker.Default
                 if (distributor == null)
                 {
                     result.IsSucces = false;
-                    result.Message = JoberHost.JoberMQ.StatusCode.GetStatusMessage("1.7.11");
+                    result.Message = JoberHost.JoberMQ.StatusCode.GetStatusMessage("1.7.14");
                 }
                 else if (distributor.IsDefault)
                 {
                     result.IsSucces = false;
-                    result.Message = JoberHost.JoberMQ.StatusCode.GetStatusMessage("1.7.12");
+                    result.Message = JoberHost.JoberMQ.StatusCode.GetStatusMessage("1.7.15");
                 }
                 else
                 {
@@ -249,12 +249,12 @@ namespace JoberMQ.Implementation.Broker.Default
                     if (resultDistributorUpdate == true && resultDatabase == true)
                     {
                         result.IsSucces = true;
-                        result.Message = JoberHost.JoberMQ.StatusCode.GetStatusMessage("1.7.13");
+                        result.Message = JoberHost.JoberMQ.StatusCode.GetStatusMessage("1.7.16");
                     }
                     else
                     {
                         result.IsSucces = false;
-                        result.Message = JoberHost.JoberMQ.StatusCode.GetStatusMessage("1.7.14");
+                        result.Message = JoberHost.JoberMQ.StatusCode.GetStatusMessage("1.7.17");
                     }
                 }
             });
@@ -284,7 +284,7 @@ namespace JoberMQ.Implementation.Broker.Default
             //        if (defaultDistributor != null)
             //        {
             //            result.IsSucces = false;
-            //            result.Message = JoberHost.JoberMQ.StatusCode.GetStatusMessage("1.7.15");
+            //            result.Message = JoberHost.JoberMQ.StatusCode.GetStatusMessage("1.7.18");
             //        }
             //        else
             //        {
@@ -298,7 +298,7 @@ namespace JoberMQ.Implementation.Broker.Default
             //                }
 
             //                result.IsSucces = false;
-            //                result.Message = JoberHost.JoberMQ.StatusCode.GetStatusMessage("1.7.16") + errorMessage;
+            //                result.Message = JoberHost.JoberMQ.StatusCode.GetStatusMessage("1.7.19") + errorMessage;
             //            }
             //            else
             //            {
@@ -309,12 +309,12 @@ namespace JoberMQ.Implementation.Broker.Default
             //                if (resultDistributorRemove != null && resultDatabase == true)
             //                {
             //                    result.IsSucces = true;
-            //                    result.Message = JoberHost.JoberMQ.StatusCode.GetStatusMessage("1.7.17");
+            //                    result.Message = JoberHost.JoberMQ.StatusCode.GetStatusMessage("1.7.20");
             //                }
             //                else
             //                {
             //                    result.IsSucces = false;
-            //                    result.Message = JoberHost.JoberMQ.StatusCode.GetStatusMessage("1.7.18");
+            //                    result.Message = JoberHost.JoberMQ.StatusCode.GetStatusMessage("1.7.21");
             //                }
 
             //            }
@@ -337,7 +337,7 @@ namespace JoberMQ.Implementation.Broker.Default
                 var queue = JoberHost.JoberMQ.Queues.Get(queueKey);
                 if (queue != null)
                 {
-                    result.IsSucces = false;
+                    result.IsSucces = true;
                     result.Message = JoberHost.JoberMQ.StatusCode.GetStatusMessage("1.7.51");
                 }
                 else
