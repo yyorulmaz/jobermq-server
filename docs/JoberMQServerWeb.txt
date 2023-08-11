@@ -1,0 +1,50 @@
+1	-	PowerSell aç
+
+3	-	cd C:\src\jobermq-server\src\JoberMQServerWeb
+
+3	-	Sertifika oluþtur
+		dotnet dev-certs https --clean
+		dotnet dev-certs https -ep $env:USERPROFILE\.aspnet\https\JoberMQServerWeb.pfx -p Yy13082104Yy
+		dotnet dev-certs https --trust
+
+4	-	dockerfile düzenle
+
+FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
+WORKDIR /app
+EXPOSE 80
+EXPOSE 443
+
+FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
+WORKDIR /src
+COPY ["src/JoberMQServerWeb/JoberMQServerWeb.csproj", "src/JoberMQServerWeb/"]
+RUN dotnet restore "src/JoberMQServerWeb/JoberMQServerWeb.csproj"
+COPY . .
+WORKDIR "/src/src/JoberMQServerWeb"
+RUN dotnet build "JoberMQServerWeb.csproj" -c Release -o /app/build
+
+FROM build AS publish
+RUN dotnet publish "JoberMQServerWeb.csproj" -c Release -o /app/publish /p:UseAppHost=false
+
+FROM base AS final
+WORKDIR /app
+COPY bin/Release/net7.0/publish /app/
+ENTRYPOINT ["dotnet", "JoberMQServerWeb.dll"]
+
+
+5	-	proje publish et
+
+6	-	docker volume create jobermq_data
+
+7	-	docker build --pull -t jobermq_server:v0.0.1 .
+
+8	-	docker create -it --restart=always --ip=172.20.0.2 --network=investnetwork -p 7654:80 -p 7655:443 --name jobermq_server_container -e ASPNETCORE_URLS="https://+;http://+" -e ASPNETCORE_HTTPS_PORT=7655 -e ASPNETCORE_ENVIRONMENT=Development -v $env:APPDATA\microsoft\UserSecrets\:/root/.microsoft/usersecrets -v $env:USERPROFILE\.aspnet\https:/root/.aspnet/https/ -v jobermq_data:/app/Database jobermq_server:v0.0.1
+		
+9	-	docker start jobermq_server_container
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+8	-	docker create -it --restart=always --ip=172.20.0.2 --network=investnetwork -p 7654:80 -p 7655:443 --name jobermq_server_container -e ASPNETCORE_URLS="https://+;http://+" -e ASPNETCORE_HTTPS_PORT=7655 -e ASPNETCORE_ENVIRONMENT=Development -v $env:APPDATA\microsoft\UserSecrets\:/root/.microsoft/usersecrets -v $env:USERPROFILE\.aspnet\https:/root/.aspnet/https/ -v jobermq_data:/app/Database jobermq_server:v1
+
+

@@ -1,0 +1,54 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>32c4391c-dc6d-492b-87e3-01a9ee788d7f</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerfileContext>..\..</DockerfileContext>
+	  <NoWarn>$(NoWarn);SYSLIB0011</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.0" />
+	  <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.4" />
+	  <PackageReference Include="Microsoft.AspNetCore.Owin" Version="7.0.4" />
+	  <PackageReference Include="Microsoft.AspNetCore.SignalR.Protocols.NewtonsoftJson" Version="7.0.4" />
+	  <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+	  <PackageReference Include="Quartz" Version="3.6.2" />
+	  <PackageReference Include="TimerFramework" Version="0.0.2" />
+  </ItemGroup>
+
+	<ItemGroup Condition=" '$(Configuration)' == 'Release'">
+
+		<Compile Include="..\JoberMQ\**\*.cs" Exclude="..\JoberMQ\Properties\AssemblyInfo.cs;..\JoberMQ\obj\**;..\JoberMQ\bin\**">
+			<Link>\%(RecursiveDir)%(Filename)%(Extension)</Link>
+			<Visible>true</Visible>
+		</Compile>
+
+		<Compile Include="..\..\..\jobermq-common\src\JoberMQ.Common\**\*.cs" Exclude="..\..\..\jobermq-common\src\JoberMQ.Common\Properties\AssemblyInfo.cs;..\..\..\jobermq-common\src\JoberMQ.Common\obj\**;..\..\..\jobermq-common\src\JoberMQ.Common\bin\**">
+			<Link>JoberMQ.Common\%(RecursiveDir)%(Filename)%(Extension)</Link>
+			<Visible>true</Visible>
+		</Compile>
+
+	</ItemGroup>
+
+	<ItemGroup Condition=" '$(Configuration)' == 'Debug'">
+
+		<Compile Include="..\JoberMQ\**\*.cs" Exclude="..\JoberMQ\Properties\AssemblyInfo.cs;..\JoberMQ\obj\**;..\JoberMQ\bin\**">
+			<Link>\%(RecursiveDir)%(Filename)%(Extension)</Link>
+			<Visible>true</Visible>
+		</Compile>
+
+		<Compile Include="..\..\..\jobermq-common\src\JoberMQ.Common\**\*.cs" Exclude="..\..\..\jobermq-common\src\JoberMQ.Common\Properties\AssemblyInfo.cs;..\..\..\jobermq-common\src\JoberMQ.Common\obj\**;..\..\..\jobermq-common\src\JoberMQ.Common\bin\**">
+			<Link>JoberMQ.Common\%(RecursiveDir)%(Filename)%(Extension)</Link>
+			<Visible>true</Visible>
+		</Compile>
+
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Hubs\" />
+	</ItemGroup>
+
+</Project>

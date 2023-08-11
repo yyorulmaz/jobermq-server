@@ -1,146 +1,117 @@
-﻿using JoberMQ.Common.Dbos;
-using JoberMQ.Common.Enums.Client;
-using JoberMQ.Common.Enums.Distributor;
-using JoberMQ.Common.Enums.Queue;
+﻿using JoberMQ.Common;
+using JoberMQ.Common.Dbos;
 using JoberMQ.Common.Models.Base;
-using JoberMQ.Common.Models.DeclareConsume;
 using JoberMQ.Common.Models.Distributor;
 using JoberMQ.Common.Models.Queue;
+using JoberMQ.Common.Models.Response;
+using JoberMQ.Common.Models.Rpc;
+using JoberMQ.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Concurrent;
-using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace JoberMQ.Hubs
 {
-    internal class JoberHub : Hub
-    {
-        //todo CLIENT CONNECT OLDUĞUNDA CLIENTGROUPKEY İNE GÖRE KUYRUK OLUŞTURMA DURUMU
 
-        #region CONNECT - DISCONNECT
+    public class JoberHub : Hub
+    {
+        #region Connect
         public override Task OnConnectedAsync()
         {
-            var clientType = (ClientTypeEnum)Enum.Parse(typeof(ClientTypeEnum), Context.GetHttpContext()?.Request.Headers["ClientType"].ToString());
-            var clientKey = Context.GetHttpContext()?.Request.Headers["ClientKey"].ToString();
-            var clientGroupKey = Context.GetHttpContext()?.Request.Headers["ClientGroupKey"].ToString();
-            var isOfflineClient = Convert.ToBoolean(Context.GetHttpContext()?.Request.Headers["IsOfflineClient"]);
+            Console.WriteLine("Clients.Count Connect : " + JoberHost.JoberMQ.Clients.Count);
 
 
-            var client = JoberMQ.Client.Factories.ClientFactory.CreateClient(
-                JoberHost.Jober.Configuration.ConfigurationClient.ClientFactory,
-                Context.ConnectionId,
-                clientKey,
-                clientGroupKey,
-                clientType);
-
-            JoberHost.Jober.ClientMaster.Add(Context.ConnectionId, client);
-
-            ////todo cluster
-            //var highAvailabilities = Startup.ClientService.ClientData.GetAll(x => x.ClientType == ClientTypeEnum.HighAvailability || x.ClientType == ClientTypeEnum.LoadBalancingANDHighAvailability);
-            //if (highAvailabilities == null || highAvailabilities.Count == 0)
-            //    Startup.ServerService.IsHighAvailability = false;
-            //else
-            //    Startup.ServerService.IsHighAvailability = true;
-
-
-            Clients.Client(Context.ConnectionId).SendCoreAsync("ReceiveServerActive", new object[] { JoberHost.Jober.IsJoberActive });
-
-            return base.OnConnectedAsync();
+            var result = JoberHost.JoberMQ.ConnectedOperationAsync(Context).Result;
+            if (result == false)
+            {
+                var errorMessage = JoberHost.JoberMQ.StatusCode.GetStatusMessage("0.0.14");
+                Console.WriteLine(errorMessage);
+                return base.OnDisconnectedAsync(new Exception(errorMessage));
+            }
+            else
+            {
+                return base.OnConnectedAsync();
+            }
         }
-        public override Task OnDisconnectedAsync(Exception? exception)
+        public override Task OnDisconnectedAsync(Exception exception)
         {
-            JoberHost.Jober.ClientMaster.Remove(Context.ConnectionId);
+            Console.WriteLine("Clients.Count Disconnect : " + JoberHost.JoberMQ.Clients.Count);
 
+            var result = JoberHost.JoberMQ.DisconnectedOperationAsync(Context).Result;
             return base.OnDisconnectedAsync(exception);
         }
         #endregion
 
-
+        #region Distributor
         [Authorize(Roles = "administrators")]
-        public async Task<ResponseBaseModel> Distributor(string distributorData)
+        public async Task<ResponseBaseModel<DistributorModel>> DistributorGet(string data)
+            => await JoberHost.JoberMQ.DistributorOperationGetAsync(data);
+        [Authorize(Roles = "administrators")]
+        public async Task<ResponseBaseModel> DistributorCreate(DistributorModel data)
+            => await JoberHost.JoberMQ.DistributorOperationCreateAsync(data);
+        [Authorize(Roles = "administrators")]
+        public async Task<ResponseBaseModel> DistributorEdit(DistributorModel data)
+            => await JoberHost.JoberMQ.DistributorOperationEditAsync(data);
+        [Authorize(Roles = "administrators")]
+        public async Task<ResponseBaseModel> DistributorRemove(string data)
+            => await JoberHost.JoberMQ.DistributorOperationRemoveAsync(data);
+        #endregion
+
+        #region Queue
+        [Authorize(Roles = "administrators")]
+        public async Task<ResponseBaseModel<QueueModel>> QueueGet(string data)
+            => await JoberHost.JoberMQ.QueueOperationGetAsync(data);
+        [Authorize(Roles = "administrators")]
+        public async Task<ResponseBaseModel<List<QueueModel>>> QueueGetAll(string data)
+           => await JoberHost.JoberMQ.QueueOperationGetAllAsync(data);
+        [Authorize(Roles = "administrators")]
+        public async Task<ResponseBaseModel> QueueCreate(QueueModel data)
+            => await JoberHost.JoberMQ.QueueOperationCreateAsync(data);
+        [Authorize(Roles = "administrators")]
+        public async Task<ResponseBaseModel> QueueEdit(QueueModel data)
+            => await JoberHost.JoberMQ.QueueOperationEditAsync(data);
+        [Authorize(Roles = "administrators")]
+        public async Task<ResponseBaseModel> QueueRemove(string data)
+            => await JoberHost.JoberMQ.QueueOperationRemoveAsync(data);
+        [Authorize(Roles = "administrators")]
+        public async Task<ResponseBaseModel> QueueBind(string data)
+            => await JoberHost.JoberMQ.QueueOperationBindAsync(data);
+        #endregion
+
+        #region Consume
+        // todo başlangıçta birkaçtane yetki gruplarına göre kullanıcı ekle
+        //[Authorize(Roles = "user")]
+        [Authorize(Roles = "administrators")]
+        public async Task<ResponseBaseModel> ConsumeSub(string clientKey, string queueKey, bool isDurable)
         {
-            var result = new ResponseBaseModel();
-            var data = JsonConvert.DeserializeObject<DistributorModel>(distributorData);
-
-            switch (data.DistributorOperationType)
-            {
-                case DistributorOperationTypeEnum.Create:
-                    result = JoberHost.Jober.MessageBroker.DistributorCreate(data.DistributorKey, data.DistributorType, data.PermissionType, data.IsDurable);
-                    break;
-                case DistributorOperationTypeEnum.Update:
-                    result = JoberHost.Jober.MessageBroker.DistributorUpdate(data.DistributorKey, data.IsDurable);
-                    break;
-                case DistributorOperationTypeEnum.Remove:
-                    result = JoberHost.Jober.MessageBroker.DistributorRemove(data.DistributorKey);
-                    break;
-            }
-
+            var result = await JoberHost.JoberMQ.ConsumeOperationSubAsync(clientKey, queueKey, isDurable);
+            JoberHost.JoberMQ.Clients.InvokeChangedAdded(Context.ConnectionId);
             return result;
         }
-
-
+        //[Authorize(Roles = "user")]
         [Authorize(Roles = "administrators")]
-        public async Task<ResponseBaseModel> Queue(string queueData)
+        public async Task<ResponseBaseModel> ConsumeUnSub(string clientKey, string queueKey)
         {
-            var result = new ResponseBaseModel();
-            var data = JsonConvert.DeserializeObject<QueueModel>(queueData);
-
-            switch (data.QueueOperationType)
-            {
-                case QueueOperationTypeEnum.Create:
-                    result = JoberHost.Jober.MessageBroker.QueueCreate(data.DistributorKey, data.QueueKey, data.MatchType, data.SendType, data.PermissionType, data.IsDurable);
-                    break;
-                case QueueOperationTypeEnum.Update:
-                    result = JoberHost.Jober.MessageBroker.QueueUpdate(data.QueueKey, data.MatchType, data.SendType, data.PermissionType, data.IsDurable);
-                    break;
-                case QueueOperationTypeEnum.Remove:
-                    result = JoberHost.Jober.MessageBroker.QueueRemove(data.QueueKey);
-                    break;
-                case QueueOperationTypeEnum.DistributorBind:
-                    result = JoberHost.Jober.MessageBroker.QueueBind(data.DistributorKey, data.QueueKey);
-                    break;
-            }
-
+            var result = await JoberHost.JoberMQ.ConsumeOperationUnSubAsync(clientKey, queueKey);
+            JoberHost.JoberMQ.Clients.InvokeChangedRemoved(Context.ConnectionId);
             return result;
         }
+        #endregion
 
-
-
-        public async Task<bool> Job(string message)
-        {
-            Console.WriteLine(message);
-
-
-            return true;
-        }
-        public async Task<bool> Message(string message)
-        {
-            return JoberHost.Jober.MessageBroker.MessageAdd(JsonConvert.DeserializeObject<MessageDbo>(message));
-        }
-        public async Task<bool> Rpc(string message)
-        {
-
-
-            return true;
-        }
-
-
-
+        #region Message
         [Authorize(Roles = "administrators")]
-        public async Task<bool> Consume(string consumeData)
-        {
-            //todo buradayım
-            var data = JsonConvert.DeserializeObject<ConcurrentDictionary<string, DeclareConsumeModel>>(consumeData);
-            var client = JoberHost.Jober.ClientMaster.Get(Context.ConnectionId);
-            client.DeclareConsuming = data;
-
-            JoberHost.Jober.ClientMaster.Update(Context.ConnectionId, client);
-            return true;
-        }
-
-
+        public async Task<ResponseModel> Message(MessageDbo data)
+            => await JoberHost.JoberMQ.MessageOperationAsync(data);
+        [Authorize(Roles = "administrators")]
+        public async Task<ResponseModel> Job(string data)
+            => await JoberHost.JoberMQ.JobOperationAsync(data);
+        [Authorize(Roles = "administrators")]
+        public async Task<RpcResponseModel> Rpc(string data)
+            => await JoberHost.JoberMQ.RpcOperationAsync(data);
+        [Authorize(Roles = "administrators")]
+        public async Task RpcResponse(string rpc)
+            => await JoberHost.JoberMQ.RpcResponseOperationAsync(rpc);
+        #endregion
 
     }
 }
