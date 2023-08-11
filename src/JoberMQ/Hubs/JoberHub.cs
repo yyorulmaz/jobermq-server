@@ -8,6 +8,7 @@ using JoberMQ.Common.Models.Rpc;
 using JoberMQ.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
+using System.Xml.Linq;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace JoberMQ.Hubs
@@ -111,6 +112,35 @@ namespace JoberMQ.Hubs
         [Authorize(Roles = "administrators")]
         public async Task RpcResponse(string rpc)
             => await JoberHost.JoberMQ.RpcResponseOperationAsync(rpc);
+        #endregion
+
+        #region FreeMessage
+        [Authorize(Roles = "administrators")]
+        public async Task FreeMessageToClient(string message, string clientKey)
+        {
+            var client = JoberHost.JoberMQ.Clients.Get(x => x.ClientKey == clientKey);
+            if (client != null)
+                _ = Clients.Client(client.ConnectionId).SendAsync("ReceiveDataText", message);
+        }
+        [Authorize(Roles = "administrators")]
+        public async Task FreeMessageToGroup(string message, string groupKey)
+        {
+            _ = Clients.Group(groupKey).SendAsync("ReceiveDataText", message);
+        }
+
+
+
+
+        [Authorize(Roles = "administrators")]
+        public async Task ConsumeSubAFreeMessageGroup(string groupKey)
+        {
+            await Groups.AddToGroupAsync(Context.ConnectionId, groupKey);
+        }
+        [Authorize(Roles = "administrators")]
+        public async Task ConsumeUnSubAFreeMessageGroup(string groupKey)
+        {
+            await Groups.RemoveFromGroupAsync(Context.ConnectionId, groupKey);
+        }
         #endregion
 
     }
