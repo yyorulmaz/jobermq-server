@@ -18,6 +18,9 @@ namespace JoberMQ.Hubs
         #region Connect
         public override Task OnConnectedAsync()
         {
+            Console.WriteLine("Clients.Count Connect : " + JoberHost.JoberMQ.Clients.Count);
+
+
             var result = JoberHost.JoberMQ.ConnectedOperationAsync(Context).Result;
             if (result == false)
             {
@@ -32,6 +35,8 @@ namespace JoberMQ.Hubs
         }
         public override Task OnDisconnectedAsync(Exception exception)
         {
+            Console.WriteLine("Clients.Count Disconnect : " + JoberHost.JoberMQ.Clients.Count);
+
             var result = JoberHost.JoberMQ.DisconnectedOperationAsync(Context).Result;
             return base.OnDisconnectedAsync(exception);
         }

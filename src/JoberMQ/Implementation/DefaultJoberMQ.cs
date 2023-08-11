@@ -46,7 +46,7 @@ namespace JoberMQ.Implementation
         {
             this.configuration = configuration;
             this.statusCode = StatusCodeFactory.Create(configuration.ConfigurationStatusCode.StatusCodeFactory, configuration.ConfigurationStatusCode.StatusCodeDatas, configuration.ConfigurationStatusCode.StatusCodeMessageLanguage);
-            this.clients = ClientsFactory.Create(configuration.ConfigurationClient.ClientsFactory);
+            this.clients = ClientsFactory.Create(configuration.ConfigurationClient.ClientsFactory, InMemoryClient.ClientMasterData);
             this.messageMasterData = MemFactory.Create<Guid, MessageDbo>(configuration.ConfigurationMessage.MessageMasterFactory, configuration.ConfigurationMessage.MessageMasterDataFactory, InMemoryMessage.MessageMasterData);
             this.database = DatabaseFactory.Create(configuration.ConfigurationDatabase);
             this.schedule = ScheduleFactory.CreateSchedule(configuration.ConfigurationTiming.ScheduleFactory);

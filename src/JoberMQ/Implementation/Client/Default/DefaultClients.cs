@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using JoberMQ.Abstraction.Client;
+using Newtonsoft.Json.Linq;
 
 namespace JoberMQ.Implementation.Client.Default
 {
@@ -12,6 +13,10 @@ namespace JoberMQ.Implementation.Client.Default
         public DefaultClients()
         {
             database = new ConcurrentDictionary<string, IClient>();
+        }
+        public DefaultClients(ConcurrentDictionary<string, IClient> masterData)
+        {
+            this.database = masterData;
         }
         #endregion
 

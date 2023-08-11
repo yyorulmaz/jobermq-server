@@ -30,6 +30,16 @@ namespace JoberMQ
             #region Newtonsoft Json Protocol
             services
                 .AddSignalR()
+                .AddHubOptions<JoberHub>(options =>
+                {
+                    //options.MaximumParallelInvocationsPerClient = 256;
+                    options.EnableDetailedErrors = true;
+                    options.StreamBufferCapacity = 4096;
+
+                    options.MaximumParallelInvocationsPerClient = 4096; // Yeni maksimum değer
+                    options.MaximumReceiveMessageSize = 1024000; // Yeni maksimum mesaj boyutu
+                    options.ClientTimeoutInterval = TimeSpan.FromSeconds(120); // Yeni istemci zaman aşımı süresi
+                })
                 //https://learn.microsoft.com/tr-tr/aspnet/core/signalr/messagepackhubprotocol?view=aspnetcore-7.0
                 ////.AddMessagePackProtocol();
                 //.AddMessagePackProtocol(options =>
@@ -87,6 +97,7 @@ namespace JoberMQ
                         {
                             return Task.CompletedTask;
                         },
+                        
                     };
 
 
@@ -108,7 +119,11 @@ namespace JoberMQ
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapHub<JoberHub>("/JoberHub");
+                endpoints.MapHub<JoberHub>("/JoberHub", options =>
+                {
+                    options.ApplicationMaxBufferSize = 4096;
+                    options.TransportMaxBufferSize = 4096;
+                });
                 endpoints.MapHub<TestHub>("/TestHub");
                 endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
             });

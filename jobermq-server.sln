@@ -7,7 +7,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{961CF067-678
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{2DC75D50-42AE-4B38-B0E5-85BD2225B922}"
 	ProjectSection(SolutionItems) = preProject
-		docs\docker.txt = docs\docker.txt
+		docs\JoberMQServer.txt = docs\JoberMQServer.txt
 		docs\JoberMQServerWeb.txt = docs\JoberMQServerWeb.txt
 	EndProjectSection
 EndProject
@@ -31,7 +31,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JoberMQ.Common", "..\joberm
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JoberMQServer", "src\JoberMQServer\JoberMQServer.csproj", "{9BF5625B-6222-473E-8F7D-33FAF704F4D9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JoberMQServerWeb", "src\JoberMQServerWeb\JoberMQServerWeb.csproj", "{AEF2FBBB-0574-4606-936B-E0DE7DE45968}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JoberMQServerWeb", "src\JoberMQServerWeb\JoberMQServerWeb.csproj", "{AEF2FBBB-0574-4606-936B-E0DE7DE45968}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
