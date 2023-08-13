@@ -23,6 +23,7 @@ using JoberMQ.Data;
 using JoberMQ.Factories.Broker;
 using JoberMQ.Factories.Client;
 using JoberMQ.Factories.Database;
+using JoberMQ.Factories.Publisher;
 using JoberMQ.Factories.Timing;
 using JoberMQ.Hubs;
 using Microsoft.AspNetCore;
@@ -192,7 +193,7 @@ namespace JoberMQ.Implementation
         #endregion
 
         #region Distributor
-        async Task<ResponseBaseModel<DistributorModel>> IJoberMQ.DistributorOperationGetAsync(string data)
+        async Task<ResponseBaseModel<DistributorModel>> IJoberMQ.DistributorGetOperationAsync(string data)
         {
             var result = new ResponseBaseModel<DistributorModel>();
             result.IsOnline = true;
@@ -215,16 +216,16 @@ namespace JoberMQ.Implementation
 
             return result;
         }
-        async Task<ResponseBaseModel> IJoberMQ.DistributorOperationCreateAsync(DistributorModel data)
-            => await messageBroker.DistributorCreate(data.DistributorKey, data.DistributorType.Value, data.DistributorSearchSourceType.Value, data.PermissionType.Value, data.IsDurable.Value);
-        async Task<ResponseBaseModel> IJoberMQ.DistributorOperationEditAsync(DistributorModel data)
+        async Task<ResponseBaseModel> IJoberMQ.DistributorAddOperationAsync(DistributorModel data)
+            => await messageBroker.DistributorAdd(data.DistributorKey, data.DistributorType.Value, data.DistributorSearchSourceType.Value, data.PermissionType.Value, data.IsDurable.Value);
+        async Task<ResponseBaseModel> IJoberMQ.DistributorEditOperationAsync(DistributorModel data)
             => await messageBroker.DistributorUpdate(data.DistributorKey, data.PermissionType.Value, data.IsDurable.Value);
-        async Task<ResponseBaseModel> IJoberMQ.DistributorOperationRemoveAsync(string data)
+        async Task<ResponseBaseModel> IJoberMQ.DistributorRemoveOperationAsync(string data)
             => await messageBroker.DistributorRemove(data);
         #endregion
 
         #region Queue
-        async Task<ResponseBaseModel<QueueModel>> IJoberMQ.QueueOperationGetAsync(string data)
+        async Task<ResponseBaseModel<QueueModel>> IJoberMQ.QueueGetOperationAsync(string data)
         {
             var result = new ResponseBaseModel<QueueModel>();
             result.IsOnline = true;
@@ -249,7 +250,7 @@ namespace JoberMQ.Implementation
 
             return result;
         }
-        async Task<ResponseBaseModel<List<QueueModel>>> IJoberMQ.QueueOperationGetAllAsync(string data)
+        async Task<ResponseBaseModel<List<QueueModel>>> IJoberMQ.QueueGetAllOperationAsync(string data)
         {
             var result = new ResponseBaseModel<List<QueueModel>>();
             result.IsOnline = true;
@@ -277,20 +278,20 @@ namespace JoberMQ.Implementation
 
             return result;
         }
-        async Task<ResponseBaseModel> IJoberMQ.QueueOperationCreateAsync(QueueModel data)
+        async Task<ResponseBaseModel> IJoberMQ.QueueAddOperationAsync(QueueModel data)
             => await messageBroker.QueueCreate(data.QueueKey, data.Tags, data.QueueMatchType.Value, data.QueueOrderOfSendingType.Value, data.PermissionType, data.IsDurable, data.IsActive);
-        async Task<ResponseBaseModel> IJoberMQ.QueueOperationEditAsync(QueueModel data)
+        async Task<ResponseBaseModel> IJoberMQ.QueueEditOperationAsync(QueueModel data)
             => await messageBroker.QueueUpdate(data.QueueKey, data.Tags, data.PermissionType, data.IsDurable, data.IsActive);
-        async Task<ResponseBaseModel> IJoberMQ.QueueOperationRemoveAsync(string data)
+        async Task<ResponseBaseModel> IJoberMQ.QueueRemoveOperationAsync(string data)
             => await messageBroker.QueueRemove(data);
-        async Task<ResponseBaseModel> IJoberMQ.QueueOperationBindAsync(string data)
+        async Task<ResponseBaseModel> IJoberMQ.QueueBindOperationAsync(string data)
         {
             return null;
         }
         #endregion
 
         #region Consume
-        async Task<ResponseBaseModel> IJoberMQ.ConsumeOperationSubAsync(string clientKey, string queueKey, bool isDurable)
+        async Task<ResponseBaseModel> IJoberMQ.ConsumeSubOperationAsync(string clientKey, string queueKey, bool isDurable)
         {
             var result = new ResponseBaseModel();
             result.IsOnline = true;
@@ -316,7 +317,7 @@ namespace JoberMQ.Implementation
 
             return result;
         }
-        async Task<ResponseBaseModel> IJoberMQ.ConsumeOperationUnSubAsync(string clientKey, string queueKey)
+        async Task<ResponseBaseModel> IJoberMQ.ConsumeUnSubOperationAsync(string clientKey, string queueKey)
         {
             var result = new ResponseBaseModel();
             result.IsOnline = true;
@@ -333,13 +334,15 @@ namespace JoberMQ.Implementation
         #region Message
         async Task<ResponseModel> IJoberMQ.MessageOperationAsync(MessageDbo data)
             => await distributors.Get(data.Message.Routing.DistributorKey).Distributoring(data);
-        async Task<ResponseModel> IJoberMQ.JobOperationAsync(string data)
+        async Task<ResponseModel> IJoberMQ.JobOperationAsync(JobDbo data)
         {
 
             //var jobDeserialize = JsonConvert.DeserializeObject<JobDbo>(data);
             //var publisher = PublisherFactory.Create(configuration.ConfigurationPublisher.PublisherFactory, jobDeserialize.Publisher.PublisherType, configuration, database, schedule, messageBroker, statusCode);
             //var result = await publisher.Publish(jobDeserialize);
-            return null;
+
+            var publisher = PublisherFactory.Create(configuration.ConfigurationPublisher.PublisherFactory, data.Publisher.PublisherType);
+            return await publisher.Publish(data);
         }
 
         ConcurrentDictionary<Guid, Channel<RpcResponseModel>> channels = new ConcurrentDictionary<Guid, Channel<RpcResponseModel>>();

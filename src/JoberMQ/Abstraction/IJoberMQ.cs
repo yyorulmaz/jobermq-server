@@ -46,32 +46,32 @@ namespace JoberMQ.Abstraction
 
 
         #region Distributor
-        public Task<ResponseBaseModel<DistributorModel>> DistributorOperationGetAsync(string data);
-        public Task<ResponseBaseModel> DistributorOperationCreateAsync(DistributorModel data);
-        public Task<ResponseBaseModel> DistributorOperationEditAsync(DistributorModel data);
-        public Task<ResponseBaseModel> DistributorOperationRemoveAsync(string data);
+        public Task<ResponseBaseModel<DistributorModel>> DistributorGetOperationAsync(string data);
+        public Task<ResponseBaseModel> DistributorAddOperationAsync(DistributorModel data);
+        public Task<ResponseBaseModel> DistributorEditOperationAsync(DistributorModel data);
+        public Task<ResponseBaseModel> DistributorRemoveOperationAsync(string data);
         #endregion
 
 
         #region Queue
-        public Task<ResponseBaseModel<QueueModel>> QueueOperationGetAsync(string data);
-        public Task<ResponseBaseModel<List<QueueModel>>> QueueOperationGetAllAsync(string data);
-        public Task<ResponseBaseModel> QueueOperationCreateAsync(QueueModel data);
-        public Task<ResponseBaseModel> QueueOperationEditAsync(QueueModel data);
-        public Task<ResponseBaseModel> QueueOperationRemoveAsync(string data);
-        public Task<ResponseBaseModel> QueueOperationBindAsync(string data);
+        public Task<ResponseBaseModel<QueueModel>> QueueGetOperationAsync(string data);
+        public Task<ResponseBaseModel<List<QueueModel>>> QueueGetAllOperationAsync(string data);
+        public Task<ResponseBaseModel> QueueAddOperationAsync(QueueModel data);
+        public Task<ResponseBaseModel> QueueEditOperationAsync(QueueModel data);
+        public Task<ResponseBaseModel> QueueRemoveOperationAsync(string data);
+        public Task<ResponseBaseModel> QueueBindOperationAsync(string data);
         #endregion
 
 
         #region Consume
-        public Task<ResponseBaseModel> ConsumeOperationSubAsync(string clientKey, string queueKey, bool isDurable);
-        public Task<ResponseBaseModel> ConsumeOperationUnSubAsync(string clientKey, string queueKey);
+        public Task<ResponseBaseModel> ConsumeSubOperationAsync(string clientKey, string queueKey, bool isDurable);
+        public Task<ResponseBaseModel> ConsumeUnSubOperationAsync(string clientKey, string queueKey);
         #endregion
 
 
         #region Message
         public Task<ResponseModel> MessageOperationAsync(MessageDbo data);
-        public Task<ResponseModel> JobOperationAsync(string data);
+        public Task<ResponseModel> JobOperationAsync(JobDbo data);
         public Task<RpcResponseModel> RpcOperationAsync(string data);
         public Task RpcResponseOperationAsync(string rpc);
         #endregion

@@ -54,7 +54,9 @@ namespace JoberMQ.Implementation.Timing.Default
         }
         public override void Action(TimerModel timer)
         {
+            #region JOB
             var jobDbo = JoberHost.JoberMQ.Database.Job.Get(timer.Id);
+            #endregion
 
             #region SCHEDULE JOB TIMER COMPLETED CHECK
             jobDbo.Timing.CreatedCount = jobDbo.Timing.CreatedCount + 1;
@@ -67,6 +69,17 @@ namespace JoberMQ.Implementation.Timing.Default
 
             var clones = JoberHost.JoberMQ.Database.DboCreator.CloneJobToJobTransactions(jobDbo);
 
+            //foreach (var clone in clones)
+            //{
+            //    JoberHost.JoberMQ.Database.JobTransaction.Add(clone.Id, clone);
+
+            //    foreach (var item in clone.JobTransactioDetails)
+            //    {
+            //        var creatorJobDetail = jobDbo.JobDetails.FirstOrDefault(x => x.Id == item.CreatedJobDetailId);
+            //        var eventGroupId = Guid.NewGuid();
+            //    }
+            //}
+
             foreach (var clone in clones)
             {
                 JoberHost.JoberMQ.Database.JobTransaction.Add(clone.Id, clone);
@@ -75,8 +88,15 @@ namespace JoberMQ.Implementation.Timing.Default
                 {
                     var creatorJobDetail = jobDbo.JobDetails.FirstOrDefault(x => x.Id == item.CreatedJobDetailId);
                     var eventGroupId = Guid.NewGuid();
+
+
+                    var createdMessageDbo = JoberHost.JoberMQ.Database.DboCreator.MessageDboCreate(jobDbo, creatorJobDetail, clone, item, eventGroupId);
+                    var result = JoberHost.JoberMQ.Distributors.Get(createdMessageDbo.Message.Routing.DistributorKey).Distributoring(createdMessageDbo).Result;
                 }
             }
+
+
+
 
             #region UPDATE JobSchedule
             JoberHost.JoberMQ.Database.Job.Update(jobDbo.Id, jobDbo);

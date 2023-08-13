@@ -13,8 +13,8 @@ namespace JoberMQ.Implementation.Timing.Default
             response.Id = job.Id;
 
             // Job
-            var addJobResult = JoberHost.JoberMQ.Database.Job.Add(job.Id, job);
-            if (!addJobResult)
+            var addJob = JoberHost.JoberMQ.Database.Job.Add(job.Id, job);
+            if (!addJob)
             {
                 response.IsSucces = false;
                 response.Message = JoberHost.JoberMQ.StatusCode.GetStatusMessage("1.8.51");
@@ -24,8 +24,8 @@ namespace JoberMQ.Implementation.Timing.Default
 
             // JobTransaction
             var createdJobTransactionDbo = JoberHost.JoberMQ.Database.DboCreator.JobTransactionDboCreate(job);
-            var addJobTransactionResult = JoberHost.JoberMQ.Database.JobTransaction.Add(createdJobTransactionDbo.Id, createdJobTransactionDbo);
-            if (!addJobTransactionResult)
+            var addJobTransaction = JoberHost.JoberMQ.Database.JobTransaction.Add(createdJobTransactionDbo.Id, createdJobTransactionDbo);
+            if (!addJobTransaction)
             {
                 JoberHost.JoberMQ.Database.Job.Rollback(job.Id, job);
 

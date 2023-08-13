@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using JoberMQ.Common.Dbos;
 using JoberMQ.Common.Models.Response;
+using Newtonsoft.Json;
 using TimerFramework;
 
 namespace JoberMQ.Implementation.Timing.Default
@@ -27,7 +28,7 @@ namespace JoberMQ.Implementation.Timing.Default
             timer.Id = job.Id;
             timer.CronTime = job.Timing.CronTime;
             timer.TimerGroup = "jobScheduleData";
-            //timer.Data = JsonConvert.SerializeObject(jobScheduleDbo);
+            timer.Data = JsonConvert.SerializeObject(job);
 
             var timerResult = JoberHost.JoberMQ.Schedule.JobTimer.Add(timer);
 

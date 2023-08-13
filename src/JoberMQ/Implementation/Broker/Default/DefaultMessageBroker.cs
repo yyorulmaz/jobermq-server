@@ -173,7 +173,7 @@ namespace JoberMQ.Implementation.Broker.Default
 
 
 
-        public async Task<ResponseBaseModel> DistributorCreate(string distributorKey, DistributorTypeEnum distributorType, DistributorSearchSourceTypeEnum distributorSearchSourceType, PermissionTypeEnum permissionType, bool isDurable)
+        public async Task<ResponseBaseModel> DistributorAdd(string distributorKey, DistributorTypeEnum distributorType, DistributorSearchSourceTypeEnum distributorSearchSourceType, PermissionTypeEnum permissionType, bool isDurable)
         {
             var result = new ResponseBaseModel();
             result.IsOnline = true;

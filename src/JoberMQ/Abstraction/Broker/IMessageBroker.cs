@@ -16,7 +16,7 @@ namespace JoberMQ.Abstraction.Broker
         public Task<ResponseBaseModel> QueueSetMessages();
 
 
-        public Task<ResponseBaseModel> DistributorCreate(string distributorKey, DistributorTypeEnum distributorType, DistributorSearchSourceTypeEnum distributorSearchSourceType, PermissionTypeEnum permissionType, bool isDurable);
+        public Task<ResponseBaseModel> DistributorAdd(string distributorKey, DistributorTypeEnum distributorType, DistributorSearchSourceTypeEnum distributorSearchSourceType, PermissionTypeEnum permissionType, bool isDurable);
         public Task<ResponseBaseModel> DistributorUpdate(string distributorKey, PermissionTypeEnum permissionType, bool isDurable);
         public Task<ResponseBaseModel> DistributorRemove(string distributorKey);
 

@@ -60,6 +60,8 @@ namespace JoberMQ.Implementation.Database.Default
             messageDbo.CreatedJobTransactionId = jobTransactionDbo.Id;
             messageDbo.CreatedJobTransactionDetailId = jobTransactionDetailDbo.Id;
             messageDbo.EventGroupsId = eventGroupId;
+
+            messageDbo.Status = new StatusModel();
             messageDbo.Status.IsError = false;
             messageDbo.Status.StatusTypeMessage = StatusTypeMessageEnum.None;
             messageDbo.Status.TempAgainDate = null;
