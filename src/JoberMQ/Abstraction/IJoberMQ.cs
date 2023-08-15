@@ -33,6 +33,8 @@ namespace JoberMQ.Abstraction
         internal IMemRepository<string, IMessageDistributor> Distributors { get; }
         internal IMemRepository<string, IMessageQueue> Queues { get; }
 
+        public IScheduledNotifications ScheduledNotifications { get; }
+
         Task StartAsync(bool owinHost, IHubContext<JoberHub> hubContext = null);
 
 

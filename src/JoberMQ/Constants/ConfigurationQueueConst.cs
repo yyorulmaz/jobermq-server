@@ -37,8 +37,65 @@ namespace JoberMQ.Constants
                 IsDefault = true
             });
 
+            clientDatas.TryAdd("def.que.all.free.1m", new QueueModel
+            {
+                QueueKey = "def.que.all.free.1m",
+                QueueMatchType = QueueMatchTypeEnum.All,
+                QueueOrderOfSendingType = QueueOrderOfSendingTypeEnum.Free,
+                PermissionType = PermissionTypeEnum.All,
+                IsDurable = true,
+                IsDefault = true
+            });
 
+            clientDatas.TryAdd("def.que.all.free.5m", new QueueModel
+            {
+                QueueKey = "def.que.all.free.5m",
+                QueueMatchType = QueueMatchTypeEnum.All,
+                QueueOrderOfSendingType = QueueOrderOfSendingTypeEnum.Free,
+                PermissionType = PermissionTypeEnum.All,
+                IsDurable = true,
+                IsDefault = true
+            });
 
+            clientDatas.TryAdd("def.que.all.free.15m", new QueueModel
+            {
+                QueueKey = "def.que.all.free.15m",
+                QueueMatchType = QueueMatchTypeEnum.All,
+                QueueOrderOfSendingType = QueueOrderOfSendingTypeEnum.Free,
+                PermissionType = PermissionTypeEnum.All,
+                IsDurable = true,
+                IsDefault = true
+            });
+
+            clientDatas.TryAdd("def.que.all.free.1h", new QueueModel
+            {
+                QueueKey = "def.que.all.free.1h",
+                QueueMatchType = QueueMatchTypeEnum.All,
+                QueueOrderOfSendingType = QueueOrderOfSendingTypeEnum.Free,
+                PermissionType = PermissionTypeEnum.All,
+                IsDurable = true,
+                IsDefault = true
+            });
+
+            clientDatas.TryAdd("def.que.all.free.4h", new QueueModel
+            {
+                QueueKey = "def.que.all.free.4h",
+                QueueMatchType = QueueMatchTypeEnum.All,
+                QueueOrderOfSendingType = QueueOrderOfSendingTypeEnum.Free,
+                PermissionType = PermissionTypeEnum.All,
+                IsDurable = true,
+                IsDefault = true
+            });
+
+            clientDatas.TryAdd("def.que.all.free.1d", new QueueModel
+            {
+                QueueKey = "def.que.all.free.1d",
+                QueueMatchType = QueueMatchTypeEnum.All,
+                QueueOrderOfSendingType = QueueOrderOfSendingTypeEnum.Free,
+                PermissionType = PermissionTypeEnum.All,
+                IsDurable = true,
+                IsDefault = true
+            });
 
             return clientDatas;
         }

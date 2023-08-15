@@ -55,6 +55,7 @@ namespace JoberMQ.Implementation
             this.distributors = MemFactory.Create<string, IMessageDistributor>(configuration.ConfigurationDistributor.DistributorsMemFactory, configuration.ConfigurationDistributor.DistributorsMemDataFactory);
             this.queues = MemFactory.Create<string, IMessageQueue>(configuration.ConfigurationQueue.QueuesMemFactory, configuration.ConfigurationQueue.QueuesMemDataFactory);
 
+            this.scheduledNotifications = ScheduledNotificationsFactory.Create();
             JoberHost.JoberMQ = this;
         }
 
@@ -97,6 +98,10 @@ namespace JoberMQ.Implementation
 
         IMemRepository<string, IMessageQueue> queues;
         IMemRepository<string, IMessageQueue> IJoberMQ.Queues => queues;
+
+
+        IScheduledNotifications scheduledNotifications;
+        IScheduledNotifications IJoberMQ.ScheduledNotifications => scheduledNotifications;
 
 
         async Task IJoberMQ.StartAsync(bool owinHost, IHubContext<JoberHub> hubContext = null)
@@ -165,6 +170,8 @@ namespace JoberMQ.Implementation
 
             JoberHost.IsJoberActive = true;
             JoberHost.JoberMQ = this;
+
+            scheduledNotifications.Start();
         }
         
 
