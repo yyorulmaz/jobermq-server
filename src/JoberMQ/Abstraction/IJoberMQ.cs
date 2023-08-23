@@ -17,6 +17,7 @@ using JoberMQ.Abstraction.Distributor;
 using JoberMQ.Abstraction.Queue;
 using JoberMQ.Abstraction.Timing;
 using JoberMQ.Hubs;
+using System.Data.SqlTypes;
 
 namespace JoberMQ.Abstraction
 {
@@ -74,8 +75,15 @@ namespace JoberMQ.Abstraction
         #region Message
         public Task<ResponseModel> MessageOperationAsync(MessageDbo data);
         public Task<ResponseModel> JobOperationAsync(JobDbo data);
-        public Task<RpcResponseModel> RpcOperationAsync(string data);
-        public Task RpcResponseOperationAsync(string rpc);
+        public Task<RpcResponseModel> RpcMessageTextOperationAsync(Guid transactionId, string consumerKey, string message);
+        public Task<RpcResponseModel> RpcMessageFunctionOperationAsync(Guid transactionId, string consumerKey, string message);
+        public Task RpcMessageResponseOperationAsync(Guid transactionId, string resultData, bool isError, string errorMessage);
+        #endregion
+
+
+        #region Started Completed
+        internal Task<ResponseModel> StartedOperation(string data);
+        internal Task<ResponseBaseModel> CompletedOperation(string data);
         #endregion
     }
 }

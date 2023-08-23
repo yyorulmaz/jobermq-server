@@ -17,30 +17,49 @@ namespace JoberMQ.Implementation.Database.Default
 
         public JobTransactionDbo JobTransactionDboCreate(JobDbo jobDbo)
         {
-            var jobTransactionDbo = new JobTransactionDbo();
-            jobTransactionDbo.JobTransactioDetails = new List<JobTransactionDetailDbo>();
+            //var jobTransactionDbo = new JobTransactionDbo();
+            //jobTransactionDbo.JobTransactionDetails = new List<JobTransactionDetailDbo>();
 
-            jobTransactionDbo.Id = Guid.NewGuid();
-            jobTransactionDbo.Timing = jobDbo.Timing;
-            jobTransactionDbo.Status = jobDbo.Status;
-            jobTransactionDbo.IsResultMessageClientSend = false;
-            jobTransactionDbo.CreatedJobId = jobDbo.Id;
+            //jobTransactionDbo.Id = Guid.NewGuid();
+            //jobTransactionDbo.Timing = jobDbo.Timing;
+            //jobTransactionDbo.Status = jobDbo.Status;
+            //jobTransactionDbo.IsResultMessageClientSend = false;
+            //jobTransactionDbo.CreatedJobId = jobDbo.Id;
+
+            //foreach (var item in jobDbo.JobDetails)
+            //{
+            //    var jobTransactionDetailDbo = new JobTransactionDetailDbo();
+
+            //    jobTransactionDetailDbo.Id = Guid.NewGuid();
+            //    jobTransactionDetailDbo.IsResultMessageClientSend = false;
+            //    jobTransactionDetailDbo.CreatedJobId = jobDbo.Id;
+            //    jobTransactionDetailDbo.CreatedJobDetailId = item.Id;
+
+            //    jobTransactionDbo.JobTransactionDetails.Add(jobTransactionDetailDbo);
+            //}
+
+            //jobTransactionDbo.IsDbTextSave = jobDbo.IsDbTextSave;
+
+            //return jobTransactionDbo;
 
 
-            //foreach (var item in jobTransactionDbo.JobTransactioDetails)
-            foreach (var item in jobDbo.JobDetails)
+
+            var jobTransactionDbo = new JobTransactionDbo
             {
-                var jobTransactionDetailDbo = new JobTransactionDetailDbo();
-
-                jobTransactionDetailDbo.Id = Guid.NewGuid();
-                jobTransactionDetailDbo.IsResultMessageClientSend = false;
-                jobTransactionDetailDbo.CreatedJobId = jobDbo.Id;
-                jobTransactionDetailDbo.CreatedJobDetailId = item.Id;
-
-                jobTransactionDbo.JobTransactioDetails.Add(jobTransactionDetailDbo);
-            }
-
-            jobTransactionDbo.IsDbTextSave = jobDbo.IsDbTextSave;
+                Id = Guid.NewGuid(),
+                Timing = jobDbo.Timing,
+                Status = jobDbo.Status,
+                IsResultMessageClientSend = false,
+                CreatedJobId = jobDbo.Id,
+                IsDbTextSave = jobDbo.IsDbTextSave,
+                JobTransactionDetails = jobDbo.JobDetails.Select(item => new JobTransactionDetailDbo
+                {
+                    Id = Guid.NewGuid(),
+                    IsResultMessageClientSend = false,
+                    CreatedJobId = jobDbo.Id,
+                    CreatedJobDetailId = item.Id
+                }).ToList()
+            };
 
             return jobTransactionDbo;
         }
@@ -73,7 +92,7 @@ namespace JoberMQ.Implementation.Database.Default
             var messageDbos = new List<MessageDbo>();
             var creatorJob = jobDbOpr.Get(jobTransactionDbo.CreatedJobId);
 
-            foreach (var item in jobTransactionDbo.JobTransactioDetails)
+            foreach (var item in jobTransactionDbo.JobTransactionDetails)
             {
                 var messageDbo = new MessageDbo();
                 var jobDetailDbo = creatorJob.JobDetails.Where(x => x.Id == item.CreatedJobDetailId).FirstOrDefault();
@@ -113,30 +132,69 @@ namespace JoberMQ.Implementation.Database.Default
         }
         public List<JobTransactionDbo> CloneJobToJobTransactions(JobDbo job)
         {
+            #region eski
+            //var baseJobs = new List<JobDbo>();
+            //var cloneJobs = new List<JobTransactionDbo>();
+
+            //if (job.Timing.IsTrigger)
+            //    baseJobs = jobDbOpr.GetAll(x => x.Timing.TriggerGroupsId == job.Timing.TriggerGroupsId);
+            //else
+            //    baseJobs = jobDbOpr.GetAll(x => x.Id == job.Id);
+
+
+            //foreach (var item in baseJobs)
+            //{
+            //    var jobTransaction = JobTransactionDboCreate(item);
+            //    cloneJobs.Add(jobTransaction);
+            //}
+
+            //if (job.Timing.IsTrigger)
+            //{
+            //    var mainJob = cloneJobs.FirstOrDefault(x => x.Timing.IsTrigger == true && x.Timing.TriggerJobId == null);
+            //    foreach (var item in cloneJobs.OrderBy(x => x.CreateDate))
+            //    {
+            //        if (item.Timing.TriggerJobId != null)
+            //            item.Timing.TriggerJobId = cloneJobs.FirstOrDefault(x => x.CreatedJobId == item.Timing.TriggerJobId).Id;
+
+            //        item.Timing.TriggerGroupsId = mainJob.Id;
+            //    }
+            //}
+
+            //return cloneJobs; 
+            #endregion
+
             var baseJobs = new List<JobDbo>();
             var cloneJobs = new List<JobTransactionDbo>();
 
             if (job.Timing.IsTrigger)
-                baseJobs = jobDbOpr.GetAll(x => x.Timing.TriggerGroupsId == job.Timing.TriggerGroupsId);
-            else
-                baseJobs = jobDbOpr.GetAll(x => x.Id == job.Id);
-
-
-            foreach (var item in baseJobs)
             {
-                var jobTransaction = JobTransactionDboCreate(item);
+                baseJobs = jobDbOpr.GetAll(x => x.Timing.TriggerGroupsId == job.Timing.TriggerGroupsId);
+            }
+            else
+            {
+                baseJobs.Add(job);
+            }
+
+            foreach (var baseJob in baseJobs)
+            {
+                var jobTransaction = JobTransactionDboCreate(baseJob);
                 cloneJobs.Add(jobTransaction);
             }
 
             if (job.Timing.IsTrigger)
             {
-                var mainJob = cloneJobs.FirstOrDefault(x => x.Timing.IsTrigger == true && x.Timing.TriggerJobId == null);
+                var mainJob = cloneJobs.FirstOrDefault(x => x.Timing.IsTrigger && x.Timing.TriggerJobId == null);
                 foreach (var item in cloneJobs.OrderBy(x => x.CreateDate))
                 {
                     if (item.Timing.TriggerJobId != null)
-                        item.Timing.TriggerJobId = cloneJobs.FirstOrDefault(x => x.CreatedJobId == item.Timing.TriggerJobId).Id;
-
-                    item.Timing.TriggerGroupsId = mainJob.Id;
+                    {
+                        var matchingJob = cloneJobs.FirstOrDefault(x => x.CreatedJobId == item.Timing.TriggerJobId);
+                        if (matchingJob != null)
+                        {
+                            item.Timing.TriggerJobId = matchingJob.Id;
+                        }
+                    }
+                    item.Timing.TriggerGroupsId = mainJob?.Id;
                 }
             }
 
@@ -148,7 +206,7 @@ namespace JoberMQ.Implementation.Database.Default
         public JobTransactionDbo Create(JobDbo jobDbo)
         {
             var result = new JobTransactionDbo();
-            result.JobTransactioDetails = new List<JobTransactionDetailDbo>();
+            result.JobTransactionDetails = new List<JobTransactionDetailDbo>();
 
             result.Id = Guid.NewGuid();
             result.Timing = jobDbo.Timing;
@@ -169,7 +227,7 @@ namespace JoberMQ.Implementation.Database.Default
                 detail.CreatedJobDetailId = item.Id;
                 detail.IsDbTextSave = item.IsDbTextSave;
 
-                result.JobTransactioDetails.Add(detail);
+                result.JobTransactionDetails.Add(detail);
             }
 
             return result;

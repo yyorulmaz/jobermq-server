@@ -84,14 +84,24 @@ namespace JoberMQ.Implementation.Timing.Default
             {
                 JoberHost.JoberMQ.Database.JobTransaction.Add(clone.Id, clone);
 
-                foreach (var item in clone.JobTransactioDetails)
+                foreach (var item in clone.JobTransactionDetails)
                 {
                     var creatorJobDetail = jobDbo.JobDetails.FirstOrDefault(x => x.Id == item.CreatedJobDetailId);
                     var eventGroupId = Guid.NewGuid();
 
 
                     var createdMessageDbo = JoberHost.JoberMQ.Database.DboCreator.MessageDboCreate(jobDbo, creatorJobDetail, clone, item, eventGroupId);
-                    var result = JoberHost.JoberMQ.Distributors.Get(createdMessageDbo.Message.Routing.DistributorKey).Distributoring(createdMessageDbo).Result;
+
+                    if (clone.Timing.IsTriggerMain)
+                    {
+                        createdMessageDbo.IsActive = true;
+                        var result = JoberHost.JoberMQ.Distributors.Get(createdMessageDbo.Message.Routing.DistributorKey).Distributoring(createdMessageDbo).Result;
+                    }
+                    else
+                    {
+                        createdMessageDbo.IsActive = false;
+                        var addMessage = JoberHost.JoberMQ.Database.Message.Add(createdMessageDbo.Id, createdMessageDbo);
+                    }
                 }
             }
 

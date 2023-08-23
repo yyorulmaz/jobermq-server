@@ -10,7 +10,9 @@ using JoberMQ.Common.Database.Enums;
 using JoberMQ.Common.Database.Factories;
 using JoberMQ.Common.Database.Repository.Abstraction.Mem;
 using JoberMQ.Common.Dbos;
+using JoberMQ.Common.Enums.Status;
 using JoberMQ.Common.Helpers;
+using JoberMQ.Common.Models;
 using JoberMQ.Common.Models.Base;
 using JoberMQ.Common.Models.Client;
 using JoberMQ.Common.Models.Distributor;
@@ -34,10 +36,12 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
+using Quartz;
 using System.Collections.Concurrent;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Channels;
+using System.Transactions;
 
 namespace JoberMQ.Implementation
 {
@@ -353,23 +357,24 @@ namespace JoberMQ.Implementation
         }
 
         ConcurrentDictionary<Guid, Channel<RpcResponseModel>> channels = new ConcurrentDictionary<Guid, Channel<RpcResponseModel>>();
-        async Task<RpcResponseModel> IJoberMQ.RpcOperationAsync(string rpc)
+        async Task<RpcResponseModel> IJoberMQ.RpcMessageTextOperationAsync(Guid transactionId, string consumerKey, string message)
         {
-            var message = JsonConvert.DeserializeObject<RpcRequestModel>(rpc);
             var response = new RpcResponseModel();
+            response.Id = transactionId;
 
             await Task.Run(async () =>
             {
-                IClient client = clients.Get(x => x.ClientKey == message.ConsumerId);
+                IClient client = clients.Get(x => x.ClientKey == consumerKey);
                 if (client == null)
                 {
                     //todo return client yok
                 }
 
                 var channel = Channel.CreateUnbounded<RpcResponseModel>();
-                joberHubContext.Clients.Client(client.ConnectionId).SendCoreAsync("ReceiveRpc", new[] { JsonConvert.SerializeObject(message) }).ConfigureAwait(false);
+                //joberHubContext.Clients.Client(client.ConnectionId).SendCoreAsync("ReceiveRpcMessageText", new[] { JsonConvert.SerializeObject(message) }).ConfigureAwait(false);
+                joberHubContext.Clients.Client(client.ConnectionId).SendCoreAsync("ReceiveRpcMessageText", new object[] { response.Id, message }).ConfigureAwait(false);
 
-                channels.TryAdd(message.Id, channel);
+                channels.TryAdd(transactionId, channel);
 
 
                 int ssss = 0;
@@ -393,12 +398,182 @@ namespace JoberMQ.Implementation
             channels.TryRemove(response.Id, out var dddd);
             return response;
         }
-        async Task IJoberMQ.RpcResponseOperationAsync(string rpc)
+        async Task<RpcResponseModel> IJoberMQ.RpcMessageFunctionOperationAsync(Guid transactionId, string consumerKey, string message)
         {
-            var message = JsonConvert.DeserializeObject<RpcResponseModel>(rpc);
+            var response = new RpcResponseModel();
+            response.Id = transactionId;
 
-            var chnl = channels.TryGetValue(message.Id, out var channel);
-            channel.Writer.WriteAsync(message);
+            await Task.Run(async () =>
+            {
+                IClient client = clients.Get(x => x.ClientKey == consumerKey);
+                if (client == null)
+                {
+                    //todo return client yok
+                }
+
+                var channel = Channel.CreateUnbounded<RpcResponseModel>();
+                //joberHubContext.Clients.Client(client.ConnectionId).SendCoreAsync("ReceiveRpcMessageFunction", new[] { JsonConvert.SerializeObject(message) }).ConfigureAwait(false);
+                joberHubContext.Clients.Client(client.ConnectionId).SendCoreAsync("ReceiveRpcMessageFunction", new object[] { response.Id, message }).ConfigureAwait(false);
+
+                channels.TryAdd(transactionId, channel);
+
+
+                int ssss = 0;
+                while (await channel.Reader.WaitToReadAsync())
+                {
+                    while (channel.Reader.TryRead(out RpcResponseModel coordinates))
+                    {
+                        response = coordinates;
+
+                        ssss = 1;
+                        break;
+                    }
+                    if (ssss == 1)
+                    {
+                        break;
+                    }
+                }
+            });
+
+
+            channels.TryRemove(response.Id, out var dddd);
+            return response;
+        }
+        async Task IJoberMQ.RpcMessageResponseOperationAsync(Guid transactionId, string resultData, bool isError, string errorMessage)
+        {
+            var response = new RpcResponseModel();
+            response.Id = transactionId;
+            response.ResultData = resultData;
+            response.IsError = isError;
+            response.ErrorMessage = errorMessage;
+
+            var chnl = channels.TryGetValue(response.Id, out var channel);
+            channel.Writer.WriteAsync(response);
+        }
+        #endregion
+
+        #region Started Completed
+        async Task<ResponseModel> IJoberMQ.StartedOperation(string data)
+        {
+            var messageStartedData = JsonConvert.DeserializeObject<StartedModel>(data);
+            var result = new ResponseModel();
+            result.IsOnline = true;
+
+            result.Id= messageStartedData.MessageId;
+
+            await Task.Run(() =>
+            {
+                try
+                {
+                    var message = database.Message.Get(messageStartedData.MessageId);
+
+                    if (message.Status.StatusTypeMessage == StatusTypeMessageEnum.None || message.Status.StatusTypeMessage == StatusTypeMessageEnum.SendClient)
+                    {
+                        message.Status.StatusTypeMessage = StatusTypeMessageEnum.Started;
+                        database.Message.Update(message.Id, message);
+                    }
+
+                    result.IsSucces = true;
+                }
+                catch (Exception)
+                {
+                    result.IsSucces = false;
+                }
+            });
+            return result;
+        }
+        async Task<ResponseBaseModel> IJoberMQ.CompletedOperation(string data)
+        {
+            #region null message return
+            if (data == null || data == "")
+                return new ResponseBaseModel { IsOnline = true, IsSucces = false };
+            #endregion
+
+            #region completedData Deserialize
+            var completedData = JsonConvert.DeserializeObject<CompletedModel>(data);
+            #endregion
+
+            //IsDataProtection yapısı kurulur ise buraya kuracağım
+
+            #region get data
+            var messageDbo = database.Message.Get(completedData.MessageId);
+            var jobJobTransactionDbo = database.JobTransaction.Get(messageDbo.CreatedJobTransactionId.Value);
+            var jobDbo = database.Job.Get(messageDbo.CreatedJobId.Value);
+            #endregion
+
+            #region Message update
+            messageDbo.Status.IsError = completedData.IsError;
+            messageDbo.Status.StatusTypeMessage = StatusTypeMessageEnum.Completed;
+            database.Message.Update(messageDbo.Id, messageDbo);
+            #endregion
+
+            var childBrothers = database.Message.GetAll(x => x.CreatedJobId == messageDbo.CreatedJobTransactionId);
+            var childBrothersFullCompleted = childBrothers.Where(x => x.Status.StatusTypeMessage != StatusTypeMessageEnum.Completed).Count() > 0 ? false : true;
+            var childBrothersFullError = childBrothers.Where(x => x.Status.IsError == true).Count() > 0 ? true : false;
+
+            if (childBrothersFullCompleted == false)
+                return new ResponseBaseModel { IsOnline = true, IsSucces = true };
+
+
+            #region JobTransaction completed update
+            jobJobTransactionDbo.Status.IsError = childBrothersFullError;
+            jobJobTransactionDbo.Status.IsCompleted = true;
+            database.JobTransaction.Update(jobJobTransactionDbo.Id, jobJobTransactionDbo);
+            #endregion
+
+            if (jobJobTransactionDbo.Timing.IsTrigger == false && jobJobTransactionDbo.Timing.TriggerGroupsId != null)
+            {
+                var triggerBrothers = database.JobTransaction.GetAll(x => x.Timing.TriggerJobId == jobJobTransactionDbo.Timing.TriggerJobId);
+                var triggerBrothersCompleted = triggerBrothers.Where(x => x.Status.IsCompleted == false).Count() > 0 ? false : true;
+
+                if (triggerBrothersCompleted == false)
+                    return new ResponseBaseModel { IsOnline = true, IsSucces = true };
+                else
+                {
+
+                }
+            }
+
+            bool isTriggerOperation = false;
+            if (jobJobTransactionDbo.Timing.IsTrigger == true && childBrothersFullError == true)
+            {
+                if (jobJobTransactionDbo.Timing.ErrorWorkflowStop == true)
+                {
+
+                    return new ResponseBaseModel { IsOnline = true, IsSucces = true };
+                }
+                else
+                    isTriggerOperation = true;
+            }
+
+            if (isTriggerOperation == true)
+            {
+                var triggerJobTransactionList = database.JobTransaction.GetAll(x => x.Timing.TriggerJobId == jobJobTransactionDbo.Id);
+                foreach (var item in triggerJobTransactionList)
+                {
+                    // get JobTransactionDetail and JobTransactionDetail isactive
+                    item.JobTransactionDetails = database.JobTransaction.Get(x => x.Id == item.Id).JobTransactionDetails;
+                    foreach (var child in item.JobTransactionDetails)
+                    {
+                        child.IsActive = true;
+                    }
+
+
+                    // JobTransaction isactive
+                    item.IsActive = true;
+                    database.JobTransaction.Update(item.Id, item);
+
+                    foreach (var child in item.JobTransactionDetails)
+                    {
+                        var childMessage = database.Message.GetAll(x => x.CreatedJobTransactionDetailId == child.Id).FirstOrDefault();
+
+                        childMessage.IsActive = true;
+                        database.Message.Update(childMessage.Id, childMessage);
+                    }
+                }
+            }
+
+            return new ResponseBaseModel { IsOnline = true, IsSucces = true };
         }
         #endregion
 

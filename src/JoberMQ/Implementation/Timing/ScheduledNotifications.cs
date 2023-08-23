@@ -4,6 +4,7 @@ using JoberMQ.Common.Enums.Message;
 using JoberMQ.Common.Enums.Operation;
 using JoberMQ.Common.Enums.Priority;
 using JoberMQ.Common.Enums.Status;
+using JoberMQ.Common.Models.Consuming;
 using JoberMQ.Common.Models.Message;
 using JoberMQ.Common.Models.Operation;
 using JoberMQ.Common.Models.Producer;
@@ -88,7 +89,7 @@ namespace JoberMQ.Implementation.Timing
                 Info = null,
                 GeneralData = null,
                 PriorityType = PriorityTypeEnum.None,
-                MessageConsuming = null,
+                MessageConsuming = new ConsumingModel(),
             },
             IsResult = false,
             ResultMessage = null,
