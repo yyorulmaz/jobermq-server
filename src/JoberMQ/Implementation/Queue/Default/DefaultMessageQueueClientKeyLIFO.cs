@@ -54,7 +54,7 @@ namespace JoberMQ.Implementation.Queue.Default
 
                 if (client.Value != null)
                 {
-                    JoberHost.JoberMQ.JoberHubContext.Clients.Client(client.Key).SendCoreAsync("ReceiveData", new[] { message }).ConfigureAwait(false);
+                    JoberHost.JoberMQ.JoberHubContext.Clients.Client(client.Key).SendCoreAsync("ReceiveMessage", new[] { message }).ConfigureAwait(false);
                     MessageEndOperation(message);
                 }
                 else

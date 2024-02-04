@@ -19,4 +19,5 @@ namespace JoberMQ.Hubs
             return base.OnDisconnectedAsync(exception);
         }
     }
+
 }

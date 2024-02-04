@@ -50,6 +50,7 @@ namespace JoberMQ.Abstraction
 
         #region Distributor
         public Task<ResponseBaseModel<DistributorModel>> DistributorGetOperationAsync(string data);
+        public Task<ResponseBaseModel<List<DistributorModel>>> DistributorGetAllOperationAsync();
         public Task<ResponseBaseModel> DistributorAddOperationAsync(DistributorModel data);
         public Task<ResponseBaseModel> DistributorEditOperationAsync(DistributorModel data);
         public Task<ResponseBaseModel> DistributorRemoveOperationAsync(string data);
@@ -58,7 +59,7 @@ namespace JoberMQ.Abstraction
 
         #region Queue
         public Task<ResponseBaseModel<QueueModel>> QueueGetOperationAsync(string data);
-        public Task<ResponseBaseModel<List<QueueModel>>> QueueGetAllOperationAsync(string data);
+        public Task<ResponseBaseModel<List<QueueModel>>> QueueGetAllOperationAsync();
         public Task<ResponseBaseModel> QueueAddOperationAsync(QueueModel data);
         public Task<ResponseBaseModel> QueueEditOperationAsync(QueueModel data);
         public Task<ResponseBaseModel> QueueRemoveOperationAsync(string data);
@@ -67,17 +68,17 @@ namespace JoberMQ.Abstraction
 
 
         #region Consume
-        public Task<ResponseBaseModel> ConsumeSubOperationAsync(string clientKey, string queueKey, bool isDurable);
-        public Task<ResponseBaseModel> ConsumeUnSubOperationAsync(string clientKey, string queueKey);
+        public Task<ResponseBaseModel> ConsumeQueueSubOperationAsync(string clientKey, string queueKey, bool isDurable);
+        public Task<ResponseBaseModel> ConsumeQueueUnSubOperationAsync(string clientKey, string queueKey);
         #endregion
 
 
         #region Message
-        public Task<ResponseModel> MessageOperationAsync(MessageDbo data);
+        public Task<ResponseModel> MessageMessageOperationAsync(MessageDbo data);
         public Task<ResponseModel> JobOperationAsync(JobDbo data);
-        public Task<RpcResponseModel> RpcMessageTextOperationAsync(Guid transactionId, string consumerKey, string message);
-        public Task<RpcResponseModel> RpcMessageFunctionOperationAsync(Guid transactionId, string consumerKey, string message);
-        public Task RpcMessageResponseOperationAsync(Guid transactionId, string resultData, bool isError, string errorMessage);
+        public Task<RpcResponseModel> MessageRpcTextOperationAsync(Guid transactionId, string consumerKey, string message);
+        public Task<RpcResponseModel> MessageRpcFunctionOperationAsync(Guid transactionId, string consumerKey, string message);
+        public Task MessageRpcResponseOperationAsync(Guid transactionId, byte[] resultData, bool isError, string errorMessage);
         #endregion
 
 

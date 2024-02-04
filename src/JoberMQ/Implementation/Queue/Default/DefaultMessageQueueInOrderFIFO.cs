@@ -57,7 +57,7 @@ namespace JoberMQ.Implementation.Queue.Default
 
                     if (client != null)
                     {
-                        JoberHost.JoberMQ.JoberHubContext.Clients.Client(client.ConnectionId).SendCoreAsync("ReceiveData", new[] { message }).ConfigureAwait(false);
+                        JoberHost.JoberMQ.JoberHubContext.Clients.Client(client.ConnectionId).SendCoreAsync("ReceiveMessage", new[] { message }).ConfigureAwait(false);
                         MessageEndOperation(message);
 
                         endConsumerNumber = client.Number;

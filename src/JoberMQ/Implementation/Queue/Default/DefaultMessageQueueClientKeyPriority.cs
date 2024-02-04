@@ -52,7 +52,7 @@ namespace JoberMQ.Implementation.Queue.Default
 
                 if (client.Value != null)
                 {
-                    JoberHost.JoberMQ.JoberHubContext.Clients.Client(client.Key).SendCoreAsync("ReceiveData", new[] { message.Value }).ConfigureAwait(false);
+                    JoberHost.JoberMQ.JoberHubContext.Clients.Client(client.Key).SendCoreAsync("ReceiveMessage", new[] { message.Value }).ConfigureAwait(false);
                     MessageEndOperation(message.Value);
                 }
                 else

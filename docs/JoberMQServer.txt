@@ -2,11 +2,11 @@
 
 2	-	cd C:\src\jobermq-server\src\JoberMQServer
 
-3	-	dotnet dev-certs https -ep $env:USERPROFILE\.aspnet\https\jobermqserverweb.pfx -p Yy13082104Yy
+3	-	dotnet dev-certs https -ep $env:USERPROFILE\.aspnet\https\jobermqserver.pfx -p Yy13082104Yy
 
 4	-	dotnet dev-certs https --trust
 
-5	-	dotnet user-secrets -p JoberMQServerWeb.csproj set "Kestrel:Certificates:Development:Password" "Yy13082104Yy"
+5	-	dotnet user-secrets -p JoberMQServer.csproj set "Kestrel:Certificates:Development:Password" "Yy13082104Yy"
 
 6	-	dockerfile düzenle
 
@@ -38,7 +38,7 @@ ENTRYPOINT ["dotnet", "JoberMQServerWeb.dll"]
 
 9	-	docker build --pull -t jobermq_server:v0.0.1 .
 
-10	-	docker create -it --restart=always --ip=172.20.0.2 --network=investnetwork -p 7654:80 -p 7655:443 --name jobermq_server_container -e ASPNETCORE_URLS="https://+;http://+" -e ASPNETCORE_HTTPS_PORT=7655 -e ASPNETCORE_ENVIRONMENT=Development -v $env:APPDATA\microsoft\UserSecrets\:/root/.microsoft/usersecrets -v $env:USERPROFILE\.aspnet\https:/root/.aspnet/https/ -v jobermq_data:/app/Database jobermq_server:v0.0.1
+10	-	docker create -it --restart=always --ip=172.20.0.2 --network=invest_network -p 7654:80 -p 7655:443 --name jobermq_server_container -e ASPNETCORE_URLS="https://+;http://+" -e ASPNETCORE_HTTPS_PORT=7655 -e ASPNETCORE_ENVIRONMENT=Development -v $env:APPDATA\microsoft\UserSecrets\:/root/.microsoft/usersecrets -v $env:USERPROFILE\.aspnet\https:/root/.aspnet/https/ -v jobermq_data:/app/Database jobermq_server:v0.0.1
 10	-	//////////////////////////////////docker create -it --restart=always -p 7654:80 -p 7655:443 --name jobermq_server_container -e ASPNETCORE_URLS="https://+;http://+" -e ASPNETCORE_HTTPS_PORT=7655 -e ASPNETCORE_ENVIRONMENT=Development -v $env:APPDATA\microsoft\UserSecrets\:/root/.microsoft/usersecrets -v $env:USERPROFILE\.aspnet\https:/root/.aspnet/https/ -v jobermq_data:/app/Database jobermq_server:v0.0.1
 
 11	-	docker start jobermq_server_container

@@ -51,7 +51,7 @@ namespace JoberMQ.Implementation.Queue.Default
             {
                 //todo paralel for kullanırmıyım
                 foreach (var client in clientChildData)
-                    JoberHost.JoberMQ.JoberHubContext.Clients.Client(client.Value.ConnectionId).SendCoreAsync("ReceiveData", new[] { message.Value }).ConfigureAwait(false);
+                    JoberHost.JoberMQ.JoberHubContext.Clients.Client(client.Value.ConnectionId).SendCoreAsync("ReceiveMessage", new[] { message.Value }).ConfigureAwait(false);
                     
                 MessageEndOperation(message.Value);
             }

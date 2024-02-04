@@ -47,6 +47,9 @@ namespace JoberMQ.Hubs
         public async Task<ResponseBaseModel<DistributorModel>> DistributorGet(string data)
             => await JoberHost.JoberMQ.DistributorGetOperationAsync(data);
         [Authorize(Roles = "administrators")]
+        public async Task<ResponseBaseModel<List<DistributorModel>>> DistributorGetAll()
+            => await JoberHost.JoberMQ.DistributorGetAllOperationAsync();
+        [Authorize(Roles = "administrators")]
         public async Task<ResponseBaseModel> DistributorEdit(DistributorModel data)
             => await JoberHost.JoberMQ.DistributorEditOperationAsync(data);
         [Authorize(Roles = "administrators")]
@@ -59,8 +62,8 @@ namespace JoberMQ.Hubs
         public async Task<ResponseBaseModel<QueueModel>> QueueGet(string data)
             => await JoberHost.JoberMQ.QueueGetOperationAsync(data);
         [Authorize(Roles = "administrators")]
-        public async Task<ResponseBaseModel<List<QueueModel>>> QueueGetAll(string data)
-           => await JoberHost.JoberMQ.QueueGetAllOperationAsync(data);
+        public async Task<ResponseBaseModel<List<QueueModel>>> QueueGetAll()
+           => await JoberHost.JoberMQ.QueueGetAllOperationAsync();
         [Authorize(Roles = "administrators")]
         public async Task<ResponseBaseModel> QueueAdd(QueueModel data)
             => await JoberHost.JoberMQ.QueueAddOperationAsync(data);
@@ -79,46 +82,38 @@ namespace JoberMQ.Hubs
         // todo başlangıçta birkaçtane yetki gruplarına göre kullanıcı ekle
         //[Authorize(Roles = "user")]
         [Authorize(Roles = "administrators")]
-        public async Task<ResponseBaseModel> ConsumeSub(string clientKey, string queueKey, bool isDurable)
+        public async Task<ResponseBaseModel> ConsumeQueueSub(string clientKey, string queueKey, bool isDurable)
         {
-            var result = await JoberHost.JoberMQ.ConsumeSubOperationAsync(clientKey, queueKey, isDurable);
+            var result = await JoberHost.JoberMQ.ConsumeQueueSubOperationAsync(clientKey, queueKey, isDurable);
             JoberHost.JoberMQ.Clients.InvokeChangedAdded(Context.ConnectionId);
             return result;
         }
         //[Authorize(Roles = "user")]
         [Authorize(Roles = "administrators")]
-        public async Task<ResponseBaseModel> ConsumeUnSub(string clientKey, string queueKey)
+        public async Task<ResponseBaseModel> ConsumeQueueUnSub(string clientKey, string queueKey)
         {
-            var result = await JoberHost.JoberMQ.ConsumeUnSubOperationAsync(clientKey, queueKey);
+            var result = await JoberHost.JoberMQ.ConsumeQueueUnSubOperationAsync(clientKey, queueKey);
             JoberHost.JoberMQ.Clients.InvokeChangedRemoved(Context.ConnectionId);
             return result;
         }
 
 
         [Authorize(Roles = "administrators")]
-        public async Task ConsumeSubFreeGroup(string groupKey)
+        public async Task ConsumeMessageFreeGroupSub(string groupKey)
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, groupKey);
         }
         [Authorize(Roles = "administrators")]
-        public async Task ConsumeUnSubFreeGroup(string groupKey)
+        public async Task ConsumeMessageFreeGroupUnSub(string groupKey)
         {
             await Groups.RemoveFromGroupAsync(Context.ConnectionId, groupKey);
         }
         #endregion
 
 
-        #region Job
-        [Authorize(Roles = "administrators")]
-        public async Task<ResponseModel> Job(JobDbo data)
-            => await JoberHost.JoberMQ.JobOperationAsync(data);
-        #endregion
+        
 
-        #region Message
-        [Authorize(Roles = "administrators")]
-        public async Task<ResponseModel> Message(MessageDbo data)
-           => await JoberHost.JoberMQ.MessageOperationAsync(data);
-        #endregion
+        
 
         #region Started Completed
         public async Task<ResponseModel> Started(string data)
@@ -131,33 +126,44 @@ namespace JoberMQ.Hubs
 
 
 
-
-        #region Rpc
+        #region Message Message
         [Authorize(Roles = "administrators")]
-        public async Task<RpcResponseModel> RpcMessageText(Guid transactionId, string consumerKey, string message)
-            => await JoberHost.JoberMQ.RpcMessageTextOperationAsync(transactionId, consumerKey, message);
-        [Authorize(Roles = "administrators")]
-        public async Task<RpcResponseModel> RpcMessageFunction(Guid transactionId, string consumerKey, string message)
-            => await JoberHost.JoberMQ.RpcMessageFunctionOperationAsync(transactionId, consumerKey, message);
-
-
-        [Authorize(Roles = "administrators")]
-        public async Task RpcMessageResponse(Guid transactionId, string resultData, bool isError, string errorMessage)
-            => await JoberHost.JoberMQ.RpcMessageResponseOperationAsync(transactionId, resultData, isError, errorMessage);
+        public async Task<ResponseModel> MessageMessage(MessageDbo data)
+           => await JoberHost.JoberMQ.MessageMessageOperationAsync(data);
         #endregion
 
-        #region FreeMessage
+        #region Message Job
         [Authorize(Roles = "administrators")]
-        public async Task FreeMessageClient(string clientKey, string message)
+        public async Task<ResponseModel> Job(JobDbo data)
+            => await JoberHost.JoberMQ.JobOperationAsync(data);
+        #endregion
+
+        #region Message Rpc
+        [Authorize(Roles = "administrators")]
+        public async Task<RpcResponseModel> MessageRpcText(Guid transactionId, string consumerKey, string message)
+            => await JoberHost.JoberMQ.MessageRpcTextOperationAsync(transactionId, consumerKey, message);
+        [Authorize(Roles = "administrators")]
+        public async Task<RpcResponseModel> MessageRpcFunction(Guid transactionId, string consumerKey, string message)
+            => await JoberHost.JoberMQ.MessageRpcFunctionOperationAsync(transactionId, consumerKey, message);
+
+
+        [Authorize(Roles = "administrators")]
+        public async Task MessageRpcResponse(Guid transactionId, byte[] resultData, bool isError, string errorMessage)
+            => await JoberHost.JoberMQ.MessageRpcResponseOperationAsync(transactionId, resultData, isError, errorMessage);
+        #endregion
+
+        #region Message Free
+        [Authorize(Roles = "administrators")]
+        public async Task MessageFreeClient(string clientKey, string message)
         {
             var client = JoberHost.JoberMQ.Clients.Get(x => x.ClientKey == clientKey);
             if (client != null)
-                _ = Clients.Client(client.ConnectionId).SendAsync("ReceiveFreeMessageText", message);
+                _ = Clients.Client(client.ConnectionId).SendAsync("ReceiveMessageFreeText", message);
         }
         [Authorize(Roles = "administrators")]
-        public async Task MessageFreeToGroup(string groupKey, string message)
+        public async Task MessageFreeGroup(string groupKey, string message)
         {
-            _ = Clients.Group(groupKey).SendAsync("ReceiveFreeMessageText", message);
+            _ = Clients.Group(groupKey).SendAsync("ReceiveMessageFreeText", message);
         }
         #endregion
 

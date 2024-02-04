@@ -227,6 +227,37 @@ namespace JoberMQ.Implementation
 
             return result;
         }
+        async Task<ResponseBaseModel<List<DistributorModel>>> IJoberMQ.DistributorGetAllOperationAsync()
+        {
+            var result = new ResponseBaseModel<List<DistributorModel>>();
+            result.IsOnline = true;
+            result.Message = "";
+            result.IsSucces = true;
+
+            var distributorAll = distributors.GetAll();
+            if (distributorAll == null)
+                result.Data = null;
+
+            result.Data = new List<DistributorModel>();
+
+            foreach (var distributor in distributorAll)
+            {
+                var dist = new DistributorModel
+                {
+                    DistributorKey = distributor.DistributorKey,
+                    DistributorType = distributor.DistributorType,
+                    DistributorSearchSourceType = distributor.DistributorSearchSourceType,
+                    PermissionType = distributor.PermissionType,
+                    IsDurable = distributor.IsDurable,
+                    IsDefault = distributor.IsDefault
+                };
+
+                result.Data.Add(dist);
+            }
+
+
+            return result;
+        }
         async Task<ResponseBaseModel> IJoberMQ.DistributorAddOperationAsync(DistributorModel data)
             => await messageBroker.DistributorAdd(data.DistributorKey, data.DistributorType.Value, data.DistributorSearchSourceType.Value, data.PermissionType.Value, data.IsDurable.Value);
         async Task<ResponseBaseModel> IJoberMQ.DistributorEditOperationAsync(DistributorModel data)
@@ -261,7 +292,7 @@ namespace JoberMQ.Implementation
 
             return result;
         }
-        async Task<ResponseBaseModel<List<QueueModel>>> IJoberMQ.QueueGetAllOperationAsync(string data)
+        async Task<ResponseBaseModel<List<QueueModel>>> IJoberMQ.QueueGetAllOperationAsync()
         {
             var result = new ResponseBaseModel<List<QueueModel>>();
             result.IsOnline = true;
@@ -302,7 +333,7 @@ namespace JoberMQ.Implementation
         #endregion
 
         #region Consume
-        async Task<ResponseBaseModel> IJoberMQ.ConsumeSubOperationAsync(string clientKey, string queueKey, bool isDurable)
+        async Task<ResponseBaseModel> IJoberMQ.ConsumeQueueSubOperationAsync(string clientKey, string queueKey, bool isDurable)
         {
             var result = new ResponseBaseModel();
             result.IsOnline = true;
@@ -328,7 +359,7 @@ namespace JoberMQ.Implementation
 
             return result;
         }
-        async Task<ResponseBaseModel> IJoberMQ.ConsumeUnSubOperationAsync(string clientKey, string queueKey)
+        async Task<ResponseBaseModel> IJoberMQ.ConsumeQueueUnSubOperationAsync(string clientKey, string queueKey)
         {
             var result = new ResponseBaseModel();
             result.IsOnline = true;
@@ -343,7 +374,7 @@ namespace JoberMQ.Implementation
         #endregion
 
         #region Message
-        async Task<ResponseModel> IJoberMQ.MessageOperationAsync(MessageDbo data)
+        async Task<ResponseModel> IJoberMQ.MessageMessageOperationAsync(MessageDbo data)
             => await distributors.Get(data.Message.Routing.DistributorKey).Distributoring(data);
         async Task<ResponseModel> IJoberMQ.JobOperationAsync(JobDbo data)
         {
@@ -356,8 +387,12 @@ namespace JoberMQ.Implementation
             return await publisher.Publish(data);
         }
 
+
+        #endregion
+
+        #region Message Rpc
         ConcurrentDictionary<Guid, Channel<RpcResponseModel>> channels = new ConcurrentDictionary<Guid, Channel<RpcResponseModel>>();
-        async Task<RpcResponseModel> IJoberMQ.RpcMessageTextOperationAsync(Guid transactionId, string consumerKey, string message)
+        async Task<RpcResponseModel> IJoberMQ.MessageRpcTextOperationAsync(Guid transactionId, string consumerKey, string message)
         {
             var response = new RpcResponseModel();
             response.Id = transactionId;
@@ -371,8 +406,8 @@ namespace JoberMQ.Implementation
                 }
 
                 var channel = Channel.CreateUnbounded<RpcResponseModel>();
-                //joberHubContext.Clients.Client(client.ConnectionId).SendCoreAsync("ReceiveRpcMessageText", new[] { JsonConvert.SerializeObject(message) }).ConfigureAwait(false);
-                joberHubContext.Clients.Client(client.ConnectionId).SendCoreAsync("ReceiveRpcMessageText", new object[] { response.Id, message }).ConfigureAwait(false);
+                //joberHubContext.Clients.Client(client.ConnectionId).SendCoreAsync("ReceiveMessageRpcText", new[] { JsonConvert.SerializeObject(message) }).ConfigureAwait(false);
+                joberHubContext.Clients.Client(client.ConnectionId).SendCoreAsync("ReceiveMessageRpcText", new object[] { response.Id, message }).ConfigureAwait(false);
 
                 channels.TryAdd(transactionId, channel);
 
@@ -398,7 +433,7 @@ namespace JoberMQ.Implementation
             channels.TryRemove(response.Id, out var dddd);
             return response;
         }
-        async Task<RpcResponseModel> IJoberMQ.RpcMessageFunctionOperationAsync(Guid transactionId, string consumerKey, string message)
+        async Task<RpcResponseModel> IJoberMQ.MessageRpcFunctionOperationAsync(Guid transactionId, string consumerKey, string message)
         {
             var response = new RpcResponseModel();
             response.Id = transactionId;
@@ -412,8 +447,8 @@ namespace JoberMQ.Implementation
                 }
 
                 var channel = Channel.CreateUnbounded<RpcResponseModel>();
-                //joberHubContext.Clients.Client(client.ConnectionId).SendCoreAsync("ReceiveRpcMessageFunction", new[] { JsonConvert.SerializeObject(message) }).ConfigureAwait(false);
-                joberHubContext.Clients.Client(client.ConnectionId).SendCoreAsync("ReceiveRpcMessageFunction", new object[] { response.Id, message }).ConfigureAwait(false);
+                //joberHubContext.Clients.Client(client.ConnectionId).SendCoreAsync("ReceiveMessageRpcFunction", new[] { JsonConvert.SerializeObject(message) }).ConfigureAwait(false);
+                joberHubContext.Clients.Client(client.ConnectionId).SendCoreAsync("ReceiveMessageRpcFunction", new object[] { response.Id, message }).ConfigureAwait(false);
 
                 channels.TryAdd(transactionId, channel);
 
@@ -439,7 +474,7 @@ namespace JoberMQ.Implementation
             channels.TryRemove(response.Id, out var dddd);
             return response;
         }
-        async Task IJoberMQ.RpcMessageResponseOperationAsync(Guid transactionId, string resultData, bool isError, string errorMessage)
+        async Task IJoberMQ.MessageRpcResponseOperationAsync(Guid transactionId, byte[] resultData, bool isError, string errorMessage)
         {
             var response = new RpcResponseModel();
             response.Id = transactionId;
@@ -484,6 +519,9 @@ namespace JoberMQ.Implementation
         }
         async Task<ResponseBaseModel> IJoberMQ.CompletedOperation(string data)
         {
+            return new ResponseBaseModel();
+
+
             #region null message return
             if (data == null || data == "")
                 return new ResponseBaseModel { IsOnline = true, IsSucces = false };

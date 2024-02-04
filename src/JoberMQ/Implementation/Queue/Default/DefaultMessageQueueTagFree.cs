@@ -70,7 +70,7 @@ namespace JoberMQ.Implementation.Queue.Default
                     continue;
 
                 foreach (var client in matchingModels)
-                    JoberHost.JoberMQ.JoberHubContext.Clients.Client(client.ConnectionId).SendCoreAsync("ReceiveData", new[] { message.Value }).ConfigureAwait(false);
+                    JoberHost.JoberMQ.JoberHubContext.Clients.Client(client.ConnectionId).SendCoreAsync("ReceiveMessage", new[] { message.Value }).ConfigureAwait(false);
                 
                 MessageEndOperation(message.Value);
             }
